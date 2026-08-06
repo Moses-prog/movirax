@@ -2,7 +2,7 @@
 
 <div style="text-align:center">
 
-![MOVIRAX Mockup Screenshot](https://raw.githubusercontent.com/wisnuwirayuda15/MOVIRAX/refs/heads/master/src/public/img/mockup.png)
+![MOVIRAX Mockup Screenshot](https://raw.githubusercontent.com/wisnuwirayuda15/cinextma/refs/heads/master/src/public/img/mockup.png)
 
 </div>
 
