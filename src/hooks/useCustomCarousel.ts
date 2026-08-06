@@ -2,24 +2,13 @@
 
 import useEmblaCarousel from "embla-carousel-react";
 import { EmblaOptionsType, EmblaPluginType } from "embla-carousel";
-import { useCallback, useState } from "react";
+import { WheelGesturesPlugin } from "embla-carousel-wheel-gestures"; 
+import { useCallback, useEffect, useState } from "react";
 
-/**
- * Custom hook that provides carousel functionality using Embla Carousel.
- *
- * @param {EmblaOptionsType} [options] - Optional configuration options for the Embla Carousel.
- * @param {EmblaPluginType[]} [plugins] - Optional array of plugins to enhance the carousel.
- * @returns {object} An object containing:
- * - `emblaRef`: Ref to attach to the carousel container.
- * - `scrollTo`: Function to scroll to a specific index.
- * - `scrollNext`: Function to scroll to the next item.
- * - `scrollPrev`: Function to scroll to the previous item.
- * - `selectedIndex`: The current selected index of the carousel.
- * - `canScrollNext`: Boolean indicating if the carousel can scroll to the next item.
- * - `canScrollPrev`: Boolean indicating if the carousel can scroll to the previous item.
- */
-export const useCustomCarousel = (options?: EmblaOptionsType, plugins?: EmblaPluginType[]) => {
-  const [emblaRef, embla] = useEmblaCarousel(options, plugins);
+export const useCustomCarousel = (options?: EmblaOptionsType, plugins: EmblaPluginType[] = []) => {
+  // We add the WheelGesturesPlugin to the array. 
+  // It handles the "momentum" from your HP mousepad.
+  const [emblaRef, embla] = useEmblaCarousel(options, [WheelGesturesPlugin(), ...plugins]);
 
   const [canScrollNext, setCanScrollNext] = useState(true);
   const [canScrollPrev, setCanScrollPrev] = useState(false);
@@ -29,13 +18,23 @@ export const useCustomCarousel = (options?: EmblaOptionsType, plugins?: EmblaPlu
   const scrollPrev = useCallback(() => embla && embla.scrollPrev(), [embla]);
   const scrollNext = useCallback(() => embla && embla.scrollNext(), [embla]);
 
-  if (embla) {
-    embla.on("select", () => {
+  useEffect(() => {
+    if (!embla) return;
+
+    const onSelect = () => {
       setCanScrollPrev(embla.canScrollPrev());
       setCanScrollNext(embla.canScrollNext());
       setSelectedIndex(embla.selectedScrollSnap());
-    });
-  }
+    };
+
+    embla.on("select", onSelect);
+    embla.on("reInit", onSelect);
+
+    return () => {
+      embla.off("select", onSelect);
+      embla.off("reInit", onSelect);
+    };
+  }, [embla]);
 
   return { emblaRef, scrollTo, scrollNext, scrollPrev, selectedIndex, canScrollNext, canScrollPrev };
 };

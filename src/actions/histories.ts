@@ -6,58 +6,38 @@ import { ActionResponse } from "@/types";
 import { HistoryDetail } from "@/types/movie";
 import { mutateMovieTitle, mutateTvShowTitle } from "@/utils/movies";
 import { createClient } from "@/utils/supabase/server";
+import { revalidatePath } from "next/cache";
 
 export const syncHistory = async (
   data: UnifiedPlayerEventData,
   completed?: boolean,
-): ActionResponse => {
-  console.info("Saving history:", data);
-
-  if (!data) return { success: false, message: "No data to save" };
-
-  if (data.mediaType === "tv" && (!data.season || !data.episode)) {
-    return { success: false, message: "Missing season or episode" };
+): Promise<ActionResponse> => {
+  if (!data || !data.mediaId || !data.mediaType) {
+    return { success: false, message: "Missing required fields" };
   }
 
   try {
     const supabase = await createClient();
-
-    // Get current user
-    const {
-      data: { user },
-      error: userError,
-    } = await supabase.auth.getUser();
+    const { data: { user }, error: userError } = await supabase.auth.getUser();
 
     if (userError || !user) {
-      return {
-        success: false,
-        message: "You must be logged in to save history",
-      };
+      return { success: false, message: "Authentication required" };
     }
 
-    // Validate required fields
-    if (!data.mediaId || !data.mediaType) {
-      return {
-        success: false,
-        message: "Missing required fields",
-      };
-    }
-
-    // Validate type
-    if (!["movie", "tv"].includes(data.mediaType)) {
-      return {
-        success: false,
-        message: 'Invalid content type. Must be "movie" or "tv"',
-      };
-    }
-
-    const media =
-      data.mediaType === "movie"
+    // 1. Fetch metadata from TMDB only if we don't have essential UI info
+    // (Optimization: You could pass title/poster from the client to skip this API call)
+    let media;
+    try {
+      media = data.mediaType === "movie"
         ? await tmdb.movies.details(Number(data.mediaId))
         : await tmdb.tvShows.details(Number(data.mediaId));
+    } catch (tmdbErr) {
+      console.error("TMDB Fetch Error:", tmdbErr);
+      return { success: false, message: "Could not verify media details" };
+    }
 
-    // Insert or update history
-    const { data: history, error } = await supabase
+    // 2. Perform Upsert
+    const { error } = await supabase
       .from("histories")
       .upsert(
         {
@@ -66,8 +46,8 @@ export const syncHistory = async (
           type: data.mediaType,
           season: data.season || 0,
           episode: data.episode || 0,
-          duration: data.duration,
-          last_position: data.currentTime,
+          duration: Math.round(data.duration || 0),
+          last_position: Math.round(data.currentTime || 0),
           completed: completed || false,
           adult: "adult" in media ? media.adult : false,
           backdrop_path: media.backdrop_path,
@@ -76,148 +56,102 @@ export const syncHistory = async (
           title: "title" in media ? mutateMovieTitle(media) : mutateTvShowTitle(media),
           vote_average: media.vote_average,
         },
-        {
-          onConflict: "user_id,media_id,type,season,episode",
-        },
-      )
-      .select();
+        { onConflict: "user_id,media_id,type,season,episode" }
+      );
 
-    if (error) {
-      console.info("History save error:", error);
-      return {
-        success: false,
-        message: "Failed to save history",
-      };
-    }
+    if (error) throw error;
 
-    console.info("History saved:", history);
+    // Refresh the home page data
+    revalidatePath("/");
+    return { success: true, message: "Progress synced" };
 
-    return {
-      success: true,
-      message: "History saved",
-    };
-  } catch (error) {
-    console.info("Unexpected error:", error);
-    return {
-      success: false,
-      message: "An unexpected error occurred",
-    };
+  } catch (error: any) {
+    console.error("Sync Error:", error.message);
+    return { success: false, message: error.message || "Failed to sync progress" };
   }
 };
 
-export const getUserHistories = async (limit: number = 20): ActionResponse<HistoryDetail[]> => {
+export const getUserHistories = async (limit: number = 20): Promise<ActionResponse<HistoryDetail[]>> => {
   try {
     const supabase = await createClient();
+    const { data: { user } } = await supabase.auth.getUser();
 
-    // Get current user
-    const {
-      data: { user },
-      error: userError,
-    } = await supabase.auth.getUser();
-
-    if (userError || !user) {
-      return {
-        success: false,
-        message: "User not authenticated",
-      };
-    }
+    if (!user) return { success: false, message: "Not authenticated" };
 
     const { data, error } = await supabase
       .from("histories")
       .select("*")
       .eq("user_id", user.id)
-      .order("updated_at", { ascending: false })
+      .order("updated_at", { ascending: false }) // Use updated_at so most recent watch is first
       .limit(limit);
 
-    if (error) {
-      console.info("History fetch error:", error);
-      return {
-        success: false,
-        message: "Failed to fetch history",
-      };
-    }
+    if (error) throw error;
 
-    return {
-      success: true,
-      data,
-    };
-  } catch (error) {
-    console.info("Unexpected error:", error);
-    return {
-      success: false,
-      message: "An unexpected error occurred",
-    };
+    return { success: true, data: data as unknown as HistoryDetail[] };
+  } catch (error: any) {
+    return { success: false, message: error.message };
   }
 };
 
-export const getMovieLastPosition = async (id: number): Promise<number> => {
+export const getMovieLastPosition = async (
+  mediaId: number | string,
+  mediaType: "movie" | "tv"
+): Promise<ActionResponse<number>> => {
   try {
     const supabase = await createClient();
+    const { data: { user } } = await supabase.auth.getUser();
 
-    // Get current user
-    const {
-      data: { user },
-      error: userError,
-    } = await supabase.auth.getUser();
-
-    if (userError || !user) {
-      return 0;
-    }
+    if (!user) return { success: false, message: "Not authenticated" };
 
     const { data, error } = await supabase
       .from("histories")
       .select("last_position")
       .eq("user_id", user.id)
-      .eq("media_id", id)
-      .eq("type", "movie");
+      .eq("media_id", Number(mediaId))
+      .eq("type", mediaType)
+      .single(); // Fetch single record
 
-    if (error) {
-      console.info("History fetch error:", error);
-      return 0;
-    }
+    if (error && error.code !== "PGRST116") throw error; // PGRST116 = no rows found
 
-    return data?.[0]?.last_position || 0;
-  } catch (error) {
-    console.info("Unexpected error:", error);
-    return 0;
+    return {
+      success: true,
+      data: data?.last_position ?? 0
+    };
+  } catch (error: any) {
+    console.error("Get Last Position Error:", error.message);
+    return { success: false, message: error.message };
   }
 };
 
 export const getTvShowLastPosition = async (
-  id: number,
+  showId: number,
   season: number,
-  episode: number,
-): Promise<number> => {
+  episode: number
+): Promise<ActionResponse<number>> => {
   try {
     const supabase = await createClient();
+    const { data: { user } } = await supabase.auth.getUser();
 
-    // Get current user
-    const {
-      data: { user },
-      error: userError,
-    } = await supabase.auth.getUser();
-
-    if (userError || !user) {
-      return 0;
-    }
+    if (!user) return { success: false, message: "Not authenticated" };
 
     const { data, error } = await supabase
       .from("histories")
       .select("last_position")
       .eq("user_id", user.id)
-      .eq("media_id", id)
+      .eq("media_id", showId)
       .eq("type", "tv")
       .eq("season", season)
-      .eq("episode", episode);
+      .eq("episode", episode)
+      .single();
 
-    if (error) {
-      console.info("History fetch error:", error);
-      return 0;
-    }
+    if (error && error.code !== "PGRST116") throw error; // PGRST116 = no rows found
 
-    return data?.[0]?.last_position || 0;
-  } catch (error) {
-    console.info("Unexpected error:", error);
-    return 0;
+    return {
+      success: true,
+      data: data?.last_position ?? 0
+    };
+  } catch (error: any) {
+    console.error("Get TV Show Last Position Error:", error.message);
+    return { success: false, message: error.message };
   }
 };

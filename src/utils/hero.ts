@@ -10,9 +10,9 @@ export default heroui({
     },
     dark: {
       colors: {
-        background: "#0D0C0F",
+        background: "#080101",
         //@ts-expect-error this is a custom color name
-        "secondary-background": "#18181B",
+        "secondary-background": "#1b1818",
       },
     },
   },

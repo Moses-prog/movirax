@@ -23,18 +23,29 @@ const MoviePlayerPage: NextPage<Params<{ id: number }>> = ({ params }) => {
     queryKey: ["movie-player-detail", id],
   });
 
-  const { data: startAt, isPending: isPendingStartAt } = useQuery({
-    queryFn: () => getMovieLastPosition(id),
+  const { data: startAtResponse, isPending: isPendingStartAt } = useQuery({
+    queryFn: () => getMovieLastPosition(id, "movie"),
     queryKey: ["movie-player-start-at", id],
   });
 
+  // Extract the position from ActionResponse
+  const startAt = (startAtResponse as any) || undefined;
+
   if (isPending || isPendingStartAt) {
-    return <Spinner size="lg" className="absolute-center" variant="simple" />;
+    return (
+      <div className="w-full h-screen flex items-center justify-center">
+        <Spinner size="lg" variant="simple" />
+      </div>
+    );
   }
 
   if (error || isEmpty(movie)) return notFound();
 
-  return <MoviePlayer movie={movie} startAt={startAt} />;
+  return (
+    <div className="w-full h-screen bg-black flex items-center justify-center overflow-hidden">
+      <MoviePlayer movie={movie} startAt={startAt} />
+    </div>
+  );
 };
 
 export default MoviePlayerPage;

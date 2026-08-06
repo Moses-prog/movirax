@@ -1,6 +1,6 @@
 "use client";
 
-import { Image, Chip, Button } from "@heroui/react";
+import { Image, Chip, Button, Dropdown, DropdownTrigger, DropdownMenu, DropdownItem } from "@heroui/react";
 import { getImageUrl, mutateTvShowTitle } from "@/utils/movies";
 import BookmarkButton from "@/components/ui/button/BookmarkButton";
 import ShareButton from "@/components/ui/button/ShareButton";
@@ -15,6 +15,8 @@ import Rating from "@/components/ui/other/Rating";
 import SectionTitle from "@/components/ui/other/SectionTitle";
 import Trailer from "@/components/ui/overlay/Trailer";
 import { SavedMovieDetails } from "@/types/movie";
+import { useState } from "react";
+import { useRouter } from "next/navigation";
 
 export interface TvShowOverviewSectionProps {
   tv: AppendToResponse<TvShowDetails, "videos"[], "tvShow">;
@@ -25,6 +27,9 @@ export const TvShowOverviewSection: React.FC<TvShowOverviewSectionProps> = ({
   tv,
   onViewEpisodesClick,
 }) => {
+  const router = useRouter();
+  const [selectedSeason, setSelectedSeason] = useState<string>("1");
+
   const firstReleaseYear = new Date(tv.first_air_date).getFullYear();
   const lastReleaseYear = new Date(tv.last_air_date).getFullYear();
   const releaseYears = `${firstReleaseYear} ${firstReleaseYear !== lastReleaseYear ? ` - ${lastReleaseYear}` : ""}`;
@@ -41,6 +46,10 @@ export const TvShowOverviewSection: React.FC<TvShowOverviewSectionProps> = ({
     title: fullTitle,
     vote_average: tv.vote_average,
     saved_date: new Date().toISOString(),
+  };
+
+  const handleSeasonSelect = (seasonNumber: string) => {
+    setSelectedSeason(seasonNumber);
   };
 
   useDocumentTitle(`${fullTitle} | ${siteConfig.name}`);
@@ -105,6 +114,32 @@ export const TvShowOverviewSection: React.FC<TvShowOverviewSectionProps> = ({
               >
                 View Episodes
               </Button>
+              
+              <Dropdown>
+                <DropdownTrigger>
+                  <Button
+                    color="warning"
+                    variant="bordered"
+                  >
+                    Season {selectedSeason}
+                  </Button>
+                </DropdownTrigger>
+                <DropdownMenu
+                  aria-label="Select Season"
+                  color="warning"
+                  onAction={(key) => handleSeasonSelect(key as string)}
+                >
+                  {Array.from({ length: tv.number_of_seasons }, (_, i) => {
+                    const seasonNumber = (i + 1).toString();
+                    return (
+                      <DropdownItem key={seasonNumber}>
+                        Season {seasonNumber}
+                      </DropdownItem>
+                    );
+                  })}
+                </DropdownMenu>
+              </Dropdown>
+
               <Trailer color="warning" videos={tv.videos.results} />
             </div>
             <div className="flex flex-wrap gap-2">

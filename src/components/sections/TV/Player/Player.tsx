@@ -10,10 +10,12 @@ import { Episode, TvShowDetails } from "tmdb-ts";
 import useBreakpoints from "@/hooks/useBreakpoints";
 import { ADS_WARNING_STORAGE_KEY, SpacingClasses } from "@/utils/constants";
 import { usePlayerEvents } from "@/hooks/usePlayerEvents";
+
 const AdsWarning = dynamic(() => import("@/components/ui/overlay/AdsWarning"));
 const TvShowPlayerHeader = dynamic(() => import("./Header"));
 const TvShowPlayerSourceSelection = dynamic(() => import("./SourceSelection"));
 const TvShowPlayerEpisodeSelection = dynamic(() => import("./EpisodeSelection"));
+const TvShowPlayerSeasonSelection = dynamic(() => import("./SeasonSelection"));
 
 export interface TvShowPlayerProps {
   tv: TvShowDetails;
@@ -45,6 +47,7 @@ const TvShowPlayer: React.FC<TvShowPlayerProps> = ({
   const idle = useIdle(3000);
   const [sourceOpened, sourceHandlers] = useDisclosure(false);
   const [episodeOpened, episodeHandlers] = useDisclosure(false);
+  const [seasonOpened, seasonHandlers] = useDisclosure(false);
   const [selectedSource, setSelectedSource] = useQueryState<number>(
     "src",
     parseAsInteger.withDefault(0),
@@ -72,6 +75,9 @@ const TvShowPlayer: React.FC<TvShowPlayerProps> = ({
           selectedSource={selectedSource}
           onOpenSource={sourceHandlers.open}
           onOpenEpisode={episodeHandlers.open}
+          onOpenSeason={seasonHandlers.open}
+          totalSeasons={tv.number_of_seasons}
+          currentSeason={episode.season_number}
           {...props}
         />
 
@@ -94,6 +100,13 @@ const TvShowPlayer: React.FC<TvShowPlayerProps> = ({
         players={players}
         selectedSource={selectedSource}
         setSelectedSource={setSelectedSource}
+      />
+      <TvShowPlayerSeasonSelection
+        id={id}
+        opened={seasonOpened}
+        onClose={seasonHandlers.close}
+        totalSeasons={tv.number_of_seasons}
+        currentSeason={episode.season_number}
       />
       <TvShowPlayerEpisodeSelection
         id={id}

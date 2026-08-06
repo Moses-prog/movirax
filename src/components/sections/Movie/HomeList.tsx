@@ -44,13 +44,13 @@ const MovieHomeList: React.FC<QueryList<Movie>> = ({ query, name, param }) => {
             </Link>
           </div>
           <Carousel>
-            {data?.results.map((movie) => {
+            {data?.results.map((movie, index) => {
               return (
                 <div
                   key={movie.id}
                   className="embla__slide flex min-h-fit max-w-fit items-center px-1 py-2"
                 >
-                  <MoviePosterCard movie={movie} />
+                  <MoviePosterCard movie={movie} rank={index + 1} />
                 </div>
               );
             })}

@@ -3,6 +3,7 @@ import { Metadata, NextPage } from "next/types";
 import { cache, Suspense } from "react";
 import dynamic from "next/dynamic";
 import { createClient } from "@/utils/supabase/server";
+
 const UnauthorizedNotice = dynamic(() => import("@/components/ui/notice/Unauthorized"));
 const LibraryList = dynamic(() => import("@/components/sections/Library/List"));
 

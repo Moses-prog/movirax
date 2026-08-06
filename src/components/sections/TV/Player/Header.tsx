@@ -6,8 +6,11 @@ import { TvShowPlayerProps } from "./Player";
 interface TvShowPlayerHeaderProps extends Omit<TvShowPlayerProps, "episodes" | "tv" | "startAt"> {
   hidden?: boolean;
   selectedSource: number;
+  totalSeasons: number;
+  currentSeason: number;
   onOpenSource: () => void;
   onOpenEpisode: () => void;
+  onOpenSeason: () => void;
 }
 
 const TvShowPlayerHeader: React.FC<TvShowPlayerHeaderProps> = ({
@@ -17,10 +20,13 @@ const TvShowPlayerHeader: React.FC<TvShowPlayerHeaderProps> = ({
   episode,
   hidden,
   selectedSource,
+  totalSeasons,
+  currentSeason,
   nextEpisodeNumber,
   prevEpisodeNumber,
   onOpenSource,
   onOpenEpisode,
+  onOpenSeason,
 }) => {
   return (
     <div
@@ -59,6 +65,9 @@ const TvShowPlayerHeader: React.FC<TvShowPlayerHeaderProps> = ({
         </ActionButton>
         <ActionButton label="Sources" tooltip="Sources" onClick={onOpenSource}>
           <Server size={34} />
+        </ActionButton>
+        <ActionButton label="Seasons" tooltip="Seasons" onClick={onOpenSeason}>
+          <List size={34} />
         </ActionButton>
         <ActionButton label="Episodes" tooltip="Episodes" onClick={onOpenEpisode}>
           <List size={34} />

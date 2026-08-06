@@ -9,6 +9,8 @@ import { addToast } from "@heroui/react";
 
 type AuthUserData = User & {
   username: string;
+  subscription_tier?: string;
+  subscription_status?: string;
 };
 
 const fetchUser = async (): Promise<AuthUserData | null> => {
@@ -36,20 +38,28 @@ const fetchUser = async (): Promise<AuthUserData | null> => {
     return null;
   }
 
-  if (user) {
-    const { data: username } = await supabase
-      .from("profiles")
-      .select("username")
-      .eq("id", user.id)
-      .single();
+    if (user) {
+      const { data: usernameData } = await supabase
+        .from("profiles")
+        .select("username")
+        .eq("id", user.id)
+        .single();
+        
+      const { data: profileData } = await supabase
+        .from("user_profiles")
+        .select("subscription_tier, subscription_status")
+        .eq("id", user.id)
+        .single();
 
-    if (username) {
-      AuthUser = {
-        ...user,
-        username: username.username,
-      };
+      if (usernameData) {
+        AuthUser = {
+          ...user,
+          username: usernameData.username,
+          subscription_tier: profileData?.subscription_tier || 'free',
+          subscription_status: profileData?.subscription_status || 'active',
+        };
+      }
     }
-  }
 
   return AuthUser;
 };

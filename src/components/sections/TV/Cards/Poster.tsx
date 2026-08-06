@@ -15,12 +15,18 @@ import TvShowHoverCard from "./Hover";
 interface TvShowPosterCardProps {
   tv: TV;
   variant?: "full" | "bordered";
+  rank?: number;
 }
 
-const TvShowPosterCard: React.FC<TvShowPosterCardProps> = ({ tv, variant = "full" }) => {
+const TvShowPosterCard: React.FC<TvShowPosterCardProps> = ({ tv, variant = "full", rank }) => {
   const { hovered, ref } = useHover();
   const [opened, handlers] = useDisclosure(false);
-  const releaseYear = new Date(tv.first_air_date).getFullYear();
+
+  // FIXED: Added a check for first_air_date to prevent NaN error
+  const releaseYear = tv.first_air_date 
+    ? new Date(tv.first_air_date).getFullYear() 
+    : "N/A";
+
   const posterImage = getImageUrl(tv.poster_path);
   const title = mutateTvShowTitle(tv);
   const { mobile } = useBreakpoints();
@@ -29,7 +35,7 @@ const TvShowPosterCard: React.FC<TvShowPosterCardProps> = ({ tv, variant = "full
   const callback = useCallback(() => {
     handlers.open();
     setTimeout(() => startVibration([100]), 300);
-  }, []);
+  }, [handlers, startVibration]);
 
   const longPress = useLongPress(mobile ? callback : null, {
     cancelOnMovement: true,
@@ -68,6 +74,18 @@ const TvShowPosterCard: React.FC<TvShowPosterCardProps> = ({ tv, variant = "full
                   18+
                 </Chip>
               )}
+              {rank !== undefined && (
+                <div 
+                  className="absolute -top-4 -right-1 z-50 text-[90px] font-black leading-none pointer-events-none select-none tracking-tighter text-black dark:text-white drop-shadow-[0_2px_8px_rgba(0,0,0,0.8)] opacity-90"
+                  style={{
+                    WebkitTextFillColor: "transparent",
+                    WebkitTextStroke: "3px currentColor",
+                  }}
+                >
+                  {rank}
+                </div>
+              )}
+              
               <div className="absolute bottom-0 z-2 h-1/2 w-full bg-linear-to-t from-black from-1%"></div>
               <div className="absolute bottom-0 z-3 flex w-full flex-col gap-1 px-4 py-3">
                 <h6 className="truncate text-sm font-semibold">{title}</h6>

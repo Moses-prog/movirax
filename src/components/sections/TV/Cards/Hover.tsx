@@ -3,17 +3,26 @@ import Genres from "@/components/ui/other/Genres";
 import { cn, isEmpty } from "@/utils/helpers";
 import { Calendar, List, Play, Season } from "@/utils/icons";
 import { getImageUrl, mutateTvShowTitle } from "@/utils/movies";
-import { Button, Chip, Image, Link, Spinner } from "@heroui/react";
+import { Button, Chip, Image, Link, Spinner, Dropdown, DropdownTrigger, DropdownMenu, DropdownItem } from "@heroui/react";
 import { useQuery } from "@tanstack/react-query";
+import { useState } from "react";
+import { useRouter } from "next/navigation";
 import Rating from "../../../ui/other/Rating";
 import { SavedMovieDetails } from "@/types/movie";
 import BookmarkButton from "@/components/ui/button/BookmarkButton";
 
 const TvShowHoverCard: React.FC<{ id: number; fullWidth?: boolean }> = ({ id, fullWidth }) => {
+  const router = useRouter();
+  const [selectedSeason, setSelectedSeason] = useState<string>("1");
+
   const { data: tv, isPending } = useQuery({
     queryFn: () => tmdb.tvShows.details(id, ["images"]),
     queryKey: ["get-tv-detail-on-hover-poster", id],
   });
+
+  const handleSeasonSelect = (seasonNumber: string) => {
+    setSelectedSeason(seasonNumber);
+  };
 
   if (isPending) {
     return (
@@ -108,16 +117,43 @@ const TvShowHoverCard: React.FC<{ id: number; fullWidth?: boolean }> = ({ id, fu
           </div>
           <Genres genres={tv.genres} type="tv" />
           <div className="flex w-full justify-between gap-2 py-1">
-            <Button
-              as={Link}
-              href={`/tv/${tv.id}`}
-              fullWidth
-              color="warning"
-              variant="shadow"
-              startContent={<Play size={24} />}
-            >
-              View Episodes
-            </Button>
+            <div className="flex flex-1 gap-2">
+              <Button
+                as={Link}
+                href={`/tv/${tv.id}/${selectedSeason}/1/player`}
+                className="flex-1"
+                color="warning"
+                variant="shadow"
+                startContent={<Play size={24} />}
+              >
+                Play Season {selectedSeason}
+              </Button>
+              <Dropdown>
+                <DropdownTrigger>
+                  <Button
+                    color="warning"
+                    variant="bordered"
+                    size="sm"
+                  >
+                    S{selectedSeason}
+                  </Button>
+                </DropdownTrigger>
+                <DropdownMenu
+                  aria-label="Select Season"
+                  color="warning"
+                  onAction={(key) => handleSeasonSelect(key as string)}
+                >
+                  {Array.from({ length: tv.number_of_seasons }, (_, i) => {
+                    const seasonNumber = (i + 1).toString();
+                    return (
+                      <DropdownItem key={seasonNumber}>
+                        Season {seasonNumber}
+                      </DropdownItem>
+                    );
+                  })}
+                </DropdownMenu>
+              </Dropdown>
+            </div>
             <BookmarkButton data={bookmarkData} isTooltipDisabled />
           </div>
           <p className="text-sm">{tv.overview}</p>

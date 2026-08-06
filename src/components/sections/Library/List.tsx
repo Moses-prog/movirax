@@ -21,6 +21,11 @@ import ConfirmationModal from "@/components/ui/overlay/ConfirmationModal";
 type SortOption = "title" | "release_date" | "vote_average" | "created_at";
 type FilterType = "movie" | "tv" | "all";
 
+import { useFeatureAccess } from "@/hooks/useFeatureAccess";
+import Link from "next/link";
+import { AlertCircle } from "lucide-react";
+import UpgradeNotice from "@/components/ui/notice/Upgrade";
+
 const SORT_OPTIONS: { key: SortOption; label: string }[] = [
   { key: "title", label: "Title" },
   { key: "release_date", label: "Release Date" },
@@ -29,6 +34,7 @@ const SORT_OPTIONS: { key: SortOption; label: string }[] = [
 ];
 
 const LibraryList = () => {
+  const { hasAccess, feature, isLoading: isFeatureLoading } = useFeatureAccess('f6'); // f6 is Watchlist & History
   const { ref, inViewport } = useInViewport();
   const { content } = useDiscoverFilters();
   const { data: user, isLoading: isUserLoading } = useSupabaseUser();
@@ -129,6 +135,23 @@ const LibraryList = () => {
   }
 
   const hasItems = !isEmpty(sortedWatchlist);
+
+  if (isFeatureLoading) {
+    return <div className="min-h-screen flex items-center justify-center bg-background"><div className="w-16 h-16 border-4 border-primary border-t-transparent rounded-full animate-spin"/></div>;
+  }
+
+  if (!hasAccess) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <UpgradeNotice 
+          title="Upgrade Required" 
+          description={feature && !feature.enabled 
+            ? "This feature is currently disabled by the administrator."
+            : "Watchlist is a premium feature. Upgrade to Pro to save your favorite content!"}
+        />
+      </div>
+    );
+  }
 
   return (
     <>

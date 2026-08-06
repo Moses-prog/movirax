@@ -5,6 +5,8 @@
 .container {
   display: flex;
   cursor: grab;
+  /* Crucial for seamless trackpad gestures */
+  touch-action: pan-y pinch-zoom; 
 }
 
 .container:active {

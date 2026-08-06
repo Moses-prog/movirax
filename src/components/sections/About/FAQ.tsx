@@ -5,21 +5,21 @@ import { Accordion, AccordionItem, Link } from "@heroui/react";
 
 const FAQS = [
   {
-    title: "🤔 What is Cinextma?",
+    title: "🤔 What is Movira X?",
     description:
-      "Just like every other website, Cinextma is also a streaming site that helps to easily access all the TV shows and movies we wanted, without spending hours searching for them.",
+      "Just like every other website, Movira X is a streaming site that helps you easily access all the TV shows and movies you want, without spending hours searching for them. We also offer premium Pro plans for advanced features like multiple profiles and watchlists.",
   },
   {
     title: "❓ So what do we actually do?",
     description:
-      "Well, let me tell you what we don’t do: we definitely don’t illegally host our files. We do not store any copyright-protected content on our website. Any linked content is stored only in third-party websites. This is a promotional website only. All files placed here are for introducing purpose. We highly ENCOURAGE users to BUY the CDs or DVDs of the movie or the music they like.",
+      "Well, let me tell you what we don’t do: we definitely don’t illegally host our files. We do not store any copyright-protected content on our website. Any linked content is stored only in third-party websites. This is a promotional website only. All files placed here are for introductory purposes. We highly ENCOURAGE users to BUY the CDs or DVDs of the movie or the music they like.",
   },
   {
     title: "🚫 I cannot watch video because of ads",
     description: (
       <p>
-        We are very sorry that we can't help you with that. We have no control in the ads being
-        served. Don't download anything in the popups. If you don't want to be annoyed. We highly
+        We are very sorry that we can't help you with that. We have no control over the ads being
+        served by third-party servers. Don't download anything in the popups. If you don't want to be annoyed, we highly
         recommend subscribing to a legal streaming service that you can afford (or use an adblocker
         like{" "}
         <Link href="https://ublockorigin.com/" target="_blank" className="font-bold">
@@ -36,17 +36,27 @@ const FAQS = [
   {
     title: "🐌 Streaming speed is slow or all videos do not play",
     description:
-      "When you go on the page with the episode, in 99% of the cases there is a video player. What you have to do is click the Play button, of course. If it does not work (Don’t be judgmental! Everybody makes mistakes!), just click on the Servers you see on the top right of your device. You will get a list of servers [Vidlink, VidSrc etc.] Try choosing different server, it will definitely solve the problem.",
+      "When you go on the page with the episode, in 99% of the cases there is a video player. What you have to do is click the Play button, of course. If it does not work (Don’t be judgmental! Everybody makes mistakes!), just click on the Servers you see on the top right of your device. You will get a list of servers [Vidlink, VidSrc etc.]. Try choosing a different server, it will definitely solve the problem.",
   },
   {
     title: "😁 I want to download video",
     description:
-      "Since we don't store any files, so we don't have any download feature here. All files found on this site have been collected from various sources across the web and are believed to be in the public domain.",
+      "Since we don't store any files, we don't have any download feature here. All files found on this site have been collected from various sources across the web and are believed to be in the public domain.",
   },
   {
     title: "😟 Is it safe to stream in this website?",
     description:
-      "This website is undoubtedly safer to stream, however downloading, uploading is illegal. You will not get into any trouble while using our website. It's highly not recommended to download the files and share them to the public, It might get you in trouble.",
+      "This website is undoubtedly safe to stream on, however downloading and uploading copyrighted material is illegal. You will not get into any trouble while using our website to stream. It's highly recommended not to download the files and share them to the public, as it might get you in trouble.",
+  },
+  {
+    title: "👨‍👩‍👧‍👦 Can I share my account with family?",
+    description:
+      "Yes! With a Movira X Pro subscription, you can create up to 5 individual profiles per account. Each profile gets its own personalized watch history and watchlist. You can even set up dedicated Kids profiles with parental controls.",
+  },
+  {
+    title: "💎 How much does Movira X cost?",
+    description:
+      "Creating an account is free! However, we offer a Pro subscription for a low fixed monthly fee that unlocks premium features like Multiple Profiles, personalized Watchlists, and prioritized support. No extra costs, no contracts.",
   },
 ];
 

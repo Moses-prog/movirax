@@ -99,6 +99,9 @@ const BookmarkButton: React.FC<BookmarkButtonProps> = ({ data, isTooltipDisabled
           if (result.success) {
             setIsSaved(true);
             startVibration([100]);
+            
+            queryClient.invalidateQueries({ queryKey: ["watchlist"] });
+            
             addToast({
               title: `${data.title} added to your watchlist!`,
               color: "success",

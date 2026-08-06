@@ -44,12 +44,12 @@ const TvShowHomeList: React.FC<QueryList<TV>> = ({ query, name, param }) => {
             </Link>
           </div>
           <Carousel>
-            {data?.results.map((tv) => (
+            {data?.results.map((tv, index) => (
               <div
                 key={tv.id}
                 className="embla__slide flex min-h-fit max-w-fit items-center px-1 py-2"
               >
-                <TvShowHomeCard tv={tv} />
+                <TvShowHomeCard tv={tv} rank={index + 1} />
               </div>
             ))}
           </Carousel>

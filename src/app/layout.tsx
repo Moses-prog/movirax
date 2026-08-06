@@ -7,6 +7,7 @@ import Providers from "./providers";
 import TopNavbar from "@/components/ui/layout/TopNavbar";
 import BottomNavbar from "@/components/ui/layout/BottomNavbar";
 import Sidebar from "@/components/ui/layout/Sidebar";
+import ViewHistoryFAB from "@/components/ViewHistoryFAB";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import { Analytics } from "@vercel/analytics/next";
 import { cn } from "@/utils/helpers";
@@ -14,7 +15,10 @@ import { IS_PRODUCTION, SpacingClasses } from "@/utils/constants";
 import dynamic from "next/dynamic";
 import { NuqsAdapter } from "nuqs/adapters/next/app";
 import { Suspense } from "react";
+import PullToRefresh from "@/components/ui/PullToRefresh";
+
 const Disclaimer = dynamic(() => import("@/components/ui/overlay/Disclaimer"));
+const BanWarning = dynamic(() => import("@/components/ui/overlay/BanWarning"));
 
 export const metadata: Metadata = {
   title: siteConfig.name,
@@ -46,28 +50,39 @@ export const metadata: Metadata = {
   },
 };
 
+// CRITICAL FIX: viewportFit: "cover" allows the CSS safe-area-insets to work
 export const viewport: Viewport = {
   themeColor: [
     { media: "(prefers-color-scheme: light)", color: "#FFFFFF" },
     { media: "(prefers-color-scheme: dark)", color: "#0D0C0F" },
   ],
+  width: "device-width",
+  initialScale: 1,
+  maximumScale: 1,
+  viewportFit: "cover", 
 };
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html suppressHydrationWarning lang="en">
-      <body className={cn("bg-background min-h-dvh antialiased select-none", Poppins.className)}>
+      <body className={cn("bg-background min-h-dvh antialiased select-none overflow-x-clip", Poppins.className)}>
         <Suspense>
           <NuqsAdapter>
             <Providers>
               {IS_PRODUCTION && <Disclaimer />}
               <TopNavbar />
               <Sidebar>
-                <main className={cn("container mx-auto max-w-full", SpacingClasses.main)}>
-                  {children}
+                {/* Added pb-24 for mobile to ensure content isn't hidden by BottomNavbar */}
+                <main className={cn("container mx-auto max-w-full pb-24 md:pb-0", SpacingClasses.main)}>
+                  <PullToRefresh>
+                    <BanWarning>
+                      {children}
+                    </BanWarning>
+                  </PullToRefresh>
                 </main>
               </Sidebar>
               <BottomNavbar />
+              <ViewHistoryFAB />
             </Providers>
           </NuqsAdapter>
         </Suspense>

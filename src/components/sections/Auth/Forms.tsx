@@ -64,7 +64,7 @@ const AuthForms: React.FC = () => {
       });
       setError(false);
     }
-  }, [error]);
+  }, [error, setError]);
 
   if (isPendingMovies || isPendingTv) {
     return <Spinner size="lg" className="absolute-center" variant="simple" />;
@@ -95,8 +95,7 @@ const AuthForms: React.FC = () => {
                 icon={<ArrowLeft className="text-4xl transition-transform group-hover:scale-125" />}
               />
             )}
-            <Brand className="text-3xl md:text-4xl" animate />
-          </CardHeader>
+            </CardHeader>
           <ScrollShadow hideScrollBar visibility="none">
             <AnimatePresence mode="sync">
               <motion.div

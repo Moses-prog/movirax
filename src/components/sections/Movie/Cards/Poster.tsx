@@ -1,5 +1,8 @@
+"use client";
+
 import Rating from "@/components/ui/other/Rating";
 import VaulDrawer from "@/components/ui/overlay/VaulDrawer";
+import ViewHistoryButton from "@/components/ui/button/ViewHistoryButton";
 import useBreakpoints from "@/hooks/useBreakpoints";
 import useDeviceVibration from "@/hooks/useDeviceVibration";
 import { getImageUrl, mutateMovieTitle } from "@/utils/movies";
@@ -7,7 +10,7 @@ import { Card, CardBody, CardFooter, CardHeader, Chip, Image, Tooltip } from "@h
 import { Icon } from "@iconify/react";
 import { useDisclosure, useHover } from "@mantine/hooks";
 import Link from "next/link";
-import { useCallback } from "react";
+import { useCallback, useMemo } from "react"; // Added useMemo
 import { Movie } from "tmdb-ts/dist/types";
 import { useLongPress } from "use-long-press";
 import HoverPosterCard from "./Hover";
@@ -15,12 +18,20 @@ import HoverPosterCard from "./Hover";
 interface MoviePosterCardProps {
   movie: Movie;
   variant?: "full" | "bordered";
+  rank?: number;
 }
 
-const MoviePosterCard: React.FC<MoviePosterCardProps> = ({ movie, variant = "full" }) => {
+const MoviePosterCard: React.FC<MoviePosterCardProps> = ({ movie, variant = "full", rank }) => {
   const { hovered, ref } = useHover();
   const [opened, handlers] = useDisclosure(false);
-  const releaseYear = new Date(movie.release_date).getFullYear();
+
+  // FIX: Safety check for release_date to prevent NaN error
+  const releaseYear = useMemo(() => {
+    if (!movie?.release_date) return "—";
+    const year = new Date(movie.release_date).getFullYear();
+    return isNaN(year) ? "—" : String(year);
+  }, [movie?.release_date]);
+
   const posterImage = getImageUrl(movie.poster_path);
   const title = mutateMovieTitle(movie);
   const { mobile } = useBreakpoints();
@@ -29,12 +40,24 @@ const MoviePosterCard: React.FC<MoviePosterCardProps> = ({ movie, variant = "ful
   const callback = useCallback(() => {
     handlers.open();
     setTimeout(() => startVibration([100]), 300);
-  }, []);
+  }, [handlers, startVibration]);
 
   const longPress = useLongPress(mobile ? callback : null, {
     cancelOnMovement: true,
     threshold: 300,
   });
+
+  // Movie data for buttons
+  const movieData = {
+    id: movie.id,
+    type: "movie" as const,
+    title: title,
+    poster_path: movie.poster_path,
+    backdrop_path: movie.backdrop_path,
+    release_date: movie.release_date,
+    vote_average: movie.vote_average,
+    adult: movie.adult,
+  };
 
   return (
     <>
@@ -51,12 +74,18 @@ const MoviePosterCard: React.FC<MoviePosterCardProps> = ({ movie, variant = "ful
           {variant === "full" && (
             <div className="group motion-preset-focus relative aspect-2/3 overflow-hidden rounded-lg border-[3px] border-transparent text-white transition-colors hover:border-primary">
               {hovered && (
-                <Icon
-                  icon="line-md:play-filled"
-                  width="64"
-                  height="64"
-                  className="absolute-center z-20 text-white"
-                />
+                <>
+                  <Icon
+                    icon="line-md:play-filled"
+                    width="64"
+                    height="64"
+                    className="absolute-center z-20 text-white"
+                  />
+                  {/* Action Buttons on Hover */}
+                  <div className="absolute bottom-12 z-20 flex w-full gap-2 px-3">
+                    <ViewHistoryButton data={movieData} isTooltipDisabled />
+                  </div>
+                </>
               )}
               {movie.adult && (
                 <Chip
@@ -68,10 +97,23 @@ const MoviePosterCard: React.FC<MoviePosterCardProps> = ({ movie, variant = "ful
                   18+
                 </Chip>
               )}
+              {rank !== undefined && (
+                <div 
+                  className="absolute -top-4 -right-1 z-50 text-[90px] font-black leading-none pointer-events-none select-none tracking-tighter text-black dark:text-white drop-shadow-[0_2px_8px_rgba(0,0,0,0.8)] opacity-90"
+                  style={{
+                    WebkitTextFillColor: "transparent",
+                    WebkitTextStroke: "3px currentColor",
+                  }}
+                >
+                  {rank}
+                </div>
+              )}
+              
               <div className="absolute bottom-0 z-2 h-1/2 w-full bg-linear-to-t from-black from-1%"></div>
               <div className="absolute bottom-0 z-3 flex w-full flex-col gap-1 px-4 py-3">
                 <h6 className="truncate text-sm font-semibold">{title}</h6>
                 <div className="flex justify-between text-xs">
+                  {/* Explicit string render */}
                   <p>{releaseYear}</p>
                   <Rating rate={movie?.vote_average} />
                 </div>
@@ -98,12 +140,18 @@ const MoviePosterCard: React.FC<MoviePosterCardProps> = ({ movie, variant = "ful
               <CardHeader className="flex items-center justify-center pb-0">
                 <div className="relative size-full">
                   {hovered && (
-                    <Icon
-                      icon="line-md:play-filled"
-                      width="64"
-                      height="64"
-                      className="absolute-center z-20 text-white"
-                    />
+                    <>
+                      <Icon
+                        icon="line-md:play-filled"
+                        width="64"
+                        height="64"
+                        className="absolute-center z-20 text-white"
+                      />
+                      {/* Action Buttons on Hover */}
+                      <div className="absolute bottom-2 z-20 flex w-full gap-2 px-3">
+                        <ViewHistoryButton data={movieData} isTooltipDisabled />
+                      </div>
+                    </>
                   )}
                   {movie.adult && (
                     <Chip
@@ -129,6 +177,7 @@ const MoviePosterCard: React.FC<MoviePosterCardProps> = ({ movie, variant = "ful
                 <p className="text-md truncate font-bold">{title}</p>
               </CardBody>
               <CardFooter className="justify-between pt-0 text-xs">
+                {/* Explicit string render */}
                 <p>{releaseYear}</p>
                 <Rating rate={movie.vote_average} />
               </CardFooter>
@@ -151,4 +200,5 @@ const MoviePosterCard: React.FC<MoviePosterCardProps> = ({ movie, variant = "ful
     </>
   );
 };
+
 export default MoviePosterCard;

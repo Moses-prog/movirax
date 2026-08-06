@@ -3,15 +3,17 @@ import useBreakpoints from "@/hooks/useBreakpoints";
 import { cn, formatDate, isEmpty } from "@/utils/helpers";
 import { PlayOutline } from "@/utils/icons";
 import { getImageUrl, getLoadingLabel, movieDurationString } from "@/utils/movies";
-import { Card, CardBody, CardFooter, Chip, Image, Spinner } from "@heroui/react";
+import { Card, CardBody, CardFooter, Chip, Image, Spinner, Tabs, Tab } from "@heroui/react";
 import { useQuery } from "@tanstack/react-query";
 import Link from "next/link";
-import { memo } from "react";
+import { memo, useState } from "react";
 import { Episode } from "tmdb-ts/dist/types/tv-episode";
+import { TvShowDetails } from "tmdb-ts";
 
 interface TvShowEpisodesSelectionProps {
   id: number;
   seasonNumber: number;
+  tv?: TvShowDetails;
   filters?: {
     searchQuery?: string;
     sortedByName?: boolean;
@@ -26,17 +28,30 @@ interface EpisodeCardProps {
   withAnimation?: boolean;
 }
 
+interface SeasonCardProps {
+  id: number;
+  seasonNumber: number;
+  seasonName: string;
+  seasonPosterPath?: string;
+  episodeCount: number;
+  withAnimation?: boolean;
+}
+
 const TvShowEpisodesSelection: React.FC<TvShowEpisodesSelectionProps> = ({
   id,
   seasonNumber,
+  tv,
   filters: { searchQuery, sortedByName, layout } = {},
 }) => {
-  const { data, isPending } = useQuery({
+  const [viewMode, setViewMode] = useState<"seasons" | "episodes">("episodes");
+
+  const { data: seasonData, isPending: isPendingSeasons } = useQuery({
     queryFn: () => tmdb.tvShows.season(id, seasonNumber),
     queryKey: ["tv-show-episodes", id, seasonNumber],
   });
 
-  if (isPending) {
+  // Show episodes tab
+  if (isPendingSeasons && viewMode === "episodes") {
     return (
       <div className="flex h-full items-center justify-center">
         <Spinner variant="wave" size="lg" label={getLoadingLabel()} color="warning" />
@@ -44,37 +59,68 @@ const TvShowEpisodesSelection: React.FC<TvShowEpisodesSelectionProps> = ({
     );
   }
 
-  if (!data) return null;
+  if (!seasonData) return null;
 
-  const EPISODES = data.episodes
+  const EPISODES = seasonData.episodes
     .filter((episode) =>
       searchQuery ? episode.name.toLowerCase().includes(searchQuery.toLowerCase()) : true,
     )
     .sort((a, b) => (sortedByName ? a.name.localeCompare(b.name) : 0));
 
-  if (isEmpty(EPISODES)) {
-    return (
-      <div className="flex h-full items-center justify-center">
-        <p className="text-center">No episodes found.</p>
-      </div>
-    );
-  }
+  const episodesContent = (
+    <>
+      {isEmpty(EPISODES) ? (
+        <div className="flex h-full items-center justify-center">
+          <p className="text-center">No episodes found.</p>
+        </div>
+      ) : layout === "grid" ? (
+        <div className="grid grid-cols-1 gap-2 sm:grid-cols-2 sm:gap-4 lg:grid-cols-3">
+          {EPISODES.map((episode) => (
+            <EpisodeGridCard key={episode.id} episode={episode} id={id} />
+          ))}
+        </div>
+      ) : (
+        <div className="grid grid-cols-1 gap-2 sm:gap-4">
+          {EPISODES.map((episode, index) => (
+            <EpisodeListCard key={episode.id} episode={episode} order={index + 1} id={id} />
+          ))}
+        </div>
+      )}
+    </>
+  );
 
-  if (layout === "grid") {
-    return (
-      <div className="grid grid-cols-1 gap-2 sm:grid-cols-2 sm:gap-4 lg:grid-cols-3">
-        {EPISODES.map((episode) => (
-          <EpisodeGridCard key={episode.id} episode={episode} id={id} />
-        ))}
-      </div>
-    );
-  }
+  const seasonsContent = tv ? (
+    <div className="grid grid-cols-1 gap-2 sm:grid-cols-2 sm:gap-4 lg:grid-cols-3">
+      {tv.seasons.map((season, index) => (
+        <SeasonCard
+          key={season.id}
+          id={id}
+          seasonNumber={season.season_number}
+          seasonName={season.name}
+          seasonPosterPath={season.poster_path}
+          episodeCount={season.episode_count}
+          withAnimation={index < 6}
+        />
+      ))}
+    </div>
+  ) : null;
 
   return (
-    <div className="grid grid-cols-1 gap-2 sm:gap-4">
-      {EPISODES.map((episode, index) => (
-        <EpisodeListCard key={episode.id} episode={episode} order={index + 1} id={id} />
-      ))}
+    <div className="w-full">
+      <Tabs
+        aria-label="Episodes and Seasons"
+        defaultSelectedKey="episodes"
+        onSelectionChange={(key) => setViewMode(key as "seasons" | "episodes")}
+      >
+        <Tab key="episodes" title="Episodes">
+          {episodesContent}
+        </Tab>
+        {tv && (
+          <Tab key="seasons" title="Seasons">
+            {seasonsContent}
+          </Tab>
+        )}
+      </Tabs>
     </div>
   );
 };
@@ -124,8 +170,6 @@ export const EpisodeListCard: React.FC<EpisodeCardProps> = ({
             </div>
           </div>
         )}
-        {/* {isNotReleased && (
-        )} */}
         <Chip
           size="sm"
           color={isNotReleased ? "warning" : undefined}
@@ -233,6 +277,77 @@ const EpisodeGridCard: React.FC<EpisodeCardProps> = ({ episode, id }) => {
           </p>
           <p className="text-foreground-500 text-sm" title={episode.overview}>
             {episode.overview}
+          </p>
+        </div>
+      </CardFooter>
+    </Card>
+  );
+};
+
+const SeasonCard: React.FC<SeasonCardProps> = ({
+  id,
+  seasonNumber,
+  seasonName,
+  seasonPosterPath,
+  episodeCount,
+  withAnimation = true,
+}) => {
+  const imageUrl = seasonPosterPath ? getImageUrl(seasonPosterPath) : undefined;
+  const href = `/tv/${id}/${seasonNumber}/1/player`;
+
+  return (
+    <Card
+      isPressable
+      as={Link}
+      href={href}
+      shadow="none"
+      className={cn(
+        "group motion-preset-focus border-foreground-200 bg-foreground-100 border-2 transition-colors",
+        {
+          "hover:border-warning hover:bg-foreground-200": true,
+          "motion-preset-slide-up": withAnimation,
+        },
+      )}
+    >
+      <CardBody className="overflow-visible p-0">
+        <div className="relative">
+          {imageUrl ? (
+            <Image
+              alt={seasonName}
+              src={imageUrl}
+              className="aspect-video w-full rounded-b-none object-cover"
+            />
+          ) : (
+            <div className="aspect-video w-full rounded-b-none bg-foreground-200 flex items-center justify-center">
+              <p className="text-foreground-500">No Image</p>
+            </div>
+          )}
+          <div className="absolute inset-0 flex items-center justify-center">
+            <div className="z-10 flex h-12 w-12 items-center justify-center rounded-full bg-black/35 opacity-0 backdrop-blur-xs transition-opacity group-hover:opacity-100">
+              <PlayOutline className="h-6 w-6 text-white" />
+            </div>
+          </div>
+          <Chip
+            size="sm"
+            className="absolute bottom-2 left-2 z-20 bg-black/35 text-center text-white backdrop-blur-xs"
+          >
+            {episodeCount} Episodes
+          </Chip>
+        </div>
+      </CardBody>
+      <CardFooter className="h-full">
+        <div className="flex h-full flex-col gap-2">
+          <p
+            title={seasonName}
+            className={cn(
+              "text-lg font-semibold transition-colors",
+              "group-hover:text-warning",
+            )}
+          >
+            {seasonName}
+          </p>
+          <p className="text-foreground-500 text-sm">
+            {episodeCount} episode{episodeCount !== 1 ? "s" : ""}
           </p>
         </div>
       </CardFooter>

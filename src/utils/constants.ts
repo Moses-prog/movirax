@@ -14,8 +14,8 @@ const SEARCH_HISTORY_STORAGE_KEY = "search-histories";
 // Others
 const ITEMS_PER_PAGE = 20;
 const SpacingClasses = {
-  main: "px-3 py-8 sm:px-5",
-  reset: "-mx-3 -my-8 sm:-mx-5",
+  main: "px-0 py-0",
+  reset: "mx-0 my-0",
 };
 
 // Exports

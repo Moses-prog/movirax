@@ -12,6 +12,25 @@
   --animate-shine: shine 3s linear infinite;
 
   --font-poppins: var(--font-poppins);
+  --font-sans: var(--font-poppins);
+
+  /* --- BRAND COLOR OVERRIDES (BLUE TO RED) --- */
+  --color-primary: #e50914;
+  --color-primary-foreground: #ffffff;
+  --color-focus: #e50914;
+
+  /* Mapping standard blue shades to red to catch hardcoded classes */
+  --color-blue-50: #fef2f2;
+  --color-blue-100: #fee2e2;
+  --color-blue-200: #fecaca;
+  --color-blue-300: #fca5a5;
+  --color-blue-400: #f87171;
+  --color-blue-500: #ef4444;
+  --color-blue-600: #dc2626;
+  --color-blue-700: #b91c1c;
+  --color-blue-800: #991b1b;
+  --color-blue-900: #7f1d1d;
+  --color-blue-950: #450a0a;
 
   @keyframes shine {
     0% {
@@ -27,9 +46,6 @@
   The default border color has changed to `currentcolor` in Tailwind CSS v4,
   so we've added these compatibility styles to make sure everything still
   looks the same as it did with Tailwind CSS v3.
-
-  If we ever want to remove these styles, we need to add an explicit border
-  color utility to any element that depends on these defaults.
 */
 @layer base {
   *,
@@ -67,6 +83,10 @@
   iframe {
     @apply border-none;
   }
+
+  body {
+    @apply bg-black text-white;
+  }
 }
 
 @utility embla {
@@ -87,4 +107,145 @@
 
 @utility movie-grid {
   @apply grid size-full max-w-6xl grid-cols-2 justify-center gap-2 sm:grid-cols-3 md:gap-4 lg:grid-cols-[repeat(auto-fit,minmax(200px,50px))];
+}
+
+@utility bg-secondary-background {
+  background-color: #121212;
+}
+/* Add this at the very bottom of your globals.css */
+
+@utility pb-safe {
+  padding-bottom: env(safe-area-inset-bottom);
+}
+
+@utility mb-safe {
+  margin-bottom: env(safe-area-inset-bottom);
+}
+
+/* Ensure the main layout accounts for the full height of the mobile screen */
+html, body {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100%;
+  /* Fixes the 100vh issue on mobile where the bar covers content */
+  min-height: 100dvh; 
+}
+
+body {
+  overscroll-behavior-x: none;
+}
+@keyframes ping-once {
+  0%   { transform: scale(0.8); opacity: 1; }
+  100% { transform: scale(1.4); opacity: 0; }
+}
+.animate-ping-once { animation: ping-once 0.6s ease-out forwards; }
+
+:root {
+  --admin-bg: #f0f4f8;
+  --admin-surface: #ffffff;
+  --admin-input-bg: #f9fafb;
+  --admin-hover: #f9fafb;
+  --admin-active-bg: #f0f4f8;
+  --admin-border: #e8ecf1;
+  --admin-border-strong: #cbd5e0;
+  --admin-text: #1a202c;
+  --admin-text-soft: #4a5568;
+  --admin-muted: #8b96a3;
+  --admin-accent: #e50914;
+  --admin-danger: #f56565;
+  --admin-danger-strong: #d32f2f;
+  --admin-danger-soft: #fff5f5;
+  --admin-success: #48bb78;
+  --admin-accent-gradient: linear-gradient(135deg, #b91c1c 0%, #e50914 58%, #f43f3f 100%);
+  --admin-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+  --admin-popover-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+}
+
+.dark {
+  --admin-bg: #09090b;
+  --admin-surface: #111113;
+  --admin-input-bg: #18181b;
+  --admin-hover: #1f1f23;
+  --admin-active-bg: #241516;
+  --admin-border: #2a2a2f;
+  --admin-border-strong: #443236;
+  --admin-text: #f8fafc;
+  --admin-text-soft: #d4d4d8;
+  --admin-muted: #9ca3af;
+  --admin-accent: #f43f3f;
+  --admin-danger: #ef4444;
+  --admin-danger-strong: #f87171;
+  --admin-danger-soft: #2a1214;
+  --admin-success: #facc15;
+  --admin-accent-gradient: linear-gradient(135deg, #991b1b 0%, #e11d48 58%, #f59e0b 100%);
+  --admin-shadow: 0 1px 0 rgba(255, 255, 255, 0.04), 0 16px 40px rgba(0, 0, 0, 0.28);
+  --admin-popover-shadow: 0 18px 45px rgba(0, 0, 0, 0.48);
+}
+
+.admin-shimmer {
+  isolation: isolate;
+}
+
+.admin-shimmer::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background: linear-gradient(
+    105deg,
+    transparent 0%,
+    transparent 30%,
+    rgba(255, 255, 255, 0.16) 39%,
+    rgba(255, 255, 255, 0.5) 48%,
+    rgba(255, 255, 255, 0.16) 58%,
+    transparent 70%,
+    transparent 100%
+  );
+  transform: translateX(-160%);
+  animation: admin-shimmer 4s linear infinite;
+  will-change: transform;
+}
+
+.dark .admin-shimmer::after {
+  background: linear-gradient(
+    105deg,
+    transparent 0%,
+    transparent 30%,
+    rgba(255, 255, 255, 0.04) 39%,
+    rgba(255, 255, 255, 0.12) 48%,
+    rgba(255, 255, 255, 0.04) 58%,
+    transparent 70%,
+    transparent 100%
+  );
+}
+
+.admin-shimmer > * {
+  position: relative;
+  z-index: 1;
+}
+
+@keyframes admin-shimmer {
+  0% {
+    transform: translateX(-160%);
+  }
+  100% {
+    transform: translateX(160%);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .admin-shimmer::after {
+    animation: none;
+    opacity: 0;
+  }
+}
+
+/* NProgress Custom Gradient Loader */
+#nprogress .bar {
+  background: linear-gradient(90deg, #dc2626 0%, #f97316 100%) !important;
+}
+#nprogress .peg {
+  box-shadow: 0 0 10px #f97316, 0 0 5px #dc2626 !important;
 }

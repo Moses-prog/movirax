@@ -1,0 +1,143 @@
+{
+  "features": [
+    {
+      "id": "f1",
+      "name": "4K Ultra HD Streaming",
+      "description": "Stream movies and TV shows in maximum 4K resolution.",
+      "enabled": false,
+      "free_tier": false,
+      "pro_tier": false
+    },
+    {
+      "id": "f2",
+      "name": "Ad-Free Experience",
+      "description": "Remove all advertisements before and during playback.",
+      "enabled": false,
+      "free_tier": false,
+      "pro_tier": false
+    },
+    {
+      "id": "f3",
+      "name": "Offline Downloads",
+      "description": "Allow users to download content for offline viewing.",
+      "enabled": false,
+      "free_tier": false,
+      "pro_tier": false
+    },
+    {
+      "id": "f4",
+      "name": "Multiple Profiles",
+      "description": "Create up to 5 profiles per account.",
+      "enabled": true,
+      "free_tier": true,
+      "pro_tier": true
+    },
+    {
+      "id": "f5",
+      "name": "Early Access Content",
+      "description": "Get access to new releases 1 week early.",
+      "enabled": false,
+      "free_tier": false,
+      "pro_tier": false
+    },
+    {
+      "id": "f6",
+      "name": "Watchlist & History",
+      "description": "Save items to watchlist and track watch history.",
+      "enabled": true,
+      "free_tier": true,
+      "pro_tier": true
+    }
+  ],
+  "profiles": {
+    "f32bd242-ab78-43c0-91a4-c0daea5adc39": [
+      {
+        "id": "p_1782053819778",
+        "name": "My Profile",
+        "avatar": "/avatars/1.png"
+      }
+    ],
+    "2005eebe-8943-48e2-b157-3273a62d5299": [
+      {
+        "id": "p_1782054147063",
+        "name": "Just web",
+        "avatar": "/avatars/1.png",
+        "isKids": false
+      },
+      {
+        "id": "p_1782054821242",
+        "name": "Test web",
+        "avatar": "/avatars/1.png",
+        "isKids": false
+      },
+      {
+        "id": "p_1782123090793",
+        "name": "Web4488",
+        "avatar": "/avatars/1.png",
+        "isKids": false
+      },
+      {
+        "id": "p_1782392883316",
+        "name": "Web",
+        "avatar": "/avatars/1.png",
+        "isKids": false
+      },
+      {
+        "id": "p_1782392885382",
+        "name": "Web",
+        "avatar": "/avatars/1.png",
+        "isKids": false
+      }
+    ],
+    "6aa3671c-bc23-4a30-9223-325d70105d0f": [
+      {
+        "id": "p_1783529910168",
+        "name": "Webpromk",
+        "avatar": "/avatars/1.png",
+        "isKids": false
+      },
+      {
+        "id": "p_1783529912412",
+        "name": "Webpromk",
+        "avatar": "/avatars/1.png",
+        "isKids": false
+      }
+    ],
+    "95c952cb-b940-416c-be40-a04721244a1c": [
+      {
+        "id": "p_1784543612772",
+        "name": "webpro",
+        "avatar": "/avatars/1.png",
+        "isKids": false
+      },
+      {
+        "id": "p_1784543612838",
+        "name": "webpro mk",
+        "avatar": "/avatars/1.png",
+        "isKids": false
+      },
+      {
+        "id": "p_1784543613232",
+        "name": "webpro",
+        "avatar": "/avatars/1.png",
+        "isKids": true
+      }
+    ],
+    "949a9eb1-4ee0-4b22-8978-7ae0b40b985b": [
+      {
+        "id": "p_1784552409592",
+        "name": "web",
+        "avatar": "/avatars/1.png",
+        "isKids": false
+      }
+    ],
+    "8a4db5b7-4567-4404-b4af-1d8850cab0ee": [
+      {
+        "id": "p_1786008855026",
+        "name": "Mk",
+        "avatar": "/avatars/1.png",
+        "isKids": false
+      }
+    ]
+  }
+}
