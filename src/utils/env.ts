@@ -5,15 +5,15 @@ export const env = createEnv({
   server: {
     // We add .catch() to everything. If the key is missing or bad, 
     // it returns an empty string instead of crashing the whole app.
-    PROTECTED_PATHS: z.string().catch("/auth/reset-password,/profile"),
-    SUPABASE_SERVICE_ROLE_KEY: z.string().catch(""),
+    PROTECTED_PATHS: z.string().optional().default("/auth/reset-password,/profile"),
+    SUPABASE_SERVICE_ROLE_KEY: z.string().optional().default(""),
   },
   client: {
-    NEXT_PUBLIC_TMDB_ACCESS_TOKEN: z.string().catch(""),
-    NEXT_PUBLIC_SUPABASE_URL: z.string().catch(""),
-    NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY: z.string().catch(""),
-    NEXT_PUBLIC_CAPTCHA_SITE_KEY: z.string().catch(""),
-    NEXT_PUBLIC_AVATAR_PROVIDER_URL: z.string().catch("https://api.dicebear.com/7.x/initials/svg?seed=user"),
+    NEXT_PUBLIC_TMDB_ACCESS_TOKEN: z.string().optional().default(""),
+    NEXT_PUBLIC_SUPABASE_URL: z.string().optional().default(""),
+    NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY: z.string().optional().default(""),
+    NEXT_PUBLIC_CAPTCHA_SITE_KEY: z.string().optional().default(""),
+    NEXT_PUBLIC_AVATAR_PROVIDER_URL: z.string().optional().default("https://api.dicebear.com/7.x/initials/svg?seed=user"),
   },
   experimental__runtimeEnv: {
     NEXT_PUBLIC_TMDB_ACCESS_TOKEN: process.env.NEXT_PUBLIC_TMDB_ACCESS_TOKEN,
