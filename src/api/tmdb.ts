@@ -4,8 +4,8 @@ import { TMDB } from "tmdb-ts";
 
 const token = env.NEXT_PUBLIC_TMDB_ACCESS_TOKEN;
 
-if (isEmpty(token)) {
-  throw new Error("TMDB_ACCESS_TOKEN is not defined");
+if (!token) {
+  console.warn("TMDB_ACCESS_TOKEN is not defined. The app will fail to fetch movie data.");
 }
 
-export const tmdb = new TMDB(token);
+export const tmdb = new TMDB(token || "dummy-token");
