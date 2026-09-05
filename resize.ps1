@@ -2,12 +2,17 @@ Add-Type -AssemblyName System.Drawing
 $iconPath = (Resolve-Path "src/app/favicon.ico").Path
 $bmp = [System.Drawing.Image]::FromFile($iconPath)
 
-$zoom = 3.0
+$zoom = 5.5
+$bgColor = [System.Drawing.Color]::FromArgb(255, 13, 12, 15)
 
 function Create-Icon {
     param($Path, $Size)
     $newImg = New-Object System.Drawing.Bitmap($Size, $Size)
     $g = [System.Drawing.Graphics]::FromImage($newImg)
+    
+    $brush = New-Object System.Drawing.SolidBrush($bgColor)
+    $g.FillRectangle($brush, 0, 0, $Size, $Size)
+    $brush.Dispose()
     
     $g.InterpolationMode = [System.Drawing.Drawing2D.InterpolationMode]::HighQualityBicubic
     
