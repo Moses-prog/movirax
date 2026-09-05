@@ -2,7 +2,7 @@ Add-Type -AssemblyName System.Drawing
 $iconPath = (Resolve-Path "src/app/favicon.ico").Path
 $bmp = [System.Drawing.Image]::FromFile($iconPath)
 
-$zoom = 5.5
+$zoom = 2.5
 $bgColor = [System.Drawing.Color]::FromArgb(255, 13, 12, 15)
 
 function Create-Icon {
