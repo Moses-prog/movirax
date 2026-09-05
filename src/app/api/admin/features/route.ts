@@ -3,7 +3,7 @@ import { getFeatures, updateFeature, addFeature, FeatureFlag } from '@/lib/jsonD
 
 export async function GET() {
   try {
-    const features = getFeatures();
+    const features = await getFeatures();
     return NextResponse.json({ success: true, data: features });
   } catch (error) {
     return NextResponse.json({ success: false, error: String(error) }, { status: 500 });
@@ -16,9 +16,9 @@ export async function POST(request: NextRequest) {
     const { action, id, updates, feature } = body;
 
     if (action === 'update' && id && updates) {
-      const success = updateFeature(id, updates);
+      const success = await updateFeature(id, updates);
       if (success) {
-        return NextResponse.json({ success: true, data: getFeatures() });
+        return NextResponse.json({ success: true, data: await getFeatures() });
       }
       return NextResponse.json({ success: false, error: 'Feature not found' }, { status: 404 });
     }
@@ -28,9 +28,9 @@ export async function POST(request: NextRequest) {
         ...feature,
         id: `f${Date.now()}` // Generate temporary ID
       };
-      const success = addFeature(newFeature);
+      const success = await addFeature(newFeature);
       if (success) {
-        return NextResponse.json({ success: true, data: getFeatures() });
+        return NextResponse.json({ success: true, data: await getFeatures() });
       }
       return NextResponse.json({ success: false, error: 'Failed to add feature' }, { status: 500 });
     }

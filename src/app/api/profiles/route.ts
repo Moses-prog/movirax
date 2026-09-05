@@ -11,7 +11,7 @@ export async function GET() {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    let profiles = getUserProfiles(user.id);
+    let profiles = await getUserProfiles(user.id);
     
     // If no profiles exist for this user, automatically create a default one
     if (profiles.length === 0) {
@@ -20,7 +20,7 @@ export async function GET() {
         name: user.user_metadata?.full_name || 'My Profile',
         avatar: '/avatars/1.png'
       };
-      addUserProfile(user.id, defaultProfile);
+      await addUserProfile(user.id, defaultProfile);
       profiles = [defaultProfile];
     }
 
@@ -49,25 +49,25 @@ export async function POST(request: NextRequest) {
         avatar: newProfile.avatar || '/avatars/1.png',
         isKids: newProfile.isKids || false
       };
-      const success = addUserProfile(user.id, profile);
+      const success = await addUserProfile(user.id, profile);
       if (success) {
-        return NextResponse.json({ success: true, data: getUserProfiles(user.id) });
+        return NextResponse.json({ success: true, data: await getUserProfiles(user.id) });
       }
       return NextResponse.json({ success: false, error: 'Max profiles reached or error' }, { status: 400 });
     }
 
     if (action === 'update' && profileId && updates) {
-      const success = updateUserProfile(user.id, profileId, updates);
+      const success = await updateUserProfile(user.id, profileId, updates);
       if (success) {
-        return NextResponse.json({ success: true, data: getUserProfiles(user.id) });
+        return NextResponse.json({ success: true, data: await getUserProfiles(user.id) });
       }
       return NextResponse.json({ success: false, error: 'Profile not found' }, { status: 404 });
     }
 
     if (action === 'delete' && profileId) {
-      const success = deleteUserProfile(user.id, profileId);
+      const success = await deleteUserProfile(user.id, profileId);
       if (success) {
-        return NextResponse.json({ success: true, data: getUserProfiles(user.id) });
+        return NextResponse.json({ success: true, data: await getUserProfiles(user.id) });
       }
       return NextResponse.json({ success: false, error: 'Profile not found' }, { status: 404 });
     }
