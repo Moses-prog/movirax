@@ -2,7 +2,26 @@ Add-Type -AssemblyName System.Drawing
 $iconPath = (Resolve-Path "src/app/favicon.ico").Path
 $bmp = [System.Drawing.Image]::FromFile($iconPath)
 
-$zoom = 2.5
+$minX = $bmp.Width
+$minY = $bmp.Height
+$maxX = 0
+$maxY = 0
+
+for ($y = 0; $y -lt $bmp.Height; $y++) {
+    for ($x = 0; $x -lt $bmp.Width; $x++) {
+        $pixel = $bmp.GetPixel($x, $y)
+        if ($pixel.A -gt 0) {
+            if ($x -lt $minX) { $minX = $x }
+            if ($x -gt $maxX) { $maxX = $x }
+            if ($y -lt $minY) { $minY = $y }
+            if ($y -gt $maxY) { $maxY = $y }
+        }
+    }
+}
+
+$cropWidth = $maxX - $minX + 1
+$cropHeight = $maxY - $minY + 1
+
 $bgColor = [System.Drawing.Color]::FromArgb(255, 13, 12, 15)
 
 function Create-Icon {
@@ -16,12 +35,24 @@ function Create-Icon {
     
     $g.InterpolationMode = [System.Drawing.Drawing2D.InterpolationMode]::HighQualityBicubic
     
-    $newW = [int]($Size * $zoom)
-    $newH = [int]($Size * $zoom)
-    $x = [int](($Size - $newW) / 2)
-    $y = [int](($Size - $newH) / 2)
+    # 70% of the canvas size
+    $targetLogoSize = $Size * 0.70
+    $maxCropDim = [Math]::Max($cropWidth, $cropHeight)
+    $scale = $targetLogoSize / $maxCropDim
     
-    $g.DrawImage($bmp, $x, $y, $newW, $newH)
+    $drawnCropW = $cropWidth * $scale
+    $drawnCropH = $cropHeight * $scale
+    
+    $cropX = ($Size - $drawnCropW) / 2
+    $cropY = ($Size - $drawnCropH) / 2
+    
+    $drawX = $cropX - ($minX * $scale)
+    $drawY = $cropY - ($minY * $scale)
+    
+    $drawW = $bmp.Width * $scale
+    $drawH = $bmp.Height * $scale
+    
+    $g.DrawImage($bmp, [float]$drawX, [float]$drawY, [float]$drawW, [float]$drawH)
     $g.Dispose()
     $newImg.Save($Path, [System.Drawing.Imaging.ImageFormat]::Png)
     $newImg.Dispose()
