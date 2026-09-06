@@ -35,11 +35,11 @@ CREATE TABLE IF NOT EXISTS public.user_subscriptions (
 ALTER TABLE public.pricing_plans ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.user_subscriptions ENABLE ROW LEVEL SECURITY;
 
-CREATE POLICY ""Anyone can read pricing_plans"" ON public.pricing_plans FOR SELECT USING (true);
-CREATE POLICY ""Admins can manage pricing_plans"" ON public.pricing_plans
+CREATE POLICY "Anyone can read pricing_plans" ON public.pricing_plans FOR SELECT USING (true);
+CREATE POLICY "Admins can manage pricing_plans" ON public.pricing_plans
   USING (EXISTS (SELECT 1 FROM public.admin_users WHERE admin_users.id = auth.uid()));
 
-CREATE POLICY ""Users can read their own subscriptions"" ON public.user_subscriptions
+CREATE POLICY "Users can read their own subscriptions" ON public.user_subscriptions
   FOR SELECT USING (auth.uid() = user_id);
-CREATE POLICY ""Admins can manage all subscriptions"" ON public.user_subscriptions
+CREATE POLICY "Admins can manage all subscriptions" ON public.user_subscriptions
   USING (EXISTS (SELECT 1 FROM public.admin_users WHERE admin_users.id = auth.uid()));
