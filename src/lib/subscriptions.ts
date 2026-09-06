@@ -1,4 +1,6 @@
-﻿import { createClient } from '@/utils/supabase/server';
+﻿'use server';
+
+import { createClient } from '@/utils/supabase/server';
 
 export interface PricingPlan {
   id: string;
@@ -8,7 +10,7 @@ export interface PricingPlan {
   interval: string;
   currency: string;
   gateway: string;
-  created_at?: string;
+  is_active?: boolean;
 }
 
 export interface UserSubscription {
@@ -73,7 +75,6 @@ export async function activateSubscription(
 ): Promise<boolean> {
   const supabase = await createClient(true);
   
-  // Calculate end date
   const endDate = new Date();
   endDate.setDate(endDate.getDate() + daysValid);
   

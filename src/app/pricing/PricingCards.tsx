@@ -53,7 +53,7 @@ export default function PricingCards({ plans, user }: { plans: any[], user: any 
 function PlanCard({ plan, user, onSuccess, router }: { plan: any, user: any, onSuccess: any, router: any }) {
   const config = {
     public_key: process.env.NEXT_PUBLIC_FLUTTERWAVE_PUBLIC_KEY || 'FLWPUBK_TEST-xxxxxxxxxxxxxxxxxxxxx-X',
-    tx_ref: \movirax-\-\\,
+    tx_ref: `movirax-${Date.now()}-${Math.floor(Math.random() * 1000)}`,
     amount: plan.price,
     currency: plan.currency,
     payment_options: 'card,mobilemoney,ussd',
@@ -63,7 +63,7 @@ function PlanCard({ plan, user, onSuccess, router }: { plan: any, user: any, onS
       name: user?.name || '',
     },
     customizations: {
-      title: \MoviraX \\,
+      title: `MoviraX ${plan.name}`,
       description: 'Subscription Payment',
       logo: 'https://movirax.vercel.app/icons/android/android-launchericon-192-192.png',
     },

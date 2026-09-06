@@ -25,10 +25,10 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'Server configuration error' }, { status: 500 });
     }
 
-    const response = await fetch(\https://api.flutterwave.com/v3/transactions/\/verify\, {
+    const response = await fetch(`https://api.flutterwave.com/v3/transactions/${transaction_id}/verify`, {
       method: 'GET',
       headers: {
-        Authorization: \Bearer \\,
+        Authorization: `Bearer ${flutterwaveSecretKey}`,
         'Content-Type': 'application/json',
       },
     });

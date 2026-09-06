@@ -113,7 +113,7 @@ export default function SubscriptionsPage() {
               </div>
             ) : (
               filteredSubs.map((sub, idx) => (
-                <div key={sub.id} className={\grid grid-cols-[1.5fr_1fr_1fr_1fr_1fr_0.5fr] items-center gap-4 px-6 py-5 transition-colors hover:bg-white/5 \\}>
+                <div key={sub.id} className={`grid grid-cols-[1.5fr_1fr_1fr_1fr_1fr_0.5fr] items-center gap-4 px-6 py-5 transition-colors hover:bg-white/5 ${idx !== filteredSubs.length - 1 ? 'border-b border-white/5' : ''}`}>
                   <div>
                     <h3 className="text-[14px] font-bold text-foreground">{sub.user_name}</h3>
                     <p className="text-[12px] text-muted-foreground">{sub.user_email}</p>
