@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import React, { useState, useEffect } from 'react';
 import {
@@ -25,6 +25,7 @@ import {
   Filler
 } from 'chart.js';
 import { Line, Bar, Doughnut } from 'react-chartjs-2';
+import { getAnalyticsStats, AnalyticsStats } from '@/lib/analytics';
 
 ChartJS.register(
   CategoryScale,
@@ -41,27 +42,30 @@ ChartJS.register(
 
 export default function AnalyticsPage() {
   const [loading, setLoading] = useState(true);
-
-  // Mock Data for Analytics
-  const mrr = 12450;
-  const mrrGrowth = 12.5; // percent
-  
-  const totalUsers = 4820;
-  const userGrowth = 8.2; // percent
-  
-  const churnRate = 2.4; // percent
-  const churnChange = -0.5; // percent (good)
-  
-  const conversionRate = 18.5; // percent
-  const conversionChange = 1.2; // percent
+  const [stats, setStats] = useState<AnalyticsStats | null>(null);
 
   useEffect(() => {
-    // Simulate data loading
-    const timer = setTimeout(() => {
-      setLoading(false);
-    }, 600);
-    return () => clearTimeout(timer);
+    async function loadData() {
+      try {
+        const data = await getAnalyticsStats();
+        setStats(data);
+      } catch (e) {
+        console.error("Failed to load analytics", e);
+      } finally {
+        setLoading(false);
+      }
+    }
+    loadData();
   }, []);
+
+  const mrr = stats?.mrr || 0;
+  const mrrGrowth = 12.5; // Mock growth %
+  const totalUsers = stats?.totalUsers || 0;
+  const userGrowth = 8.2; // Mock growth %
+  const churnRate = stats?.churnRate || 0;
+  const churnChange = -0.5; // Mock growth %
+  const conversionRate = stats?.conversionRate || 0;
+  const conversionChange = 1.2; // Mock growth %
 
   // Common chart options matching the Movira X dark theme
   const chartOptions = {
@@ -96,13 +100,13 @@ export default function AnalyticsPage() {
     }
   };
 
-  // Revenue Line Chart Data
+  // Mock revenue line chart
   const revenueData = {
     labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul'],
     datasets: [
       {
-        label: 'Revenue ($)',
-        data: [8500, 9200, 10100, 9800, 11500, 11800, 12450],
+        label: 'Revenue (NGN/USD)',
+        data: [0, 0, 0, 0, 0, 0, mrr],
         borderColor: '#f97316',
         backgroundColor: 'rgba(249, 115, 22, 0.1)',
         borderWidth: 2,
@@ -116,35 +120,39 @@ export default function AnalyticsPage() {
     ]
   };
 
-  // User Growth Bar Chart Data
   const userGrowthData = {
     labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul'],
     datasets: [
       {
         label: 'New Users',
-        data: [420, 380, 510, 490, 620, 580, 650],
+        data: [0, 0, 0, 0, 0, 0, totalUsers],
         backgroundColor: 'rgba(220, 38, 38, 0.8)',
-        borderRadius: 4,
-      },
-      {
-        label: 'Churned Users',
-        data: [45, 52, 48, 60, 42, 38, 45],
-        backgroundColor: 'rgba(255, 255, 255, 0.1)',
         borderRadius: 4,
       }
     ]
   };
 
-  // Plans Doughnut Chart Data
+  // Plans Doughnut Chart Data based on DB stats
+  const planNames = stats ? Object.keys(stats.plansDistribution) : ['Free'];
+  const planValues = stats && Object.keys(stats.plansDistribution).length > 0 
+    ? Object.values(stats.plansDistribution) 
+    : [totalUsers > 0 ? totalUsers : 1];
+  
+  if (planNames.length === 0) {
+    planNames.push('Free Users');
+    planValues.push(totalUsers || 1);
+  }
+
   const plansData = {
-    labels: ['Free', 'Pro', 'Enterprise'],
+    labels: planNames,
     datasets: [
       {
-        data: [65, 28, 7],
+        data: planValues,
         backgroundColor: [
-          'rgba(255, 255, 255, 0.1)',
           'rgba(249, 115, 22, 0.8)',
           'rgba(220, 38, 38, 0.8)',
+          'rgba(14, 165, 233, 0.8)',
+          'rgba(255, 255, 255, 0.1)',
         ],
         borderColor: 'rgba(13, 12, 15, 1)',
         borderWidth: 2,
@@ -152,16 +160,22 @@ export default function AnalyticsPage() {
     ]
   };
 
-  // Payment Methods Doughnut Chart Data
+  const methodNames = stats && Object.keys(stats.gatewaysDistribution).length > 0
+    ? Object.keys(stats.gatewaysDistribution)
+    : ['None'];
+  const methodValues = stats && Object.keys(stats.gatewaysDistribution).length > 0
+    ? Object.values(stats.gatewaysDistribution)
+    : [1];
+
   const paymentsData = {
-    labels: ['Stripe', 'Paystack', 'Crypto'],
+    labels: methodNames,
     datasets: [
       {
-        data: [72, 23, 5],
+        data: methodValues,
         backgroundColor: [
+          'rgba(245, 158, 11, 0.8)', // Flutterwave/Crypto Amber
           'rgba(99, 102, 241, 0.8)', // Stripe Indigo
           'rgba(14, 165, 233, 0.8)', // Paystack Blue
-          'rgba(245, 158, 11, 0.8)', // Crypto Amber
         ],
         borderColor: 'rgba(13, 12, 15, 1)',
         borderWidth: 2,
@@ -171,7 +185,6 @@ export default function AnalyticsPage() {
 
   return (
     <div className="mx-auto max-w-7xl">
-      {/* Header */}
       <header className="mb-8 flex flex-wrap items-center justify-between gap-4">
         <div>
           <h1 className="m-0 mb-1 text-3xl font-extrabold tracking-tight text-foreground">Analytics & Reporting</h1>
@@ -181,11 +194,10 @@ export default function AnalyticsPage() {
         </div>
       </header>
 
-      {/* Top Metrics Grid */}
       <div className="mb-8 grid gap-6 md:grid-cols-2 lg:grid-cols-4">
         <MetricCard 
           title="MRR" 
-          value={`$${mrr.toLocaleString()}`} 
+          value={`₦${mrr.toLocaleString()}`} 
           change={mrrGrowth} 
           icon={<DollarSign size={20} />} 
           loading={loading}
@@ -209,12 +221,11 @@ export default function AnalyticsPage() {
           value={`${churnRate}%`} 
           change={churnChange} 
           icon={<BarChart3 size={20} />} 
-          inverseColor // For churn, negative is good
+          inverseColor
           loading={loading}
         />
       </div>
 
-      {/* Main Charts */}
       <div className="mb-8 grid gap-6 lg:grid-cols-2">
         <div className="flex flex-col rounded-2xl border border-white/5 bg-background/50 p-6 shadow-sm backdrop-blur-xl">
           <h3 className="mb-6 text-[15px] font-bold text-foreground">Revenue Dashboard</h3>
@@ -231,7 +242,6 @@ export default function AnalyticsPage() {
         </div>
       </div>
 
-      {/* Breakdown Charts */}
       <div className="grid gap-6 lg:grid-cols-3">
         <div className="flex flex-col rounded-2xl border border-white/5 bg-background/50 p-6 shadow-sm backdrop-blur-xl lg:col-span-2">
           <h3 className="mb-6 text-[15px] font-bold text-foreground">Top Subscribed Plans</h3>
@@ -249,17 +259,13 @@ export default function AnalyticsPage() {
               )}
             </div>
             <div className="flex flex-col justify-center gap-4">
-              {[
-                { name: 'Free', value: '65%', color: 'bg-white/10' },
-                { name: 'Pro', value: '28%', color: 'bg-orange-500' },
-                { name: 'Enterprise', value: '7%', color: 'bg-red-600' }
-              ].map(plan => (
-                <div key={plan.name} className="flex items-center justify-between border-b border-white/5 pb-3">
+              {planNames.map((name, idx) => (
+                <div key={name} className="flex items-center justify-between border-b border-white/5 pb-3">
                   <div className="flex items-center gap-3">
-                    <span className={`size-3 rounded-full ${plan.color}`} />
-                    <span className="text-[14px] font-bold text-foreground">{plan.name}</span>
+                    <span className={`size-3 rounded-full`} style={{ backgroundColor: plansData.datasets[0].backgroundColor[idx] }} />
+                    <span className="text-[14px] font-bold text-foreground">{name}</span>
                   </div>
-                  <span className="text-[15px] font-black text-foreground">{plan.value}</span>
+                  <span className="text-[15px] font-black text-foreground">{planValues[idx]} subs</span>
                 </div>
               ))}
             </div>
@@ -287,11 +293,8 @@ export default function AnalyticsPage() {
   );
 }
 
-// Subcomponents
-
 function MetricCard({ title, value, change, icon, inverseColor = false, loading = false }: any) {
   const isPositive = change >= 0;
-  // If inverseColor is true (like for Churn Rate), then negative change is "good" (green) and positive is "bad" (red)
   const isGood = inverseColor ? !isPositive : isPositive;
   
   return (
@@ -327,11 +330,8 @@ function ChartSkeleton({ circular = false }: { circular?: boolean }) {
   
   return (
     <div className="flex h-full w-full items-end gap-2 pb-6 pl-8">
-      {/* Y Axis line */}
       <div className="absolute bottom-6 left-6 top-6 w-[1px] bg-white/10" />
-      {/* X Axis line */}
       <div className="absolute bottom-6 left-6 right-6 h-[1px] bg-white/10" />
-      
       {Array.from({ length: 7 }).map((_, i) => {
         const height = 20 + Math.random() * 60;
         return (
