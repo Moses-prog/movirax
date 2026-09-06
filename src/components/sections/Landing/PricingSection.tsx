@@ -1,10 +1,29 @@
-"use client";
+﻿'use client';
 
 import { motion } from "framer-motion";
 import { Check, X } from "lucide-react";
 import Link from "next/link";
+import { useEffect, useState } from "react";
+import { createClient } from "@/utils/supabase/client";
 
 export default function PricingSection() {
+  const [lowestPrice, setLowestPrice] = useState('4.99');
+  const [currency, setCurrency] = useState('$');
+  const [interval, setInterval] = useState('mo');
+
+  useEffect(() => {
+    async function loadPlans() {
+      const supabase = createClient();
+      const { data } = await supabase.from('pricing_plans').select('*').eq('gateway', 'flutterwave').order('price').limit(1).single();
+      if (data) {
+        setLowestPrice(data.price.toString());
+        setCurrency(data.currency === 'NGN' ? '₦' : '$');
+        setInterval(data.interval === 'monthly' ? 'mo' : (data.interval === 'annual' ? 'yr' : data.interval));
+      }
+    }
+    loadPlans();
+  }, []);
+
   return (
     <section className="py-32 px-4 lg:px-8 max-w-[1200px] mx-auto transition-colors">
       <div className="text-center mb-16">
@@ -70,7 +89,7 @@ export default function PricingSection() {
             <div className="mb-8 mt-2">
               <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-2 transition-colors">Movira X Premium</h3>
               <div className="text-4xl font-semibold text-transparent bg-clip-text bg-gradient-to-r from-red-500 to-yellow-500 dark:from-red-400 dark:to-yellow-400 mb-2">
-                $4.99<span className="text-lg text-gray-500 font-normal">/mo</span>
+                {currency}{lowestPrice}<span className="text-lg text-gray-500 font-normal">/{interval}</span>
               </div>
               <p className="text-gray-500 dark:text-gray-400 text-sm transition-colors">For the absolute cinema purist.</p>
             </div>
@@ -93,9 +112,9 @@ export default function PricingSection() {
               </li>
             </ul>
 
-            <Link href="/auth?form=register" className="block w-full">
+            <Link href="/pricing" className="block w-full">
               <button className="w-full py-4 bg-black dark:bg-white text-white dark:text-black hover:bg-gray-800 dark:hover:bg-gray-200 rounded-2xl font-bold transition-transform hover:scale-105 shadow-[0_0_30px_rgba(220,38,38,0.3)]">
-                Start 14-Day Trial
+                Start 7-Day Trial
               </button>
             </Link>
           </div>
