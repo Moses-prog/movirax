@@ -1,4 +1,4 @@
-﻿import { NextResponse } from 'next/server';
+import { NextResponse } from 'next/server';
 import { createClient } from '@/utils/supabase/server';
 import { activateSubscription, getPricingPlans } from '@/lib/subscriptions';
 
@@ -51,13 +51,18 @@ export async function POST(request: Request) {
 
       const userName = user.user_metadata?.full_name || 'User';
 
+      let paymentMethod = 'Flutterwave';
+      if (fwData.data.card && fwData.data.card.last_4digits) {
+        paymentMethod = `${fwData.data.card.type || 'Card'} ending in ${fwData.data.card.last_4digits}`;
+      }
+
       const success = await activateSubscription(
         user.id,
         user.email!,
         userName,
         plan.id,
         tx_ref,
-        'Flutterwave',
+        paymentMethod,
         daysValid
       );
 

@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import BackButton from "@/components/ui/button/BackButton";
 import { siteConfig } from "@/config/site";
@@ -81,7 +81,7 @@ const TopNavbar = () => {
       position="sticky"
       maxWidth="full"
       classNames={{ wrapper: "px-4 md:px-8 max-w-full" }}
-      className={cn("w-[100vw] max-w-[100vw] h-16 bg-transparent z-50 border-b border-transparent transition-colors overflow-x-hidden", {
+      className={cn("w-full max-w-full h-16 bg-transparent z-50 border-b border-transparent transition-colors overflow-x-hidden", {
         "bg-background/80 backdrop-blur-md border-white/10": show,
       })}
     >

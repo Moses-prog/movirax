@@ -1,10 +1,11 @@
 ﻿'use client';
 
-import React from 'react';
+import React, { useState } from 'react';
 import { useFlutterwave, closePaymentModal } from 'flutterwave-react-v3';
-import { Card, CardBody, CardHeader, Button, Divider, addToast } from '@heroui/react';
-import { CheckCircle2, Crown } from 'lucide-react';
+import { Card, CardBody, CardHeader, Button, Divider, addToast, Input } from '@heroui/react';
+import { CheckCircle2, Crown, Tag } from 'lucide-react';
 import { useRouter } from 'next/navigation';
+import { validatePromoCode } from '@/lib/promotions';
 
 export default function PricingCards({ plans, user }: { plans: any[], user: any }) {
   const router = useRouter();
@@ -51,11 +52,36 @@ export default function PricingCards({ plans, user }: { plans: any[], user: any 
 }
 
 function PlanCard({ plan, user, onSuccess, router }: { plan: any, user: any, onSuccess: any, router: any }) {
+  const [promoCode, setPromoCode] = useState('');
+  const [appliedDiscount, setAppliedDiscount] = useState<number | null>(null);
+  const [checkingPromo, setCheckingPromo] = useState(false);
+
   // Calculate final discounted price
-  const hasDiscount = plan.discount && plan.discount > 0;
-  const finalPrice = hasDiscount 
-    ? (plan.price - (plan.price * (plan.discount / 100))).toFixed(2) 
-    : plan.price;
+  const hasAdminDiscount = plan.discount && plan.discount > 0;
+  
+  let baseAmount = plan.price;
+  if (hasAdminDiscount) {
+    baseAmount = baseAmount - (baseAmount * (plan.discount / 100));
+  }
+  if (appliedDiscount) {
+    baseAmount = baseAmount - (baseAmount * (appliedDiscount / 100));
+  }
+  const finalPrice = baseAmount.toFixed(2);
+  const hasAnyDiscount = hasAdminDiscount || appliedDiscount;
+
+  const handleApplyPromo = async () => {
+    if (!promoCode) return;
+    setCheckingPromo(true);
+    const res = await validatePromoCode(promoCode);
+    if (res.valid && res.discount) {
+      setAppliedDiscount(res.discount);
+      addToast({ title: `Promo applied: ${res.discount}% off!`, color: 'success' });
+    } else {
+      addToast({ title: res.error || 'Invalid code', color: 'danger' });
+      setAppliedDiscount(null);
+    }
+    setCheckingPromo(false);
+  };
 
   const config = {
     public_key: process.env.NEXT_PUBLIC_FLUTTERWAVE_PUBLIC_KEY || 'FLWPUBK_TEST-xxxxxxxxxxxxxxxxxxxxx-X',
@@ -89,7 +115,7 @@ function PlanCard({ plan, user, onSuccess, router }: { plan: any, user: any, onS
           {plan.name} <Crown size={18} className="text-yellow-500" />
         </h3>
         <div className="flex flex-col items-start gap-0 mt-2">
-          {hasDiscount && (
+          {hasAnyDiscount && (
             <span className="text-sm font-bold text-muted-foreground line-through opacity-70">
               {plan.currency === 'NGN' ? '₦' : '$'}{plan.price}
             </span>
@@ -117,6 +143,26 @@ function PlanCard({ plan, user, onSuccess, router }: { plan: any, user: any, onS
             <CheckCircle2 size={16} className="text-danger" /> Watch on any device
           </li>
         </ul>
+
+        <div className="flex gap-2 mb-6">
+          <Input 
+            placeholder="Promo code" 
+            value={promoCode} 
+            onValueChange={setPromoCode}
+            size="sm"
+            startContent={<Tag size={14} className="text-muted-foreground" />}
+            classNames={{ inputWrapper: "bg-white/5 border border-white/10" }}
+          />
+          <Button 
+            size="sm" 
+            variant="flat" 
+            onPress={handleApplyPromo}
+            isLoading={checkingPromo}
+            isDisabled={!promoCode || !!appliedDiscount}
+          >
+            Apply
+          </Button>
+        </div>
 
         <Button 
           color="danger" 
