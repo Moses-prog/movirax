@@ -28,7 +28,7 @@ export default function PricingCards({ plans, user }: { plans: any[], user: any 
       if (res.ok) {
         addToast({ title: 'Subscription Activated!', color: 'success' });
         closePaymentModal();
-        router.refresh();
+        router.push('/profile');
       } else {
         addToast({ title: data.error || 'Payment verification failed', color: 'danger' });
       }
@@ -51,10 +51,16 @@ export default function PricingCards({ plans, user }: { plans: any[], user: any 
 }
 
 function PlanCard({ plan, user, onSuccess, router }: { plan: any, user: any, onSuccess: any, router: any }) {
+  // Calculate final discounted price
+  const hasDiscount = plan.discount && plan.discount > 0;
+  const finalPrice = hasDiscount 
+    ? (plan.price - (plan.price * (plan.discount / 100))).toFixed(2) 
+    : plan.price;
+
   const config = {
     public_key: process.env.NEXT_PUBLIC_FLUTTERWAVE_PUBLIC_KEY || 'FLWPUBK_TEST-xxxxxxxxxxxxxxxxxxxxx-X',
     tx_ref: `movirax-${Date.now()}-${Math.floor(Math.random() * 1000)}`,
-    amount: plan.price,
+    amount: Number(finalPrice),
     currency: plan.currency,
     payment_options: 'card,mobilemoney,ussd',
     customer: {
@@ -82,11 +88,18 @@ function PlanCard({ plan, user, onSuccess, router }: { plan: any, user: any, onS
         <h3 className="text-xl font-bold text-foreground flex items-center gap-2">
           {plan.name} <Crown size={18} className="text-yellow-500" />
         </h3>
-        <div className="flex items-baseline gap-1 mt-2">
-          <span className="text-3xl font-black text-foreground">
-            {plan.currency === 'NGN' ? '₦' : '$'}{plan.price}
-          </span>
-          <span className="text-sm font-medium text-muted-foreground">/{plan.interval}</span>
+        <div className="flex flex-col items-start gap-0 mt-2">
+          {hasDiscount && (
+            <span className="text-sm font-bold text-muted-foreground line-through opacity-70">
+              {plan.currency === 'NGN' ? '₦' : '$'}{plan.price}
+            </span>
+          )}
+          <div className="flex items-baseline gap-1">
+            <span className="text-3xl font-black text-foreground">
+              {plan.currency === 'NGN' ? '₦' : '$'}{finalPrice}
+            </span>
+            <span className="text-sm font-medium text-muted-foreground">/{plan.interval}</span>
+          </div>
         </div>
       </CardHeader>
       
@@ -111,7 +124,7 @@ function PlanCard({ plan, user, onSuccess, router }: { plan: any, user: any, onS
           onPress={() => {
             if (!user) {
               addToast({ title: 'Please login to subscribe', color: 'danger' });
-              // router.push('/login'); 
+              router.push('/auth'); 
               return;
             }
             handleFlutterPayment({

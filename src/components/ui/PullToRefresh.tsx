@@ -98,7 +98,7 @@ export default function PullToRefresh({ children }: { children: React.ReactNode 
         // Nudge content down slightly to give room
         controls.start({ y: 50, transition: { type: "spring", bounce: 0.4 } });
         
-        router.refresh();
+        window.location.reload();
         setTimeout(() => {
           setIsRefreshing(false);
           setIsReadyToRefresh(false);

@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import BackButton from "@/components/ui/button/BackButton";
 import { siteConfig } from "@/config/site";
@@ -8,12 +8,14 @@ import { Button, Navbar, NavbarBrand, NavbarContent, NavbarItem } from "@heroui/
 import { useWindowScroll } from "@mantine/hooks";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useEffect, useState } from "react";
 import FullscreenToggleButton from "../button/FullscreenToggleButton";
 import InstallAppButton from "../button/InstallAppButton";
 import UserProfileButton from "../button/UserProfileButton";
 import SearchInput from "../input/SearchInput";
 import ThemeSwitchDropdown from "../input/ThemeSwitchDropdown";
 import BrandLogo from "../other/BrandLogo";
+import { getUserSubscription, UserSubscription } from "@/lib/subscriptions";
 
 const ScrollFadeBackground = () => {
   const [{ y }] = useWindowScroll();
@@ -23,6 +25,38 @@ const ScrollFadeBackground = () => {
       className="border-background bg-background absolute inset-0 h-full w-full border-b pointer-events-none"
       style={{ opacity }}
     />
+  );
+};
+
+const SubscriptionBadge = ({ userId }: { userId: string }) => {
+  const [sub, setSub] = useState<UserSubscription | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    async function load() {
+      try {
+        const data = await getUserSubscription(userId);
+        setSub(data);
+      } catch (e) {}
+      setLoading(false);
+    }
+    load();
+  }, [userId]);
+
+  if (loading) return <div className="h-7 w-20 animate-pulse bg-white/10 rounded-full hidden sm:block" />;
+  
+  if (sub && sub.status === 'active') {
+    return (
+      <Button as={Link} href="/profile" size="sm" color="warning" variant="flat" className="font-bold border border-warning/20 bg-warning/10 text-warning hidden sm:flex h-8">
+        {sub.pricing_plans?.name || 'Pro'}
+      </Button>
+    );
+  }
+
+  return (
+    <Button as={Link} href="/pricing" size="sm" color="danger" className="font-bold shadow-md hidden sm:flex h-8">
+      Upgrade Plan
+    </Button>
   );
 };
 
@@ -92,7 +126,8 @@ const TopNavbar = () => {
           </>
         ) : showAuthenticatedNav ? (
           <>
-            <NavbarItem className="flex gap-0.5 sm:gap-2">
+            <NavbarItem className="flex gap-0.5 sm:gap-2 items-center">
+              {user && <SubscriptionBadge userId={user.id} />}
               <ThemeSwitchDropdown />
               <InstallAppButton />
               <FullscreenToggleButton />

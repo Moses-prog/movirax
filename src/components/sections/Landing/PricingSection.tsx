@@ -1,4 +1,4 @@
-﻿'use client';
+'use client';
 
 import { motion } from "framer-motion";
 import { Check, X } from "lucide-react";
@@ -16,7 +16,12 @@ export default function PricingSection() {
       const supabase = createClient();
       const { data } = await supabase.from('pricing_plans').select('*').eq('gateway', 'flutterwave').order('price').limit(1).single();
       if (data) {
-        setLowestPrice(data.price.toString());
+        const hasDiscount = data.discount && data.discount > 0;
+        const finalPrice = hasDiscount 
+          ? (data.price - (data.price * (data.discount / 100))).toFixed(2) 
+          : data.price.toString();
+        
+        setLowestPrice(finalPrice);
         setCurrency(data.currency === 'NGN' ? '₦' : '$');
         setInterval(data.interval === 'monthly' ? 'mo' : (data.interval === 'annual' ? 'yr' : data.interval));
       }
