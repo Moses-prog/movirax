@@ -1,4 +1,4 @@
-﻿'use client';
+'use client';
 
 import React, { useState } from 'react';
 import { useFlutterwave, closePaymentModal } from 'flutterwave-react-v3';
@@ -63,9 +63,11 @@ export default function PricingCards({ plans, user }: { plans: any[], user: any 
   }
 
   return (
-    <div className="grid gap-8 md:grid-cols-2 max-w-4xl mx-auto px-4">
+    <div className="flex flex-col md:flex-row flex-wrap justify-center items-stretch gap-8 max-w-6xl mx-auto px-4">
       {plans.map((plan) => (
-        <PlanCard key={plan.id} plan={plan} user={user} onSuccess={handlePaymentSuccess} router={router} />
+        <div key={plan.id} className="w-full md:w-[380px]">
+          <PlanCard plan={plan} user={user} onSuccess={handlePaymentSuccess} router={router} />
+        </div>
       ))}
     </div>
   );
