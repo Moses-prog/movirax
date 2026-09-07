@@ -114,9 +114,7 @@ const UserProfileButton: React.FC = () => {
           Manage Profiles
         </DropdownItem>
 
-        <DropdownItem key="admin" href="/admin" startContent={<Gear />} className="text-default-500">
-          Admin Dashboard
-        </DropdownItem>
+
 
         <DropdownItem 
           key="logout" 
@@ -133,4 +131,5 @@ const UserProfileButton: React.FC = () => {
 };
 
 export default UserProfileButton;
+
 
