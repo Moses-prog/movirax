@@ -217,7 +217,9 @@ function PlanCard({ plan, user, onSuccess, router }: { plan: any, user: any, onS
             }
             handleFlutterPayment({
               callback: (response) => onSuccess(response, plan),
-              onClose: () => {},
+              onClose: () => {
+                addToast({ title: 'Payment cancelled', color: 'default' });
+              },
             });
           }}
         >

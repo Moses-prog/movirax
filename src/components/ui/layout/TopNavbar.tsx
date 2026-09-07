@@ -22,7 +22,7 @@ const ScrollFadeBackground = () => {
   const opacity = Math.min((y / 1000) * 5, 1);
   return (
     <div
-      className="border-background bg-background absolute inset-0 h-full w-full border-b pointer-events-none"
+      className="border-background bg-background absolute inset-0 border-b pointer-events-none"
       style={{ opacity }}
     />
   );
@@ -80,8 +80,8 @@ const TopNavbar = () => {
       isBlurred={false}
       position="sticky"
       maxWidth="full"
-      classNames={{ wrapper: "px-4 md:px-8 max-w-full w-full" }}
-      className={cn("w-full h-16 bg-transparent z-50 border-b border-transparent transition-colors overflow-hidden", {
+      classNames={{ wrapper: "px-4 md:px-8 max-w-[100vw] overflow-hidden" }}
+      className={cn("h-16 bg-transparent z-50 border-b border-transparent transition-colors max-w-[100vw] overflow-hidden", {
         "bg-background/80 backdrop-blur-md border-white/10": show,
       })}
     >
