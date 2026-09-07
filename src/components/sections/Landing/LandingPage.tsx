@@ -22,6 +22,20 @@ interface Movie {
   vote_average: number;
 }
 
+const ScrollBlurWord = ({ word, index, scrollY }: { word: string, index: number, scrollY: any }) => {
+  const startY = (index - 1) * 40;
+  const endY = index * 40;
+  
+  const blurValue = useTransform(scrollY, [startY, endY], ["blur(12px)", "blur(0px)"]);
+  const opacityValue = useTransform(scrollY, [startY, endY], [0.3, 1]);
+  
+  return (
+    <motion.span style={{ filter: blurValue, opacity: opacityValue }}>
+      {word}
+    </motion.span>
+  );
+};
+
 const ScrollBlurHeading = ({ text }: { text: string }) => {
   const { scrollY } = useScroll();
   const words = text.split(" ");
@@ -33,17 +47,7 @@ const ScrollBlurHeading = ({ text }: { text: string }) => {
           return <span key={i} className="text-white">{word}</span>;
         }
         
-        const startY = (i - 1) * 40;
-        const endY = i * 40;
-        
-        const blurValue = useTransform(scrollY, [startY, endY], ["blur(12px)", "blur(0px)"]);
-        const opacityValue = useTransform(scrollY, [startY, endY], [0.3, 1]);
-        
-        return (
-          <motion.span key={i} style={{ filter: blurValue, opacity: opacityValue }}>
-            {word}
-          </motion.span>
-        );
+        return <ScrollBlurWord key={i} word={word} index={i} scrollY={scrollY} />;
       })}
     </h1>
   );
@@ -384,6 +388,7 @@ export default function LandingPage() {
     </div>
   );
 }
+
 
 
 
