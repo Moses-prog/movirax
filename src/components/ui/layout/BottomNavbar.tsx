@@ -1,10 +1,9 @@
-"use client";
+﻿"use client";
 
 import { siteConfig } from "@/config/site";
 import clsx from "clsx";
-import { Link } from "@heroui/link";
+import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Chip } from "@heroui/chip";
 import useSupabaseUser from "@/hooks/useSupabaseUser";
 
 const BottomNavbar = () => {
@@ -14,54 +13,40 @@ const BottomNavbar = () => {
   const hrefs = siteConfig.navItems.map((item) => item.href);
   const show = hrefs.includes(pathName) && user && !isLoading;
 
+  if (!show) return null;
+
   return (
-    show && (
-      <>
-        {/* Spacer for page content */}
-        <div className="pt-28 md:hidden" />
-        
-        {/* LIFTED: pb-[calc(max(1.5rem,env(safe-area-inset-bottom))+1.2rem)] 
-            This forces the bar up significantly for iPhones.
-        */}
-        <div className="fixed bottom-0 left-0 z-50 block h-fit w-full border-t border-white/10 bg-background/95 backdrop-blur-xl pt-4 pb-[calc(max(1.5rem,env(safe-area-inset-bottom))+1.2rem)] md:hidden">
-          <div className="mx-auto grid h-full max-w-lg grid-cols-5">
-            {siteConfig.navItems.map((item) => {
-              const isActive = pathName === item.href;
-              return (
-                <Link
-                  href={item.href}
-                  key={item.href}
-                  className="flex items-center justify-center text-foreground"
-                >
-                  <div className="flex flex-col items-center justify-center">
-                    <Chip
-                      size="lg"
-                      variant={isActive ? "solid" : "light"}
-                      color={isActive ? "primary" : "default"}
-                      classNames={{
-                        /* BOLDER ICONS: Added 'stroke-[2px]' and 'font-bold' to the icon container */
-                        base: clsx("py-1 transition-all h-10 w-14 mb-1", { 
-                            "scale-110 shadow-2xl shadow-primary/40": isActive 
-                        }),
-                        content: "flex items-center justify-center stroke-[2px] font-bold text-lg",
-                      }}
-                    >
-                      {isActive ? item.activeIcon : item.icon}
-                    </Chip>
-                    <p className={clsx("text-[11px] tracking-tight transition-colors", { 
-                        "font-black text-primary": isActive,
-                        "text-foreground/60": !isActive 
-                    })}>
-                      {item.label}
-                    </p>
-                  </div>
-                </Link>
-              );
-            })}
-          </div>
-        </div>
-      </>
-    )
+    <div className="fixed bottom-0 left-0 z-50 w-full border-t border-white/5 bg-background/85 backdrop-blur-2xl pb-safe md:hidden shadow-[0_-15px_40px_rgba(0,0,0,0.5)]">
+      <div className="mx-auto flex h-[4.5rem] max-w-md items-center justify-between px-6">
+        {siteConfig.navItems.map((item) => {
+          const isActive = pathName === item.href;
+          return (
+            <Link
+              href={item.href}
+              key={item.href}
+              className="flex flex-col items-center justify-center gap-1.5 min-w-[3.5rem] tap-highlight-transparent"
+            >
+              <div 
+                className={clsx("flex h-[1.35rem] w-[1.35rem] items-center justify-center transition-all duration-300", {
+                  "text-primary scale-110 drop-shadow-[0_0_8px_rgba(229,9,20,0.5)]": isActive,
+                  "text-muted-foreground hover:text-foreground": !isActive
+                })}
+              >
+                {isActive ? item.activeIcon : item.icon}
+              </div>
+              <span 
+                className={clsx("text-[10px] transition-colors", { 
+                  "text-primary font-bold": isActive,
+                  "text-muted-foreground font-medium": !isActive 
+                })}
+              >
+                {item.label}
+              </span>
+            </Link>
+          );
+        })}
+      </div>
+    </div>
   );
 };
 
