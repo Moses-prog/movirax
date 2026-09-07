@@ -1,4 +1,4 @@
-﻿import Link from "next/link";
+import Link from "next/link";
 import React from "react";
 import { Film } from "lucide-react";
 
@@ -40,6 +40,9 @@ export default function FooterSection() {
             <ul className="space-y-3">
               <li><Link href="/terms" className="text-zinc-400 hover:text-white transition-colors text-sm">Terms of Service</Link></li>
               <li><Link href="/privacy" className="text-zinc-400 hover:text-white transition-colors text-sm">Privacy Policy</Link></li>
+              <li><Link href="/refunds" className="text-zinc-400 hover:text-white transition-colors text-sm">Refund Policy</Link></li>
+              <li><Link href="/cookies" className="text-zinc-400 hover:text-white transition-colors text-sm">Cookie Policy</Link></li>
+              <li><Link href="/dmca" className="text-zinc-400 hover:text-white transition-colors text-sm">DMCA & Copyright</Link></li>
             </ul>
           </div>
           

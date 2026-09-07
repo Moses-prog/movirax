@@ -34,7 +34,8 @@ export default function TermsPage() {
           <p>
             MoviraX offers premium subscription tiers ("MoviraX Pro"). By selecting a premium tier, you agree to pay the 
             subscription fees indicated. Payments are securely processed via our payment partners (e.g., Flutterwave). 
-            Your subscription will automatically renew unless canceled prior to the end of the current billing cycle.
+            Your subscription will automatically renew unless canceled prior to the end of the current billing cycle. 
+            For information regarding refunds, please review our <a href="/refunds" className="text-foreground underline">Refund Policy</a>.
           </p>
         </section>
 
@@ -60,7 +61,50 @@ export default function TermsPage() {
         </section>
 
         <section>
-          <h2 className="text-xl sm:text-2xl font-semibold text-foreground mb-4">6. Termination</h2>
+          <h2 className="text-xl sm:text-2xl font-semibold text-foreground mb-4">6. DISCLAIMER OF WARRANTIES</h2>
+          <p className="uppercase text-xs sm:text-sm font-medium tracking-wide">
+            The service is provided on an "as is" and "as available" basis. MoviraX expressly disclaims all warranties 
+            of any kind, whether express or implied, including, but not limited to, the implied warranties of merchantability, 
+            fitness for a particular purpose, and non-infringement. We make no warranty that the service will meet your 
+            requirements, be uninterrupted, timely, secure, or error-free.
+          </p>
+        </section>
+
+        <section>
+          <h2 className="text-xl sm:text-2xl font-semibold text-foreground mb-4">7. LIMITATION OF LIABILITY</h2>
+          <p className="uppercase text-xs sm:text-sm font-medium tracking-wide">
+            In no event shall MoviraX, its directors, employees, partners, agents, suppliers, or affiliates, be liable 
+            for any indirect, incidental, special, consequential, or punitive damages, including without limitation, 
+            loss of profits, data, use, goodwill, or other intangible losses, resulting from (i) your access to or use of 
+            or inability to access or use the service; (ii) any conduct or content of any third party on the service; 
+            (iii) any content obtained from the service; and (iv) unauthorized access, use, or alteration of your 
+            transmissions or content, whether based on warranty, contract, tort (including negligence) or any other legal theory.
+          </p>
+        </section>
+
+        <section>
+          <h2 className="text-xl sm:text-2xl font-semibold text-foreground mb-4">8. Indemnification</h2>
+          <p>
+            You agree to defend, indemnify, and hold harmless MoviraX and its licensee and licensors, and their employees, 
+            contractors, agents, officers, and directors, from and against any and all claims, damages, obligations, losses, 
+            liabilities, costs or debt, and expenses (including but not limited to attorney's fees), resulting from or arising 
+            out of a) your use and access of the Service, by you or any person using your account and password; b) a breach 
+            of these Terms, or c) Content posted on the Service.
+          </p>
+        </section>
+
+        <section>
+          <h2 className="text-xl sm:text-2xl font-semibold text-foreground mb-4">9. Governing Law & Dispute Resolution</h2>
+          <p>
+            These Terms shall be governed and construed in accordance with the laws of the jurisdiction in which MoviraX operates, 
+            without regard to its conflict of law provisions. Any dispute arising from these Terms or the use of the Service 
+            shall be subject to binding arbitration, rather than in court, except that you may assert claims in small claims court 
+            if your claims qualify. You agree to waive any right to participate in a class action lawsuit or class-wide arbitration.
+          </p>
+        </section>
+
+        <section>
+          <h2 className="text-xl sm:text-2xl font-semibold text-foreground mb-4">10. Termination</h2>
           <p>
             We may terminate or suspend your access to the service immediately, without prior notice or liability, 
             for any reason whatsoever, including without limitation if you breach the Terms. You may cancel your account 
