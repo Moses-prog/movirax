@@ -22,6 +22,33 @@ interface Movie {
   vote_average: number;
 }
 
+const ScrollBlurHeading = ({ text }: { text: string }) => {
+  const { scrollY } = useScroll();
+  const words = text.split(" ");
+  
+  return (
+    <h1 className="text-5xl lg:text-7xl font-bold tracking-tight leading-[1.1] mb-6 text-white flex flex-wrap gap-x-[0.25em] gap-y-2">
+      {words.map((word, i) => {
+        if (i === 0) {
+          return <span key={i} className="text-white">{word}</span>;
+        }
+        
+        const startY = (i - 1) * 40;
+        const endY = i * 40;
+        
+        const blurValue = useTransform(scrollY, [startY, endY], ["blur(12px)", "blur(0px)"]);
+        const opacityValue = useTransform(scrollY, [startY, endY], [0.3, 1]);
+        
+        return (
+          <motion.span key={i} style={{ filter: blurValue, opacity: opacityValue }}>
+            {word}
+          </motion.span>
+        );
+      })}
+    </h1>
+  );
+};
+
 export default function LandingPage() {
   const [movies, setMovies] = useState<Movie[]>([]);
   const [moviesLoading, setMoviesLoading] = useState(true);
@@ -140,10 +167,7 @@ export default function LandingPage() {
                 <span className="w-2 h-2 rounded-full bg-red-600 animate-pulse" />
                 <span className="text-xs font-semibold tracking-wider uppercase text-zinc-400">Movira X</span>
               </motion.div>
-              <motion.h1 variants={heroItemVariant} className="text-5xl lg:text-7xl font-bold tracking-tight leading-[1.1] mb-6 text-white">
-                Your cinematic universe, <br className="hidden md:block" />
-                curated perfectly.
-              </motion.h1>
+              <ScrollBlurHeading text="Your cinematic universe, curated perfectly." />
               <motion.p variants={heroItemVariant} className="text-lg lg:text-xl text-zinc-400 mb-10 max-w-lg">
                 Track watched films, save favorites, and build your personal collection within an uncompromisingly clean ecosystem.
               </motion.p>
@@ -360,4 +384,6 @@ export default function LandingPage() {
     </div>
   );
 }
+
+
 

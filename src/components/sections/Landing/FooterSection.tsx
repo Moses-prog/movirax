@@ -29,29 +29,29 @@ export default function FooterSection() {
           <div>
             <h4 className="text-white font-bold mb-4 uppercase tracking-wider text-sm">Platform</h4>
             <ul className="space-y-3">
-              <li><Link href="/" className="text-zinc-400 hover:text-white transition-colors text-sm">Home</Link></li>
-              <li><Link href="/pricing" className="text-zinc-400 hover:text-white transition-colors text-sm">Pricing</Link></li>
-              <li><Link href="/auth" className="text-zinc-400 hover:text-white transition-colors text-sm">Sign In</Link></li>
+              <li><a href="/" className="text-zinc-400 hover:text-white transition-colors text-sm">Home</a></li>
+              <li><a href="/pricing" className="text-zinc-400 hover:text-white transition-colors text-sm">Pricing</a></li>
+              <li><a href="/auth" className="text-zinc-400 hover:text-white transition-colors text-sm">Sign In</a></li>
             </ul>
           </div>
           
           <div>
             <h4 className="text-white font-bold mb-4 uppercase tracking-wider text-sm">Legal</h4>
             <ul className="space-y-3">
-              <li><Link href="/terms" className="text-zinc-400 hover:text-white transition-colors text-sm">Terms of Service</Link></li>
-              <li><Link href="/privacy" className="text-zinc-400 hover:text-white transition-colors text-sm">Privacy Policy</Link></li>
-              <li><Link href="/refunds" className="text-zinc-400 hover:text-white transition-colors text-sm">Refund Policy</Link></li>
-              <li><Link href="/cookies" className="text-zinc-400 hover:text-white transition-colors text-sm">Cookie Policy</Link></li>
-              <li><Link href="/dmca" className="text-zinc-400 hover:text-white transition-colors text-sm">DMCA & Copyright</Link></li>
+              <li><a href="/terms" className="text-zinc-400 hover:text-white transition-colors text-sm">Terms of Service</a></li>
+              <li><a href="/privacy" className="text-zinc-400 hover:text-white transition-colors text-sm">Privacy Policy</a></li>
+              <li><a href="/refunds" className="text-zinc-400 hover:text-white transition-colors text-sm">Refund Policy</a></li>
+              <li><a href="/cookies" className="text-zinc-400 hover:text-white transition-colors text-sm">Cookie Policy</a></li>
+              <li><a href="/dmca" className="text-zinc-400 hover:text-white transition-colors text-sm">DMCA & Copyright</a></li>
             </ul>
           </div>
           
           <div>
             <h4 className="text-white font-bold mb-4 uppercase tracking-wider text-sm">Connect</h4>
             <ul className="space-y-3">
-              <li><a href="#" className="text-zinc-400 hover:text-white transition-colors text-sm">Twitter / X</a></li>
-              <li><a href="#" className="text-zinc-400 hover:text-white transition-colors text-sm">Discord</a></li>
-              <li><a href="#" className="text-zinc-400 hover:text-white transition-colors text-sm">Support</a></li>
+              <li><a href="https://twitter.com/movirax" target="_blank" rel="noopener noreferrer" className="text-zinc-400 hover:text-white transition-colors text-sm">Twitter / X</a></li>
+              <li><a href="https://discord.gg/movirax" target="_blank" rel="noopener noreferrer" className="text-zinc-400 hover:text-white transition-colors text-sm">Discord</a></li>
+              <li><a href="/support" className="text-zinc-400 hover:text-white transition-colors text-sm">Support</a></li>
             </ul>
           </div>
         </div>
