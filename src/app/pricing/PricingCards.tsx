@@ -1,9 +1,9 @@
-'use client';
+﻿'use client';
 
 import React, { useState } from 'react';
 import { useFlutterwave, closePaymentModal } from 'flutterwave-react-v3';
-import { Card, CardBody, CardHeader, Button, Divider, addToast, Input } from '@heroui/react';
-import { CheckCircle2, Crown, Tag } from 'lucide-react';
+import { addToast, Input, Button } from '@heroui/react';
+import { Film } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { validatePromoCode } from '@/lib/promotions';
 
@@ -43,7 +43,7 @@ export default function PricingCards({ plans, user }: { plans: any[], user: any 
   }
 
   return (
-    <div className="grid gap-8 md:grid-cols-3 max-w-5xl mx-auto">
+    <div className="grid gap-10 md:grid-cols-2 max-w-4xl mx-auto px-4">
       {plans.map((plan) => (
         <PlanCard key={plan.id} plan={plan} user={user} onSuccess={handlePaymentSuccess} router={router} />
       ))}
@@ -67,7 +67,6 @@ function PlanCard({ plan, user, onSuccess, router }: { plan: any, user: any, onS
     baseAmount = baseAmount - (baseAmount * (appliedDiscount / 100));
   }
   const finalPrice = baseAmount.toFixed(2);
-  const hasAnyDiscount = hasAdminDiscount || appliedDiscount;
 
   const handleApplyPromo = async () => {
     if (!promoCode) return;
@@ -103,111 +102,127 @@ function PlanCard({ plan, user, onSuccess, router }: { plan: any, user: any, onS
 
   const handleFlutterPayment = useFlutterwave(config);
 
+  const isAnnual = plan.interval === 'annual';
+  const themeColor = isAnnual ? 'bg-[#ffcc00]' : 'bg-[#e50914]';
+  const textColor = isAnnual ? 'text-black' : 'text-white';
+  const mutedTextColor = isAnnual ? 'text-black/70' : 'text-white/70';
+  const inputBg = isAnnual ? 'bg-black/10' : 'bg-black/20';
+
   return (
-    <Card className="border border-white/10 bg-background/50 backdrop-blur-xl relative overflow-hidden h-full flex flex-col">
-      <CardHeader className="flex flex-col items-start gap-2 px-6 pt-8 pb-4">
-        {plan.interval === 'annual' && (
-          <div className="absolute top-0 right-0 bg-danger text-white text-[10px] font-bold uppercase tracking-widest px-3 py-1 rounded-bl-lg">
-            Best Value
-          </div>
-        )}
-        <h3 className="text-xl font-bold text-foreground flex items-center gap-2">
-          {plan.name}
-        </h3>
-        <div className="flex flex-col items-start gap-0 mt-2">
-          <div className="flex items-baseline gap-1">
-            <span className="text-3xl font-black text-foreground">
+    <div className={`relative overflow-hidden flex flex-col h-full rounded-sm shadow-2xl ${themeColor} transform transition-transform hover:scale-[1.02]`}>
+      
+      {/* Left Film Edge */}
+      <div className="absolute left-0 top-0 bottom-0 w-8 bg-[#111] flex flex-col items-center py-2 z-10 shadow-[2px_0_10px_rgba(0,0,0,0.5)]">
+        {Array.from({ length: 50 }).map((_, i) => (
+          <div key={i} className="w-4 h-3 bg-white/10 rounded-[2px] mb-2 flex-shrink-0 shadow-inner" />
+        ))}
+      </div>
+      
+      {/* Right Film Edge */}
+      <div className="absolute right-0 top-0 bottom-0 w-8 bg-[#111] flex flex-col items-center py-2 z-10 shadow-[-2px_0_10px_rgba(0,0,0,0.5)]">
+        {Array.from({ length: 50 }).map((_, i) => (
+          <div key={i} className="w-4 h-3 bg-white/10 rounded-[2px] mb-2 flex-shrink-0 shadow-inner" />
+        ))}
+      </div>
+
+      <div className={`px-12 pt-10 pb-8 flex-grow flex flex-col z-0 ${textColor}`}>
+        {/* Header */}
+        <div className="flex flex-col items-center text-center mb-6">
+          {isAnnual && (
+             <div className="bg-black text-[#ffcc00] text-[10px] font-black uppercase tracking-widest px-4 py-1 rounded-sm mb-4">
+               Director's Cut
+             </div>
+          )}
+          <h3 className="text-3xl font-black uppercase tracking-widest mb-2 font-mono drop-shadow-md">
+            {plan.name}
+          </h3>
+          <div className="flex items-baseline justify-center gap-1 drop-shadow-md">
+            <span className="text-5xl font-black font-mono">
               {plan.currency === 'NGN' ? '₦' : '$'}{finalPrice}
             </span>
-            <span className="text-sm font-medium text-muted-foreground">/{plan.interval}</span>
+            <span className={`text-sm font-bold uppercase ${mutedTextColor}`}>/{plan.interval}</span>
           </div>
         </div>
-      </CardHeader>
-      
-      <Divider className="bg-white/5" />
-      
-      <CardBody className="px-6 py-6 flex-grow flex flex-col">
-        <ul className="flex flex-col gap-4 mb-6 flex-grow">
-          <li className="flex items-center gap-3 text-sm text-foreground">
-            <CheckCircle2 size={16} className="text-default-500" /> Unlimited Movies & TV Shows
+        
+        {/* Features */}
+        <ul className={`flex flex-col gap-4 mb-8 flex-grow font-bold uppercase text-[12px] tracking-wide ${mutedTextColor}`}>
+          <li className="flex items-center justify-center gap-2">
+            <Film size={16} className={textColor} /> Unlimited Movies
           </li>
-          <li className="flex items-center gap-3 text-sm text-foreground">
-            <CheckCircle2 size={16} className="text-default-500" /> Ad-Free Experience
+          <li className="flex items-center justify-center gap-2">
+            <Film size={16} className={textColor} /> No Commercials
           </li>
-          <li className="flex items-center gap-3 text-sm text-foreground">
-            <CheckCircle2 size={16} className="text-default-500" /> Watch on any device
+          <li className="flex items-center justify-center gap-2">
+            <Film size={16} className={textColor} /> All Devices
           </li>
         </ul>
 
-        <div className="bg-white/5 rounded-xl p-4 mb-6 flex flex-col gap-3 border border-white/10 shadow-none">
-          <div className="flex justify-between items-center text-sm">
-            <span className="text-muted-foreground">Original Price</span>
-            <span className="font-medium">{plan.currency === 'NGN' ? '₦' : '$'}{plan.price}</span>
+        {/* Receipt / Breakdown */}
+        <div className={`${inputBg} rounded-sm p-4 mb-6 flex flex-col gap-3 font-mono text-xs ${textColor}`}>
+          <div className="flex justify-between items-center">
+            <span className="opacity-80">BOX OFFICE</span>
+            <span className="font-bold">{plan.currency === 'NGN' ? '₦' : '$'}{plan.price}</span>
           </div>
 
           {hasAdminDiscount && (
-            <div className="flex justify-between items-center text-sm">
-              <span className="text-danger flex items-center gap-1">Special Discount</span>
-              <span className="font-medium text-danger">-{plan.discount}%</span>
+            <div className="flex justify-between items-center">
+              <span className="opacity-80">STUDIO DISCOUNT</span>
+              <span className="font-bold">-{plan.discount}%</span>
             </div>
           )}
 
           {appliedDiscount && (
-            <div className="flex justify-between items-center text-sm">
-              <span className="text-success flex items-center gap-1">Promo Applied</span>
-              <span className="font-medium text-success">-{appliedDiscount}%</span>
+            <div className="flex justify-between items-center">
+              <span className="opacity-80">PROMO APPLIED</span>
+              <span className="font-bold">-{appliedDiscount}%</span>
             </div>
           )}
 
-          <Divider className="my-1 bg-white/10" />
+          <div className="border-t border-current opacity-20 my-1" />
           
-          <div className="flex justify-between items-center">
-            <span className="font-bold text-foreground">Total Due</span>
-            <span className="font-black text-lg text-foreground">{plan.currency === 'NGN' ? '₦' : '$'}{finalPrice}</span>
+          <div className="flex justify-between items-center text-sm">
+            <span className="font-bold">TOTAL DUE</span>
+            <span className="font-black">{plan.currency === 'NGN' ? '₦' : '$'}{finalPrice}</span>
           </div>
         </div>
 
+        {/* Promo */}
         <div className="flex gap-2 mb-6">
           <Input 
-            placeholder="Have a promo code?" 
+            placeholder="PROMO CODE" 
             value={promoCode} 
             onValueChange={setPromoCode}
             size="sm"
             isDisabled={!!appliedDiscount}
-            classNames={{ inputWrapper: "bg-white/5 border border-white/10 focus-within:border-white/50 uppercase font-mono text-xs" }}
+            classNames={{ inputWrapper: `${inputBg} border-transparent ${textColor} font-mono uppercase rounded-sm` }}
           />
           {appliedDiscount ? (
             <Button 
               size="sm" 
-              color="danger"
-              variant="flat"
+              className="bg-black text-white font-bold uppercase rounded-sm"
               onPress={() => {
                 setAppliedDiscount(null);
                 setPromoCode('');
                 addToast({ title: 'Promo code removed', color: 'default' });
               }}
-              className="font-bold"
             >
-              Remove
+              DEL
             </Button>
           ) : (
             <Button 
               size="sm" 
-              variant="flat"
-              color="default"
+              className="bg-black text-white font-bold uppercase rounded-sm"
               onPress={handleApplyPromo}
               isLoading={checkingPromo}
               isDisabled={!promoCode}
-              className="font-bold"
             >
-              Apply
+              ADD
             </Button>
           )}
         </div>
 
         <Button 
-          color="danger" 
-          className="w-full font-bold shadow-none"
+          className="w-full font-black text-lg h-14 bg-black text-white uppercase tracking-widest shadow-[0_10px_20px_rgba(0,0,0,0.3)] hover:scale-105 transition-transform rounded-sm"
           onPress={() => {
             if (!user) {
               addToast({ title: 'Please login to subscribe', color: 'danger' });
@@ -222,9 +237,9 @@ function PlanCard({ plan, user, onSuccess, router }: { plan: any, user: any, onS
             });
           }}
         >
-          Subscribe Now
+          Get Ticket
         </Button>
-      </CardBody>
-    </Card>
+      </div>
+    </div>
   );
 }
