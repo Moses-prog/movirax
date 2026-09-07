@@ -9,6 +9,14 @@ const publicRoutes = [
   "/admin/login",
   "/api/auth",
   "/api/admin/check-auth",
+  "/pricing",
+  "/terms",
+  "/privacy",
+  "/refunds",
+  "/cookies",
+  "/dmca",
+  "/support",
+  "/about",
 ];
 
 export async function middleware(request: NextRequest) {
