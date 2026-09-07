@@ -17,7 +17,7 @@ import { NuqsAdapter } from "nuqs/adapters/next/app";
 import { Suspense } from "react";
 import PullToRefresh from "@/components/ui/PullToRefresh";
 
-const CookieConsent = dynamic(() => import("@/components/ui/overlay/CookieConsent"), { ssr: false });
+const CookieConsent = dynamic(() => import("@/components/ui/overlay/CookieConsent"));
 const BanWarning = dynamic(() => import("@/components/ui/overlay/BanWarning"));
 
 export const metadata: Metadata = {
@@ -92,3 +92,4 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
     </html>
   );
 }
+
