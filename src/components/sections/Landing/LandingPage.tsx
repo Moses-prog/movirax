@@ -43,7 +43,7 @@ export default function LandingPage() {
           return;
         }
 
-        const response = await fetch(`https://api.themoviedb.org/3/discover/movie?primary_release_year=2026&sort_by=popularity.desc`, {
+        const response = await fetch(`https://api.themoviedb.org/3/discover/movie?sort_by=popularity.desc&page=1`, {
           method: "GET",
           headers: {
             accept: "application/json",
@@ -102,6 +102,11 @@ export default function LandingPage() {
     visible: { opacity: 1, filter: "blur(0px)", scale: 1, y: 0, transition: { duration: 0.8, ease: [0.22, 1, 0.36, 1] } }
   };
 
+  const heroItemVariant = {
+    hidden: { opacity: 0, filter: "blur(12px)", y: 20 },
+    visible: { opacity: 1, filter: "blur(0px)", y: 0, transition: { duration: 0.8, ease: "easeOut" } }
+  };
+
   const staggerContainer = {
     hidden: { opacity: 0 },
     visible: { opacity: 1, transition: { staggerChildren: 0.15 } }
@@ -126,23 +131,23 @@ export default function LandingPage() {
           className="grid grid-cols-1 md:grid-cols-4 xl:grid-cols-6 gap-4 lg:gap-6 auto-rows-[auto] md:auto-rows-[260px]"
         >
           {/* Main Hero Cell (Spans 4 cols, 2 rows) - Transparent floating text, no card */}
-          <motion.div variants={bentoVariant} className="md:col-span-4 xl:col-span-4 md:row-span-2 p-4 lg:p-8 flex flex-col justify-center relative group">
+          <motion.div variants={staggerContainer} className="md:col-span-4 xl:col-span-4 md:row-span-2 p-4 lg:p-8 flex flex-col justify-center relative group">
             {/* SVG Movie Ribbon Texture - Anchored broadly behind the hero area */}
-            <FilmStripPattern colorClass="text-red-600" bgClass="stroke-background" className="opacity-[0.08] scale-[2.5] -translate-y-20 origin-top-left" />
+            <FilmStripPattern colorClass="text-red-500/30" bgClass="stroke-red-900/50" className="opacity-100 scale-[1.8] -translate-y-10 translate-x-20 origin-top-left" />
             
             <div className="relative z-10 max-w-2xl">
-              <motion.div variants={bentoVariant} className="inline-flex items-center space-x-2 mb-8">
+              <motion.div variants={heroItemVariant} className="inline-flex items-center space-x-2 mb-8">
                 <span className="w-2 h-2 rounded-full bg-red-600 animate-pulse" />
                 <span className="text-xs font-semibold tracking-wider uppercase text-zinc-400">Movira X</span>
               </motion.div>
-              <motion.h1 variants={bentoVariant} className="text-5xl lg:text-7xl font-bold tracking-tight leading-[1.1] mb-6 text-white">
+              <motion.h1 variants={heroItemVariant} className="text-5xl lg:text-7xl font-bold tracking-tight leading-[1.1] mb-6 text-white">
                 Your cinematic universe, <br className="hidden md:block" />
                 curated perfectly.
               </motion.h1>
-              <motion.p variants={bentoVariant} className="text-lg lg:text-xl text-zinc-400 mb-10 max-w-lg">
+              <motion.p variants={heroItemVariant} className="text-lg lg:text-xl text-zinc-400 mb-10 max-w-lg">
                 Track watched films, save favorites, and build your personal collection within an uncompromisingly clean ecosystem.
               </motion.p>
-              <motion.div variants={bentoVariant} className="flex flex-col sm:flex-row gap-4">
+              <motion.div variants={heroItemVariant} className="flex flex-col sm:flex-row gap-4">
                 <Link href="/auth?form=register">
                   <button className="px-8 py-4 bg-black dark:bg-white text-white dark:text-black rounded-2xl font-bold hover:scale-105 transition-transform shadow-xl dark:shadow-none">
                     Start Free Trial
@@ -355,3 +360,4 @@ export default function LandingPage() {
     </div>
   );
 }
+
