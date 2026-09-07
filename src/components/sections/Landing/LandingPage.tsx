@@ -11,6 +11,7 @@ import TestimonialsSection from "./TestimonialsSection";
 import PricingSection from "./PricingSection";
 import FAQSection from "./FAQSection";
 import FooterSection from "./FooterSection";
+import { FilmStripPattern } from "@/components/ui/design/FilmStripPattern";
 
 interface Movie {
   id: number;
