@@ -121,6 +121,9 @@ const AuthForms: React.FC = () => {
             </AnimatePresence>
           </ScrollShadow>
         </Card>
+        <div className="pointer-events-auto mt-6 text-sm text-zinc-400">
+          Staff member? <a href="/admin-login" className="text-white hover:underline transition-all">Switch to Admin Login</a>
+        </div>
       </div>
       <div className="pointer-events-none absolute inset-0 z-10 h-full w-full bg-black/60 backdrop-blur-[2px] dark:bg-black/20" />
       {!isEmpty(IMAGES) && <ThreeDMarquee className="absolute" images={IMAGES} aspect="poster" />}
@@ -129,3 +132,4 @@ const AuthForms: React.FC = () => {
 };
 
 export default AuthForms;
+
