@@ -112,7 +112,7 @@ function PlanCard({ plan, user, onSuccess, router }: { plan: any, user: any, onS
           </div>
         )}
         <h3 className="text-xl font-bold text-foreground flex items-center gap-2">
-          {plan.name} <Crown size={18} className="text-yellow-500" />
+          {plan.name}
         </h3>
         <div className="flex flex-col items-start gap-0 mt-2">
           <div className="flex items-baseline gap-1">
@@ -129,17 +129,17 @@ function PlanCard({ plan, user, onSuccess, router }: { plan: any, user: any, onS
       <CardBody className="px-6 py-6 flex-grow flex flex-col">
         <ul className="flex flex-col gap-4 mb-6 flex-grow">
           <li className="flex items-center gap-3 text-sm text-foreground">
-            <CheckCircle2 size={16} className="text-danger" /> Unlimited Movies & TV Shows
+            <CheckCircle2 size={16} className="text-default-500" /> Unlimited Movies & TV Shows
           </li>
           <li className="flex items-center gap-3 text-sm text-foreground">
-            <CheckCircle2 size={16} className="text-danger" /> Ad-Free Experience
+            <CheckCircle2 size={16} className="text-default-500" /> Ad-Free Experience
           </li>
           <li className="flex items-center gap-3 text-sm text-foreground">
-            <CheckCircle2 size={16} className="text-danger" /> Watch on any device
+            <CheckCircle2 size={16} className="text-default-500" /> Watch on any device
           </li>
         </ul>
 
-        <div className="bg-white/5 rounded-xl p-4 mb-6 flex flex-col gap-3 border border-white/10 shadow-inner">
+        <div className="bg-white/5 rounded-xl p-4 mb-6 flex flex-col gap-3 border border-white/10 shadow-none">
           <div className="flex justify-between items-center text-sm">
             <span className="text-muted-foreground">Original Price</span>
             <span className="font-medium">{plan.currency === 'NGN' ? '₦' : '$'}{plan.price}</span>
@@ -147,14 +147,14 @@ function PlanCard({ plan, user, onSuccess, router }: { plan: any, user: any, onS
 
           {hasAdminDiscount && (
             <div className="flex justify-between items-center text-sm">
-              <span className="text-danger flex items-center gap-1"><Tag size={12}/> Special Discount</span>
+              <span className="text-danger flex items-center gap-1">Special Discount</span>
               <span className="font-medium text-danger">-{plan.discount}%</span>
             </div>
           )}
 
           {appliedDiscount && (
             <div className="flex justify-between items-center text-sm">
-              <span className="text-success flex items-center gap-1"><Tag size={12}/> Promo Applied</span>
+              <span className="text-success flex items-center gap-1">Promo Applied</span>
               <span className="font-medium text-success">-{appliedDiscount}%</span>
             </div>
           )}
@@ -173,9 +173,8 @@ function PlanCard({ plan, user, onSuccess, router }: { plan: any, user: any, onS
             value={promoCode} 
             onValueChange={setPromoCode}
             size="sm"
-            startContent={<Tag size={14} className="text-muted-foreground" />}
             isDisabled={!!appliedDiscount}
-            classNames={{ inputWrapper: "bg-white/5 border border-white/10 focus-within:border-danger/50 uppercase font-mono text-xs" }}
+            classNames={{ inputWrapper: "bg-white/5 border border-white/10 focus-within:border-white/50 uppercase font-mono text-xs" }}
           />
           {appliedDiscount ? (
             <Button 
@@ -208,7 +207,7 @@ function PlanCard({ plan, user, onSuccess, router }: { plan: any, user: any, onS
 
         <Button 
           color="danger" 
-          className="w-full font-bold shadow-md hover:scale-[1.02] transition-transform"
+          className="w-full font-bold shadow-none"
           onPress={() => {
             if (!user) {
               addToast({ title: 'Please login to subscribe', color: 'danger' });
