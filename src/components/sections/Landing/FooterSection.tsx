@@ -1,6 +1,6 @@
 import Link from "next/link";
 import React from "react";
-import { Film } from "lucide-react";
+import BrandLogo from "@/components/ui/other/BrandLogo";
 
 export default function FooterSection() {
   return (
@@ -18,8 +18,7 @@ export default function FooterSection() {
         <div className="grid grid-cols-1 md:grid-cols-4 gap-12 md:gap-8 mb-16">
           <div className="md:col-span-1">
             <div className="flex items-center gap-2 mb-6 text-white">
-              <Film className="w-6 h-6 text-red-600" />
-              <span className="font-bold text-xl tracking-tight">MoviraX</span>
+              <BrandLogo />
             </div>
             <p className="text-zinc-400 text-sm leading-relaxed max-w-xs">
               Your definitive cinematic universe. Track, discover, and organize your favorite films without compromise.
@@ -68,4 +67,5 @@ export default function FooterSection() {
     </footer>
   );
 }
+
 

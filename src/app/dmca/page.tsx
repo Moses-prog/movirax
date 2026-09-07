@@ -1,4 +1,4 @@
-﻿import React from 'react';
+import React from 'react';
 import { Metadata } from 'next';
 
 export const metadata: Metadata = {
@@ -49,11 +49,12 @@ export default function DMCAPage() {
         </section>
 
         <section>
-          <h2 className="text-xl sm:text-2xl font-semibold text-foreground mb-4">3. External Content & APIs</h2>
+          <h2 className="text-xl sm:text-2xl font-semibold text-foreground mb-4">3. External Content, Aggregation & Streaming APIs</h2>
           <p>
-            MoviraX utilizes third-party APIs (such as The Movie Database - TMDB) to display movie metadata, posters, and trailers. 
-            MoviraX does not host this media content on our own servers. If you believe an image or trailer provided by a third-party 
-            API infringes your copyright, we recommend sending your DMCA notice directly to the source API provider (e.g., TMDB or YouTube).
+            MoviraX operates strictly as a search aggregator and indexer. We utilize third-party APIs and external servers to stream and display video content, movie metadata, posters, and trailers. <strong>MoviraX does not host, upload, or store any video files, media, or streaming content on our own servers.</strong> 
+          </p>
+          <p className="mt-4">
+            Because we do not control the external servers or third-party APIs that host this content, if you believe a video stream or image provided by a third-party infringes your copyright, we strongly recommend sending your DMCA takedown notice directly to the source API provider or external hosting server. Upon receiving a valid DMCA notice, we will gladly remove the link or indexed reference to the infringing content from our platform.
           </p>
         </section>
 

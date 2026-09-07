@@ -1,4 +1,4 @@
-﻿import React from 'react';
+import React from 'react';
 import { Metadata } from 'next';
 
 export const metadata: Metadata = {
@@ -16,7 +16,7 @@ export default function TermsPage() {
           <p>
             Welcome to MoviraX. By accessing or using our platform, you agree to be bound by these Terms of Service. 
             Please read them carefully before using our services. MoviraX provides a premium cinematic 
-            tracking, analytics, and collection platform designed for movie enthusiasts.
+            tracking, analytics, and aggregation platform designed for movie enthusiasts. We operate strictly as an indexer and aggregator of third-party streaming APIs and do not host any video files on our own servers.
           </p>
         </section>
 

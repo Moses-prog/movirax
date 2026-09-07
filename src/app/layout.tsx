@@ -17,7 +17,7 @@ import { NuqsAdapter } from "nuqs/adapters/next/app";
 import { Suspense } from "react";
 import PullToRefresh from "@/components/ui/PullToRefresh";
 
-const Disclaimer = dynamic(() => import("@/components/ui/overlay/Disclaimer"));
+const CookieConsent = dynamic(() => import("@/components/ui/overlay/CookieConsent"), { ssr: false });
 const BanWarning = dynamic(() => import("@/components/ui/overlay/BanWarning"));
 
 export const metadata: Metadata = {
@@ -69,7 +69,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
         <Suspense>
           <NuqsAdapter>
             <Providers>
-              {IS_PRODUCTION && <Disclaimer />}
+              <CookieConsent />
               <TopNavbar />
               <Sidebar>
                 {/* Added pb-24 for mobile to ensure content isn't hidden by BottomNavbar */}
