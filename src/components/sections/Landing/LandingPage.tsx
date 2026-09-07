@@ -4,7 +4,7 @@ import { Skeleton } from "@heroui/react";
 import { useEffect, useState, useRef } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { motion, useScroll, useSpring } from "framer-motion";
+import { motion, useScroll, useSpring, useTransform } from "framer-motion";
 import { ListVideo, History, MonitorPlay } from "lucide-react";
 import CommunitySection from "./CommunitySection";
 import TestimonialsSection from "./TestimonialsSection";
