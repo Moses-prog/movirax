@@ -3,7 +3,7 @@
 import React, { useState } from 'react';
 import { useFlutterwave, closePaymentModal } from 'flutterwave-react-v3';
 import { addToast, Input, Button } from '@heroui/react';
-import { Film } from 'lucide-react';
+import { CheckCircle2 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { validatePromoCode } from '@/lib/promotions';
 
@@ -135,97 +135,97 @@ function PlanCard({ plan, user, onSuccess, router }: { plan: any, user: any, onS
       <div className="px-8 pt-10 pb-8 flex-grow flex flex-col z-10 relative">
         <div className="flex flex-col items-start mb-6">
           {isAnnual && (
-             <div className={`${tagBg} text-[10px] font-black uppercase tracking-widest px-3 py-1 rounded-full mb-4 shadow-lg`}>
-               Director's Cut
+             <div className={`${tagBg} text-[10px] font-bold uppercase tracking-wider px-3 py-1 rounded-full mb-4 shadow-lg`}>
+               Best Value
              </div>
           )}
-          <h3 className="text-2xl font-bold uppercase tracking-widest mb-2 text-white">
+          <h3 className="text-2xl font-bold tracking-tight mb-2 text-white">
             {plan.name}
           </h3>
           <div className="flex items-baseline gap-1">
             <span className="text-4xl font-black text-white">
               {plan.currency === 'NGN' ? '₦' : '$'}{finalPrice}
             </span>
-            <span className="text-sm font-medium uppercase text-zinc-400">/{plan.interval}</span>
+            <span className="text-sm font-medium text-zinc-400">/{plan.interval}</span>
           </div>
         </div>
         
-        <ul className="flex flex-col gap-4 mb-8 flex-grow font-medium text-sm tracking-wide text-zinc-300">
+        <ul className="flex flex-col gap-4 mb-8 flex-grow font-medium text-sm text-zinc-300">
           <li className="flex items-center gap-3">
-            <Film size={16} className={themeColor} /> Unlimited Movies
+            <CheckCircle2 size={16} className={themeColor} /> Unlimited Movies & TV Shows
           </li>
           <li className="flex items-center gap-3">
-            <Film size={16} className={themeColor} /> No Commercials
+            <CheckCircle2 size={16} className={themeColor} /> Ad-Free Experience
           </li>
           <li className="flex items-center gap-3">
-            <Film size={16} className={themeColor} /> All Devices
+            <CheckCircle2 size={16} className={themeColor} /> Watch on any device
           </li>
         </ul>
 
-        <div className="bg-black/40 rounded-xl p-4 mb-6 flex flex-col gap-3 text-xs text-zinc-300 border border-white/5 backdrop-blur-md">
+        <div className="bg-black/40 rounded-xl p-4 mb-6 flex flex-col gap-3 text-sm text-zinc-300 border border-white/5 backdrop-blur-md">
           <div className="flex justify-between items-center">
-            <span className="opacity-80">BOX OFFICE</span>
-            <span className="font-bold text-white">{plan.currency === 'NGN' ? '₦' : '$'}{plan.price}</span>
+            <span className="opacity-80">Original Price</span>
+            <span className="font-medium text-white">{plan.currency === 'NGN' ? '₦' : '$'}{plan.price}</span>
           </div>
 
           {hasAdminDiscount && (
             <div className="flex justify-between items-center text-red-400">
-              <span className="opacity-80">STUDIO DISCOUNT</span>
-              <span className="font-bold">-{plan.discount}%</span>
+              <span className="opacity-80">Special Discount</span>
+              <span className="font-medium">-{plan.discount}%</span>
             </div>
           )}
 
           {appliedDiscount && (
             <div className="flex justify-between items-center text-green-400">
-              <span className="opacity-80">PROMO APPLIED</span>
-              <span className="font-bold">-{appliedDiscount}%</span>
+              <span className="opacity-80">Promo Applied</span>
+              <span className="font-medium">-{appliedDiscount}%</span>
             </div>
           )}
 
           <div className="border-t border-white/10 my-1" />
           
           <div className="flex justify-between items-center text-sm">
-            <span className="font-bold text-white">TOTAL DUE</span>
-            <span className="font-black text-white">{plan.currency === 'NGN' ? '₦' : '$'}{finalPrice}</span>
+            <span className="font-medium text-white">Total Due</span>
+            <span className="font-bold text-white">{plan.currency === 'NGN' ? '₦' : '$'}{finalPrice}</span>
           </div>
         </div>
 
         <div className="flex gap-2 mb-6">
           <Input 
-            placeholder="PROMO CODE" 
+            placeholder="Have a promo code?" 
             value={promoCode} 
             onValueChange={setPromoCode}
             size="sm"
             isDisabled={!!appliedDiscount}
-            classNames={{ inputWrapper: "bg-black/40 border border-white/10 text-white font-mono uppercase rounded-lg" }}
+            classNames={{ inputWrapper: "bg-black/40 border border-white/10 text-white uppercase rounded-lg" }}
           />
           {appliedDiscount ? (
             <Button 
               size="sm" 
-              className="bg-zinc-800 text-white font-bold uppercase rounded-lg"
+              className="bg-zinc-800 text-white font-medium rounded-lg"
               onPress={() => {
                 setAppliedDiscount(null);
                 setPromoCode('');
                 addToast({ title: 'Promo code removed', color: 'default' });
               }}
             >
-              DEL
+              Remove
             </Button>
           ) : (
             <Button 
               size="sm" 
-              className="bg-zinc-800 text-white font-bold uppercase rounded-lg"
+              className="bg-zinc-800 text-white font-medium rounded-lg"
               onPress={handleApplyPromo}
               isLoading={checkingPromo}
               isDisabled={!promoCode}
             >
-              ADD
+              Apply
             </Button>
           )}
         </div>
 
         <Button 
-          className={`w-full font-bold text-base h-12 uppercase tracking-wide shadow-xl rounded-xl ${buttonBg}`}
+          className={`w-full font-bold text-base h-12 shadow-xl rounded-xl ${buttonBg}`}
           onPress={() => {
             if (!user) {
               addToast({ title: 'Please login to subscribe', color: 'danger' });
@@ -240,7 +240,7 @@ function PlanCard({ plan, user, onSuccess, router }: { plan: any, user: any, onS
             });
           }}
         >
-          Get Ticket
+          Subscribe Now
         </Button>
       </div>
     </div>
