@@ -81,6 +81,7 @@ const AuthForms: React.FC = () => {
       )}
     >
       <div className="pointer-events-none relative z-50 container mx-auto flex size-full flex-col items-center justify-center p-3">
+        <Brand className="pointer-events-auto mb-6" />
         <Card
           shadow="lg"
           className="border-foreground-200 bg-background/70 dark:bg-background/80 pointer-events-auto w-full max-w-lg border-2 p-1 backdrop-blur-md md:p-3"
