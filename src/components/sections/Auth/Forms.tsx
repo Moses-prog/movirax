@@ -81,22 +81,22 @@ const AuthForms: React.FC = () => {
       )}
     >
       <div className="pointer-events-none relative z-50 container mx-auto flex size-full flex-col items-center justify-center p-3">
-        <Brand className="pointer-events-auto mb-6" />
         <Card
           shadow="lg"
           className="border-foreground-200 bg-background/70 dark:bg-background/80 pointer-events-auto w-full max-w-lg border-2 p-1 backdrop-blur-md md:p-3"
         >
-          <CardHeader className="relative flex items-center justify-center">
+          <CardHeader className="relative flex flex-col items-center justify-center gap-4">
+            <Brand className="pointer-events-auto" />
             {form === "forgot" && (
               <IconButton
                 size="md"
                 variant="light"
                 onClick={() => setForm("login")}
-                className="group motion-preset-focus absolute left-2 data-[hover=true]:bg-transparent"
+                className="group motion-preset-focus absolute left-2 top-1/2 -translate-y-1/2 data-[hover=true]:bg-transparent"
                 icon={<ArrowLeft className="text-4xl transition-transform group-hover:scale-125" />}
               />
             )}
-            </CardHeader>
+          </CardHeader>
           <ScrollShadow hideScrollBar visibility="none">
             <AnimatePresence mode="sync">
               <motion.div
@@ -121,9 +121,6 @@ const AuthForms: React.FC = () => {
             </AnimatePresence>
           </ScrollShadow>
         </Card>
-        <div className="pointer-events-auto mt-6 text-sm text-zinc-400">
-          Staff member? <a href="/admin-login" className="text-white hover:underline transition-all">Switch to Admin Login</a>
-        </div>
       </div>
       <div className="pointer-events-none absolute inset-0 z-10 h-full w-full bg-black/60 backdrop-blur-[2px] dark:bg-black/20" />
       {!isEmpty(IMAGES) && <ThreeDMarquee className="absolute" images={IMAGES} aspect="poster" />}
