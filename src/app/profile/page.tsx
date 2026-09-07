@@ -1,4 +1,4 @@
-﻿'use client';
+'use client';
 
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
@@ -172,7 +172,12 @@ export default function UserProfilePage() {
 
       <div className="grid gap-6 lg:grid-cols-3">
         <div className="col-span-1 rounded-2xl border border-white/5 bg-background/50 p-6 backdrop-blur-xl">
-          <h3 className="mb-4 text-[15px] font-bold text-foreground">Payment Method</h3>
+          <div className="mb-4 flex items-center justify-between">
+            <h3 className="text-[15px] font-bold text-foreground">Payment Method</h3>
+            <Button as={Link} href="/pricing" size="sm" variant="light" className="text-[12px] font-bold h-8">
+              {paymentMethodStr ? 'Update' : 'Add'}
+            </Button>
+          </div>
           {paymentMethodStr ? (
             <div className="flex items-center gap-4 rounded-xl border border-white/5 bg-white/5 p-4">
               <div className="flex h-10 w-auto px-4 items-center justify-center rounded bg-white/10 text-xl font-bold italic text-foreground uppercase tracking-widest">
@@ -184,8 +189,11 @@ export default function UserProfilePage() {
               </div>
             </div>
           ) : (
-            <div className="flex items-center justify-center rounded-xl border border-dashed border-white/10 bg-white/5 p-6 text-center text-sm font-medium text-muted-foreground">
+            <div className="flex flex-col gap-3 items-center justify-center rounded-xl border border-dashed border-white/10 bg-white/5 p-6 text-center text-sm font-medium text-muted-foreground">
               No payment method on file
+              <Button as={Link} href="/pricing" size="sm" color="default" variant="flat" className="font-bold shadow-sm">
+                Add Card
+              </Button>
             </div>
           )}
         </div>

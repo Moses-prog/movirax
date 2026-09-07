@@ -80,8 +80,8 @@ const TopNavbar = () => {
       isBlurred={false}
       position="sticky"
       maxWidth="full"
-      classNames={{ wrapper: "px-4 md:px-8 max-w-full" }}
-      className={cn("w-full max-w-full h-16 bg-transparent z-50 border-b border-transparent transition-colors overflow-x-hidden", {
+      classNames={{ wrapper: "px-4 md:px-8 max-w-full w-full" }}
+      className={cn("w-full h-16 bg-transparent z-50 border-b border-transparent transition-colors overflow-hidden", {
         "bg-background/80 backdrop-blur-md border-white/10": show,
       })}
     >
