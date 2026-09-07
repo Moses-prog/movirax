@@ -10,6 +10,7 @@ import CommunitySection from "./CommunitySection";
 import TestimonialsSection from "./TestimonialsSection";
 import PricingSection from "./PricingSection";
 import FAQSection from "./FAQSection";
+import FooterSection from "./FooterSection";
 
 interface Movie {
   id: number;
@@ -106,10 +107,10 @@ export default function LandingPage() {
   };
 
   return (
-    <div className="relative w-full min-h-screen overflow-x-hidden bg-gray-50 dark:bg-[#050505] text-gray-900 dark:text-white selection:bg-red-500/30 transition-colors duration-300">
+    <div className="relative w-full min-h-screen overflow-x-hidden bg-background text-foreground transition-colors duration-300">
       {/* Scroll Progress Bar */}
       <motion.div
-        className="fixed top-0 left-0 right-0 h-1 bg-gradient-to-r from-red-600 to-orange-500 origin-left z-50"
+        className="fixed top-0 left-0 right-0 h-1 bg-red-600 origin-left z-50"
         style={{ scaleX }}
       />
 
@@ -124,17 +125,16 @@ export default function LandingPage() {
         >
           {/* Main Hero Cell (Spans 4 cols, 2 rows) */}
           <motion.div variants={bentoVariant} className="md:col-span-4 xl:col-span-4 md:row-span-2 p-4 lg:p-8 flex flex-col justify-center relative group">
-            <div className="absolute top-0 right-0 w-96 h-96 bg-red-600/20 rounded-full blur-[120px] -translate-y-1/2 translate-x-1/3 pointer-events-none" />
             <div className="relative z-10 max-w-2xl">
               <div className="inline-flex items-center space-x-2 mb-8">
-                <span className="w-2 h-2 rounded-full bg-red-500 animate-pulse" />
-                <span className="text-xs font-semibold tracking-wider uppercase text-gray-600 dark:text-gray-300">Movira X</span>
+                <span className="w-2 h-2 rounded-full bg-red-600 animate-pulse" />
+                <span className="text-xs font-semibold tracking-wider uppercase text-muted-foreground">Movira X</span>
               </div>
-              <h1 className="text-5xl lg:text-7xl font-semibold tracking-tight leading-[1.1] mb-6 text-gray-900 dark:text-white">
+              <h1 className="text-5xl lg:text-7xl font-bold tracking-tight leading-[1.1] mb-6 text-foreground">
                 Your cinematic universe, <br className="hidden md:block" />
-                <span className="text-transparent bg-clip-text bg-gradient-to-r from-red-500 to-red-300">curated perfectly.</span>
+                curated perfectly.
               </h1>
-              <p className="text-lg lg:text-xl text-gray-600 dark:text-gray-400 mb-10 max-w-lg">
+              <p className="text-lg lg:text-xl text-muted-foreground mb-10 max-w-lg">
                 Track watched films, save favorites, and build your personal collection within an uncompromisingly clean ecosystem.
               </p>
               <div className="flex flex-col sm:flex-row gap-4">
@@ -346,17 +346,7 @@ export default function LandingPage() {
       <PricingSection />
       <FAQSection />
 
-      <div className="relative z-10 px-4 lg:px-8 max-w-[1400px] mx-auto mb-12">
-        {/* Minimal Footer */}
-        <footer className="pt-8 border-t border-gray-200 dark:border-white/5 flex flex-col md:flex-row justify-between items-center text-sm text-gray-500 transition-colors">
-          <p>&copy; 2026 Movira X. All rights reserved.</p>
-          <div className="flex space-x-6 mt-4 md:mt-0">
-            <a href="#" className="hover:text-gray-900 dark:hover:text-white transition-colors">Privacy</a>
-            <a href="#" className="hover:text-gray-900 dark:hover:text-white transition-colors">Terms</a>
-            <a href="#" className="hover:text-gray-900 dark:hover:text-white transition-colors">Contact</a>
-          </div>
-        </footer>
-      </div>
+      <FooterSection />
     </div>
   );
 }
