@@ -125,10 +125,10 @@ export default function LandingPage() {
           variants={staggerContainer}
           className="grid grid-cols-1 md:grid-cols-4 xl:grid-cols-6 gap-4 lg:gap-6 auto-rows-[auto] md:auto-rows-[260px]"
         >
-          {/* Main Hero Cell (Spans 4 cols, 2 rows) */}
-          <motion.div variants={bentoVariant} className="md:col-span-4 xl:col-span-4 md:row-span-2 p-8 lg:p-12 flex flex-col justify-center relative overflow-hidden group bg-zinc-900 border border-white/10 rounded-[2.5rem]">
-            {/* SVG Movie Ribbon Texture */}
-            <FilmStripPattern colorClass="text-red-600" bgClass="stroke-zinc-900" className="opacity-30 scale-[1.2]" />
+          {/* Main Hero Cell (Spans 4 cols, 2 rows) - Transparent floating text, no card */}
+          <motion.div variants={bentoVariant} className="md:col-span-4 xl:col-span-4 md:row-span-2 p-4 lg:p-8 flex flex-col justify-center relative group">
+            {/* SVG Movie Ribbon Texture - Anchored broadly behind the hero area */}
+            <FilmStripPattern colorClass="text-red-600" bgClass="stroke-background" className="opacity-[0.08] scale-[2.5] -translate-y-20 origin-top-left" />
             
             <div className="relative z-10 max-w-2xl">
               <motion.div variants={bentoVariant} className="inline-flex items-center space-x-2 mb-8">
