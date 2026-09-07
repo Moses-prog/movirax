@@ -1,4 +1,4 @@
-﻿'use client';
+'use client';
 
 import React, { useState } from 'react';
 import { useFlutterwave, closePaymentModal } from 'flutterwave-react-v3';
@@ -115,11 +115,6 @@ function PlanCard({ plan, user, onSuccess, router }: { plan: any, user: any, onS
           {plan.name} <Crown size={18} className="text-yellow-500" />
         </h3>
         <div className="flex flex-col items-start gap-0 mt-2">
-          {hasAnyDiscount && (
-            <span className="text-sm font-bold text-muted-foreground line-through opacity-70">
-              {plan.currency === 'NGN' ? '₦' : '$'}{plan.price}
-            </span>
-          )}
           <div className="flex items-baseline gap-1">
             <span className="text-3xl font-black text-foreground">
               {plan.currency === 'NGN' ? '₦' : '$'}{finalPrice}
@@ -132,7 +127,7 @@ function PlanCard({ plan, user, onSuccess, router }: { plan: any, user: any, onS
       <Divider className="bg-white/5" />
       
       <CardBody className="px-6 py-6 flex-grow flex flex-col">
-        <ul className="flex flex-col gap-4 mb-8 flex-grow">
+        <ul className="flex flex-col gap-4 mb-6 flex-grow">
           <li className="flex items-center gap-3 text-sm text-foreground">
             <CheckCircle2 size={16} className="text-danger" /> Unlimited Movies & TV Shows
           </li>
@@ -144,24 +139,71 @@ function PlanCard({ plan, user, onSuccess, router }: { plan: any, user: any, onS
           </li>
         </ul>
 
+        <div className="bg-white/5 rounded-xl p-4 mb-6 flex flex-col gap-3 border border-white/10 shadow-inner">
+          <div className="flex justify-between items-center text-sm">
+            <span className="text-muted-foreground">Original Price</span>
+            <span className="font-medium">{plan.currency === 'NGN' ? '₦' : '$'}{plan.price}</span>
+          </div>
+
+          {hasAdminDiscount && (
+            <div className="flex justify-between items-center text-sm">
+              <span className="text-danger flex items-center gap-1"><Tag size={12}/> Special Discount</span>
+              <span className="font-medium text-danger">-{plan.discount}%</span>
+            </div>
+          )}
+
+          {appliedDiscount && (
+            <div className="flex justify-between items-center text-sm">
+              <span className="text-success flex items-center gap-1"><Tag size={12}/> Promo Applied</span>
+              <span className="font-medium text-success">-{appliedDiscount}%</span>
+            </div>
+          )}
+
+          <Divider className="my-1 bg-white/10" />
+          
+          <div className="flex justify-between items-center">
+            <span className="font-bold text-foreground">Total Due</span>
+            <span className="font-black text-lg text-foreground">{plan.currency === 'NGN' ? '₦' : '$'}{finalPrice}</span>
+          </div>
+        </div>
+
         <div className="flex gap-2 mb-6">
           <Input 
-            placeholder="Promo code" 
+            placeholder="Have a promo code?" 
             value={promoCode} 
             onValueChange={setPromoCode}
             size="sm"
             startContent={<Tag size={14} className="text-muted-foreground" />}
-            classNames={{ inputWrapper: "bg-white/5 border border-white/10" }}
+            isDisabled={!!appliedDiscount}
+            classNames={{ inputWrapper: "bg-white/5 border border-white/10 focus-within:border-danger/50 uppercase font-mono text-xs" }}
           />
-          <Button 
-            size="sm" 
-            variant="flat" 
-            onPress={handleApplyPromo}
-            isLoading={checkingPromo}
-            isDisabled={!promoCode || !!appliedDiscount}
-          >
-            Apply
-          </Button>
+          {appliedDiscount ? (
+            <Button 
+              size="sm" 
+              color="danger"
+              variant="flat"
+              onPress={() => {
+                setAppliedDiscount(null);
+                setPromoCode('');
+                addToast({ title: 'Promo code removed', color: 'default' });
+              }}
+              className="font-bold"
+            >
+              Remove
+            </Button>
+          ) : (
+            <Button 
+              size="sm" 
+              variant="flat"
+              color="default"
+              onPress={handleApplyPromo}
+              isLoading={checkingPromo}
+              isDisabled={!promoCode}
+              className="font-bold"
+            >
+              Apply
+            </Button>
+          )}
         </div>
 
         <Button 
