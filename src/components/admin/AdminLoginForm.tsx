@@ -285,14 +285,13 @@ export default function AdminLoginForm() {
             </button>
           </form>
 
-                                        <div style={{ marginTop: '1.5rem', textAlign: 'center', fontSize: '13px' }}>
-            <a href="/auth" style={{ color: 'var(--admin-muted)', textDecoration: 'none', fontWeight: '500' }}>? Back to User Login</a>
+                    <div style={{ marginTop: '1.5rem', textAlign: 'center', fontSize: '13px' }}>
+            <span style={{ color: 'var(--admin-muted)' }}>Not a staff member? </span>
+            <a href="/auth" style={{ color: 'white', textDecoration: 'none', fontWeight: 'bold' }}>Switch to User Login</a>
           </div>
         </div>
       </section>
     </main>
   );
 }
-
-
 

@@ -238,15 +238,6 @@ const AuthLoginForm: React.FC<AuthFormProps> = ({ setForm }) => {
               }
             >
               Continue with Phone
-                        </Button>
-
-            <Button
-              variant="flat"
-              className="w-full font-medium text-default-500 bg-default-100"
-              isDisabled={isSubmitting || isVerifying}
-              onPress={() => router.push("/admin-login")}
-            >
-              Admin & Staff Login
             </Button>
           </div>
 
