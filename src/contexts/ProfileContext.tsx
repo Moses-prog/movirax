@@ -102,7 +102,8 @@ export function ProfileProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     if (isLoading) return;
     
-    const isPublicRoute = pathname.startsWith('/auth') || pathname.startsWith('/admin') || pathname === '/';
+    const publicPaths = ['/', '/pricing', '/terms', '/privacy', '/refunds', '/cookies', '/dmca', '/support', '/about'];
+    const isPublicRoute = pathname.startsWith('/auth') || pathname.startsWith('/admin') || publicPaths.includes(pathname);
     
     // If multiple profiles is enabled, and we are not on the profiles selection screen, and no profile is active, redirect to /profiles
     if (
