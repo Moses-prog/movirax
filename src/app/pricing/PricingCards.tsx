@@ -7,13 +7,33 @@ import { Film } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { validatePromoCode } from '@/lib/promotions';
 
+const FilmStripPattern = ({ colorClass, bgClass }: { colorClass: string, bgClass: string }) => (
+  <svg 
+    className={`absolute inset-0 w-full h-full pointer-events-none z-0 ${colorClass}`} 
+    viewBox="0 0 400 400" 
+    preserveAspectRatio="xMidYMid slice"
+    xmlns="http://www.w3.org/2000/svg"
+  >
+    <g transform="rotate(-20 200 200) translate(-50, -50)" opacity="0.15">
+      <path d="M-200,150 Q200,0 600,150 T1000,150" fill="none" stroke="currentColor" strokeWidth="80" />
+      <path d="M-200,115 Q200,-35 600,115 T1000,115" fill="none" className={bgClass} strokeWidth="12" strokeDasharray="10 15" />
+      <path d="M-200,185 Q200,35 600,185 T1000,185" fill="none" className={bgClass} strokeWidth="12" strokeDasharray="10 15" />
+    </g>
+
+    <g transform="rotate(35 200 200) translate(0, 100)" opacity="0.1">
+      <path d="M-200,250 Q200,350 600,250 T1000,250" fill="none" stroke="currentColor" strokeWidth="60" />
+      <path d="M-200,225 Q200,325 600,225 T1000,225" fill="none" className={bgClass} strokeWidth="8" strokeDasharray="8 12" />
+      <path d="M-200,275 Q200,375 600,275 T1000,275" fill="none" className={bgClass} strokeWidth="8" strokeDasharray="8 12" />
+    </g>
+  </svg>
+);
+
 export default function PricingCards({ plans, user }: { plans: any[], user: any }) {
   const router = useRouter();
 
   const handlePaymentSuccess = async (response: any, plan: any) => {
     addToast({ title: 'Payment Processing...', color: 'primary' });
     
-    // Call our backend API to verify the payment
     try {
       const res = await fetch('/api/payments/verify', {
         method: 'POST',
@@ -43,7 +63,7 @@ export default function PricingCards({ plans, user }: { plans: any[], user: any 
   }
 
   return (
-    <div className="grid gap-10 md:grid-cols-2 max-w-4xl mx-auto px-4">
+    <div className="grid gap-8 md:grid-cols-2 max-w-4xl mx-auto px-4">
       {plans.map((plan) => (
         <PlanCard key={plan.id} plan={plan} user={user} onSuccess={handlePaymentSuccess} router={router} />
       ))}
@@ -56,7 +76,6 @@ function PlanCard({ plan, user, onSuccess, router }: { plan: any, user: any, onS
   const [appliedDiscount, setAppliedDiscount] = useState<number | null>(null);
   const [checkingPromo, setCheckingPromo] = useState(false);
 
-  // Calculate final discounted price
   const hasAdminDiscount = plan.discount && plan.discount > 0;
   
   let baseAmount = plan.price;
@@ -103,90 +122,74 @@ function PlanCard({ plan, user, onSuccess, router }: { plan: any, user: any, onS
   const handleFlutterPayment = useFlutterwave(config);
 
   const isAnnual = plan.interval === 'annual';
-  const themeColor = isAnnual ? 'bg-[#ffcc00]' : 'bg-[#e50914]';
-  const textColor = isAnnual ? 'text-black' : 'text-white';
-  const mutedTextColor = isAnnual ? 'text-black/70' : 'text-white/70';
-  const inputBg = isAnnual ? 'bg-black/10' : 'bg-black/20';
+  const themeColor = isAnnual ? 'text-yellow-500' : 'text-red-500';
+  const buttonBg = isAnnual ? 'bg-yellow-500 text-black hover:bg-yellow-400' : 'bg-red-600 text-white hover:bg-red-500';
+  const tagBg = isAnnual ? 'bg-yellow-500 text-black' : 'bg-red-600 text-white';
 
   return (
-    <div className={`relative overflow-hidden flex flex-col h-full rounded-sm shadow-2xl ${themeColor} transform transition-transform hover:scale-[1.02]`}>
+    <div className={`relative overflow-hidden flex flex-col h-full rounded-2xl shadow-xl bg-zinc-900 border border-white/10 transition-transform hover:scale-[1.02]`}>
       
-      {/* Left Film Edge */}
-      <div className="absolute left-0 top-0 bottom-0 w-8 bg-[#111] flex flex-col items-center py-2 z-10 shadow-[2px_0_10px_rgba(0,0,0,0.5)]">
-        {Array.from({ length: 50 }).map((_, i) => (
-          <div key={i} className="w-4 h-3 bg-white/10 rounded-[2px] mb-2 flex-shrink-0 shadow-inner" />
-        ))}
-      </div>
-      
-      {/* Right Film Edge */}
-      <div className="absolute right-0 top-0 bottom-0 w-8 bg-[#111] flex flex-col items-center py-2 z-10 shadow-[-2px_0_10px_rgba(0,0,0,0.5)]">
-        {Array.from({ length: 50 }).map((_, i) => (
-          <div key={i} className="w-4 h-3 bg-white/10 rounded-[2px] mb-2 flex-shrink-0 shadow-inner" />
-        ))}
-      </div>
+      {/* Cool Film Ribbon SVG Texture */}
+      <FilmStripPattern colorClass={themeColor} bgClass="stroke-zinc-900" />
 
-      <div className={`px-12 pt-10 pb-8 flex-grow flex flex-col z-0 ${textColor}`}>
-        {/* Header */}
-        <div className="flex flex-col items-center text-center mb-6">
+      <div className="px-8 pt-10 pb-8 flex-grow flex flex-col z-10 relative">
+        <div className="flex flex-col items-start mb-6">
           {isAnnual && (
-             <div className="bg-black text-[#ffcc00] text-[10px] font-black uppercase tracking-widest px-4 py-1 rounded-sm mb-4">
+             <div className={`${tagBg} text-[10px] font-black uppercase tracking-widest px-3 py-1 rounded-full mb-4 shadow-lg`}>
                Director's Cut
              </div>
           )}
-          <h3 className="text-3xl font-black uppercase tracking-widest mb-2 font-mono drop-shadow-md">
+          <h3 className="text-2xl font-bold uppercase tracking-widest mb-2 text-white">
             {plan.name}
           </h3>
-          <div className="flex items-baseline justify-center gap-1 drop-shadow-md">
-            <span className="text-5xl font-black font-mono">
+          <div className="flex items-baseline gap-1">
+            <span className="text-4xl font-black text-white">
               {plan.currency === 'NGN' ? '₦' : '$'}{finalPrice}
             </span>
-            <span className={`text-sm font-bold uppercase ${mutedTextColor}`}>/{plan.interval}</span>
+            <span className="text-sm font-medium uppercase text-zinc-400">/{plan.interval}</span>
           </div>
         </div>
         
-        {/* Features */}
-        <ul className={`flex flex-col gap-4 mb-8 flex-grow font-bold uppercase text-[12px] tracking-wide ${mutedTextColor}`}>
-          <li className="flex items-center justify-center gap-2">
-            <Film size={16} className={textColor} /> Unlimited Movies
+        <ul className="flex flex-col gap-4 mb-8 flex-grow font-medium text-sm tracking-wide text-zinc-300">
+          <li className="flex items-center gap-3">
+            <Film size={16} className={themeColor} /> Unlimited Movies
           </li>
-          <li className="flex items-center justify-center gap-2">
-            <Film size={16} className={textColor} /> No Commercials
+          <li className="flex items-center gap-3">
+            <Film size={16} className={themeColor} /> No Commercials
           </li>
-          <li className="flex items-center justify-center gap-2">
-            <Film size={16} className={textColor} /> All Devices
+          <li className="flex items-center gap-3">
+            <Film size={16} className={themeColor} /> All Devices
           </li>
         </ul>
 
-        {/* Receipt / Breakdown */}
-        <div className={`${inputBg} rounded-sm p-4 mb-6 flex flex-col gap-3 font-mono text-xs ${textColor}`}>
+        <div className="bg-black/40 rounded-xl p-4 mb-6 flex flex-col gap-3 text-xs text-zinc-300 border border-white/5 backdrop-blur-md">
           <div className="flex justify-between items-center">
             <span className="opacity-80">BOX OFFICE</span>
-            <span className="font-bold">{plan.currency === 'NGN' ? '₦' : '$'}{plan.price}</span>
+            <span className="font-bold text-white">{plan.currency === 'NGN' ? '₦' : '$'}{plan.price}</span>
           </div>
 
           {hasAdminDiscount && (
-            <div className="flex justify-between items-center">
+            <div className="flex justify-between items-center text-red-400">
               <span className="opacity-80">STUDIO DISCOUNT</span>
               <span className="font-bold">-{plan.discount}%</span>
             </div>
           )}
 
           {appliedDiscount && (
-            <div className="flex justify-between items-center">
+            <div className="flex justify-between items-center text-green-400">
               <span className="opacity-80">PROMO APPLIED</span>
               <span className="font-bold">-{appliedDiscount}%</span>
             </div>
           )}
 
-          <div className="border-t border-current opacity-20 my-1" />
+          <div className="border-t border-white/10 my-1" />
           
           <div className="flex justify-between items-center text-sm">
-            <span className="font-bold">TOTAL DUE</span>
-            <span className="font-black">{plan.currency === 'NGN' ? '₦' : '$'}{finalPrice}</span>
+            <span className="font-bold text-white">TOTAL DUE</span>
+            <span className="font-black text-white">{plan.currency === 'NGN' ? '₦' : '$'}{finalPrice}</span>
           </div>
         </div>
 
-        {/* Promo */}
         <div className="flex gap-2 mb-6">
           <Input 
             placeholder="PROMO CODE" 
@@ -194,12 +197,12 @@ function PlanCard({ plan, user, onSuccess, router }: { plan: any, user: any, onS
             onValueChange={setPromoCode}
             size="sm"
             isDisabled={!!appliedDiscount}
-            classNames={{ inputWrapper: `${inputBg} border-transparent ${textColor} font-mono uppercase rounded-sm` }}
+            classNames={{ inputWrapper: "bg-black/40 border border-white/10 text-white font-mono uppercase rounded-lg" }}
           />
           {appliedDiscount ? (
             <Button 
               size="sm" 
-              className="bg-black text-white font-bold uppercase rounded-sm"
+              className="bg-zinc-800 text-white font-bold uppercase rounded-lg"
               onPress={() => {
                 setAppliedDiscount(null);
                 setPromoCode('');
@@ -211,7 +214,7 @@ function PlanCard({ plan, user, onSuccess, router }: { plan: any, user: any, onS
           ) : (
             <Button 
               size="sm" 
-              className="bg-black text-white font-bold uppercase rounded-sm"
+              className="bg-zinc-800 text-white font-bold uppercase rounded-lg"
               onPress={handleApplyPromo}
               isLoading={checkingPromo}
               isDisabled={!promoCode}
@@ -222,7 +225,7 @@ function PlanCard({ plan, user, onSuccess, router }: { plan: any, user: any, onS
         </div>
 
         <Button 
-          className="w-full font-black text-lg h-14 bg-black text-white uppercase tracking-widest shadow-[0_10px_20px_rgba(0,0,0,0.3)] hover:scale-105 transition-transform rounded-sm"
+          className={`w-full font-bold text-base h-12 uppercase tracking-wide shadow-xl rounded-xl ${buttonBg}`}
           onPress={() => {
             if (!user) {
               addToast({ title: 'Please login to subscribe', color: 'danger' });
