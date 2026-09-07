@@ -152,7 +152,7 @@ export default function LandingPage() {
                     Sign In
                   </button>
                 </Link>
-              </div>
+              </motion.div>
             </div>
           </motion.div>
 
