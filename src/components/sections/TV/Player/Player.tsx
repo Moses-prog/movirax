@@ -5,7 +5,7 @@ import { Card, Skeleton } from "@heroui/react";
 import { useDisclosure, useDocumentTitle, useIdle, useLocalStorage } from "@mantine/hooks";
 import dynamic from "next/dynamic";
 import { parseAsInteger, useQueryState } from "nuqs";
-import { memo, useMemo } from "react";
+import { memo, useMemo, useEffect } from "react";
 import { Episode, TvShowDetails } from "tmdb-ts";
 import useBreakpoints from "@/hooks/useBreakpoints";
 import { ADS_WARNING_STORAGE_KEY, SpacingClasses } from "@/utils/constants";
@@ -30,6 +30,65 @@ export interface TvShowPlayerProps {
   defaultServer?: number;
 }
 
+
+// -----------------------------------------------------------------
+// AD BLOCKER LOGIC (REFINED FOR MOBILE COMPATIBILITY)
+// -----------------------------------------------------------------
+function installAdBlocker() {
+  if (typeof window === "undefined" || (window as any).__adBlockInstalled) return;
+  (window as any).__adBlockInstalled = true;
+
+  const ownOrigin = window.location.origin;
+  const isSafe = (url: string) =>
+    !url ||
+    url.startsWith(ownOrigin) ||
+    url.startsWith("/") ||
+    url.startsWith("#") ||
+    url.startsWith("blob:") ||
+    url === "about:blank";
+
+  // 1. Permanent Override of Window Triggers
+  window.open = () => null;
+  window.alert = () => null;
+
+  // 2. Link Interception (Capture Phase)
+  document.addEventListener("click", (e) => {
+    const anchor = (e.target as Element)?.closest("a");
+    if (!anchor) return;
+    const href = anchor.getAttribute("href") ?? "";
+    const target = anchor.getAttribute("target") ?? "";
+    
+    if (!isSafe(href) && ["_blank", "_top", "_parent"].includes(target)) {
+      e.preventDefault();
+      e.stopImmediatePropagation();
+    }
+  }, true);
+
+  // 3. Location Proxy (Detection Avoidance)
+  try {
+    const realLocation = window.location;
+    const proxy = new Proxy(realLocation, {
+      set(target, prop, value) {
+        if (prop === "href" && !isSafe(String(value))) return true;
+        (target as any)[prop] = value;
+        return true;
+      },
+      get(target, prop) {
+        const val = (target as any)[prop];
+        if (typeof val === "function") {
+          return (...args: any[]) => {
+            if (["assign", "replace"].includes(prop as string) && !isSafe(args[0])) return;
+            return val.apply(target, args);
+          };
+        }
+        return val;
+      },
+    });
+
+    Object.defineProperty(window, "location", { get: () => proxy, configurable: true });
+  } catch (e) { /* Silently fail if browser restricts location redefine */ }
+}
+
 const TvShowPlayer: React.FC<TvShowPlayerProps> = ({
   tv,
   id,
@@ -47,6 +106,10 @@ const TvShowPlayer: React.FC<TvShowPlayerProps> = ({
   const { mobile } = useBreakpoints();
   const players = getTvShowPlayers(id, episode.season_number, episode.episode_number, startAt);
   const idle = useIdle(3000);
+
+  useEffect(() => {
+    installAdBlocker();
+  }, []);
   const [sourceOpened, sourceHandlers] = useDisclosure(false);
   const [episodeOpened, episodeHandlers] = useDisclosure(false);
   const [seasonOpened, seasonHandlers] = useDisclosure(false);
