@@ -79,8 +79,8 @@ const UserProfileButton: React.FC = () => {
   };
 
   return (
-    <Dropdown showArrow className="w-10">
-      <DropdownTrigger className="w-10">{ProfileButton}</DropdownTrigger>
+    <Dropdown showArrow>
+      <DropdownTrigger>{ProfileButton}</DropdownTrigger>
       <DropdownMenu
         aria-label="User profile dropdown"
         variant="flat"
@@ -131,5 +131,6 @@ const UserProfileButton: React.FC = () => {
 };
 
 export default UserProfileButton;
+
 
 
