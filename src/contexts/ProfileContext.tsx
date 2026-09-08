@@ -82,6 +82,17 @@ export function ProfileProvider({ children }: { children: React.ReactNode }) {
         const profilesJson = await profilesRes.json();
         if (profilesJson.success) {
           setProfiles(profilesJson.data);
+          
+          setActiveProfileState(current => {
+            if (current) {
+              const updated = profilesJson.data.find((p: SubProfile) => p.id === current.id);
+              if (updated) {
+                Cookies.set('movira_active_profile', updated.id, { expires: 365 });
+                return updated;
+              }
+            }
+            return current;
+          });
         }
       }
     } catch (e) {
@@ -138,3 +149,4 @@ export function useProfile() {
   }
   return context;
 }
+

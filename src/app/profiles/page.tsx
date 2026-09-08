@@ -3,7 +3,7 @@
 import React, { useState } from 'react';
 import { useProfile } from '@/contexts/ProfileContext';
 import { useRouter } from 'next/navigation';
-import { Button, Modal, ModalContent, ModalHeader, ModalBody, ModalFooter, useDisclosure, Input } from '@heroui/react';
+import { Button, Modal, ModalContent, ModalHeader, ModalBody, ModalFooter, useDisclosure, Input, addToast } from '@heroui/react';
 import { Switch } from '@heroui/switch';
 import { Plus, Edit2, CheckCircle2, AlertCircle, Image as ImageIcon } from 'lucide-react';
 
@@ -79,11 +79,14 @@ export default function ProfilesPage() {
           newProfile: { name: newName, avatar: selectedAvatar, isKids }
         })
       });
-      if (res.ok) {
+            if (res.ok) {
         await refreshProfiles();
         setNewName('');
         setIsKids(false);
         onClose();
+        addToast({ title: 'Profile added successfully', color: 'success' });
+      } else {
+        addToast({ title: 'Failed to add profile', color: 'danger' });
       }
     } catch (e) {
       console.error(e);
@@ -102,9 +105,12 @@ export default function ProfilesPage() {
           updates: { name: editName, isKids: editIsKids, avatar: editAvatar }
         })
       });
-      if (res.ok) {
+            if (res.ok) {
         await refreshProfiles();
         onClose();
+        addToast({ title: 'Profile saved successfully', color: 'success' });
+      } else {
+        addToast({ title: 'Failed to save profile', color: 'danger' });
       }
     } catch (e) {
       console.error(e);
@@ -124,7 +130,7 @@ export default function ProfilesPage() {
       const res = await fetch('/api/profiles', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
+                body: JSON.stringify({
           action: 'delete',
           profileId: editingProfile.id
         })
@@ -132,6 +138,9 @@ export default function ProfilesPage() {
       if (res.ok) {
         await refreshProfiles();
         onClose();
+        addToast({ title: 'Profile deleted successfully', color: 'success' });
+      } else {
+        addToast({ title: 'Failed to delete profile', color: 'danger' });
       }
     } catch (e) {
       console.error(e);
@@ -306,6 +315,8 @@ export default function ProfilesPage() {
     </div>
   );
 }
+
+
 
 
 
