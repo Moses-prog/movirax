@@ -2,6 +2,7 @@
 
 import { tmdb } from "@/api/tmdb";
 import { getMovieLastPosition } from "@/actions/histories";
+import { fetchServerSettings } from "@/actions/settings";
 import MoviePlayer from "@/components/sections/Movie/Player/Player";
 import { Params } from "@/types";
 import { isEmpty } from "@/utils/helpers";
@@ -23,6 +24,11 @@ const MoviePlayerPage: NextPage<Params<{ id: number }>> = ({ params }) => {
     queryKey: ["movie-player-detail", id],
   });
 
+  const { data: serverSettings, isPending: isPendingSettings } = useQuery({
+    queryFn: () => fetchServerSettings(),
+    queryKey: ["server-settings"],
+  });
+
   const { data: startAtResponse, isPending: isPendingStartAt } = useQuery({
     queryFn: () => getMovieLastPosition(id, "movie"),
     queryKey: ["movie-player-start-at", id],
@@ -31,7 +37,7 @@ const MoviePlayerPage: NextPage<Params<{ id: number }>> = ({ params }) => {
   // Extract the position from ActionResponse
   const startAt = (startAtResponse as any) || undefined;
 
-  if (isPending || isPendingStartAt) {
+  if (isPending || isPendingStartAt || isPendingSettings) {
     return (
       <div className="w-full h-screen flex items-center justify-center">
         <Spinner size="lg" variant="simple" />
@@ -43,7 +49,7 @@ const MoviePlayerPage: NextPage<Params<{ id: number }>> = ({ params }) => {
 
   return (
     <div className="w-full h-screen bg-black flex items-center justify-center overflow-hidden">
-      <MoviePlayer movie={movie} startAt={startAt} />
+      <MoviePlayer movie={movie} startAt={startAt} defaultServer={serverSettings?.defaultMovie} />
     </div>
   );
 };

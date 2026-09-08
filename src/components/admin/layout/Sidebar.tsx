@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import {
   LayoutDashboard,
+  Server,
   Users,
   CreditCard,
   DollarSign,
@@ -32,6 +33,7 @@ export function Sidebar({ isOpen, onToggle, unreadSupportCount = 0 }: SidebarPro
     { label: 'Users', href: '/admin/users', Icon: Users },
     { label: 'Subscriptions', href: '/admin/subscriptions', Icon: CreditCard },
     { label: 'Pricing', href: '/admin/pricing', Icon: DollarSign },
+    { label: 'Servers', href: '/admin/servers', Icon: Server },
     { label: 'Features', href: '/admin/features', Icon: Zap },
     { label: 'Support Tickets', href: '/admin/tickets', Icon: Ticket },
     { label: 'Analytics', href: '/admin/analytics', Icon: BarChart3 },
@@ -149,3 +151,4 @@ export function Sidebar({ isOpen, onToggle, unreadSupportCount = 0 }: SidebarPro
     </nav>
   );
 }
+

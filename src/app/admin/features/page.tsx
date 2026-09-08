@@ -52,8 +52,9 @@ export default function FeaturesPage() {
   };
 
   const filteredFeatures = features.filter(f => 
-    f.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    f.description.toLowerCase().includes(searchQuery.toLowerCase())
+    !f.id.startsWith('sys_') &&
+    (f.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+     f.description.toLowerCase().includes(searchQuery.toLowerCase()))
   );
 
   const toggleStatus = async (id: string, field: 'enabled' | 'free_tier' | 'pro_tier') => {

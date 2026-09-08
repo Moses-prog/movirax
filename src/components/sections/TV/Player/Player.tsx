@@ -27,6 +27,7 @@ export interface TvShowPlayerProps {
   nextEpisodeNumber: number | null;
   prevEpisodeNumber: number | null;
   startAt?: number;
+  defaultServer?: number;
 }
 
 const TvShowPlayer: React.FC<TvShowPlayerProps> = ({
@@ -35,6 +36,7 @@ const TvShowPlayer: React.FC<TvShowPlayerProps> = ({
   episode,
   episodes,
   startAt,
+  defaultServer = 0,
   ...props
 }) => {
   const [seen] = useLocalStorage<boolean>({
@@ -50,7 +52,7 @@ const TvShowPlayer: React.FC<TvShowPlayerProps> = ({
   const [seasonOpened, seasonHandlers] = useDisclosure(false);
   const [selectedSource, setSelectedSource] = useQueryState<number>(
     "src",
-    parseAsInteger.withDefault(0),
+    parseAsInteger.withDefault(defaultServer),
   );
 
   usePlayerEvents({

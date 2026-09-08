@@ -9,6 +9,7 @@ import { use } from "react";
 import dynamic from "next/dynamic";
 import { NextPage } from "next";
 import { getTvShowLastPosition } from "@/actions/histories";
+import { fetchServerSettings } from "@/actions/settings";
 const TvShowPlayer = dynamic(() => import("@/components/sections/TV/Player/Player"));
 
 const TvShowPlayerPage: NextPage<Params<{ id: number; season: number; episode: number }>> = ({
@@ -34,6 +35,11 @@ const TvShowPlayerPage: NextPage<Params<{ id: number; season: number; episode: n
     queryKey: ["tv-show-season", id, season],
   });
 
+  const { data: serverSettings, isPending: isPendingSettings } = useQuery({
+    queryFn: () => fetchServerSettings(),
+    queryKey: ["server-settings"],
+  });
+
   const { data: startAt, isPending: isPendingStartAt } = useQuery({
     queryFn: async () => {
       const response = await getTvShowLastPosition(id, season, episode);
@@ -42,7 +48,7 @@ const TvShowPlayerPage: NextPage<Params<{ id: number; season: number; episode: n
     queryKey: ["tv-show-player-start-at", id, season, episode],
   });
 
-  if (isPendingTv || isPendingSeason || isPendingStartAt) {
+  if (isPendingTv || isPendingSeason || isPendingStartAt || isPendingSettings) {
     return <Spinner size="lg" className="absolute-center" color="warning" variant="simple" />;
   }
 
@@ -81,8 +87,10 @@ const TvShowPlayerPage: NextPage<Params<{ id: number; season: number; episode: n
       nextEpisodeNumber={nextEpisodeNumber}
       prevEpisodeNumber={prevEpisodeNumber}
       startAt={startAt}
+      defaultServer={serverSettings?.defaultTv}
     />
   );
 };
 
 export default TvShowPlayerPage;
+

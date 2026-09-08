@@ -98,9 +98,10 @@ function installAdBlocker() {
 // ─────────────────────────────────────────────────────────────────
 // COMPONENT
 // ─────────────────────────────────────────────────────────────────
-const MoviePlayer: React.FC<{ movie: MovieDetails; startAt?: number }> = ({
+const MoviePlayer: React.FC<{ movie: MovieDetails; startAt?: number; defaultServer?: number }> = ({
   movie,
   startAt,
+  defaultServer = 0,
 }) => {
   const iframeRef = useRef<HTMLIFrameElement>(null);
   const shieldTimerRef = useRef<NodeJS.Timeout | null>(null);
@@ -119,7 +120,7 @@ const MoviePlayer: React.FC<{ movie: MovieDetails; startAt?: number }> = ({
   const [opened, handlers] = useDisclosure(false);
   const [selectedSource, setSelectedSource] = useQueryState<number>(
     "src",
-    parseAsInteger.withDefault(0),
+    parseAsInteger.withDefault(defaultServer),
   );
 
   usePlayerEvents({ saveHistory: true });
