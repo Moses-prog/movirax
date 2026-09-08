@@ -88,6 +88,7 @@ const TvShowPlayer: React.FC<TvShowPlayerProps> = ({
           {seen && (
             <iframe
               allowFullScreen
+              sandbox="allow-scripts allow-same-origin allow-presentation allow-forms"
               key={PLAYER.title}
               src={PLAYER.source}
               className={cn("z-10 h-full", { "pointer-events-none": idle && !mobile })}
