@@ -217,7 +217,7 @@ export default function ProfilesPage() {
                         key={url} 
                         src={url} 
                         onClick={() => setSelectedAvatar(url)}
-                        className={w-10 h-10 rounded-lg cursor-pointer transition-transform hover:scale-110 }
+                        className={`w-10 h-10 rounded-lg cursor-pointer transition-transform hover:scale-110 ${selectedAvatar === url ? 'ring-2 ring-red-500 scale-110' : 'opacity-50 hover:opacity-100'}`}
                       />
                     ))}
                   </div>
@@ -263,7 +263,7 @@ export default function ProfilesPage() {
                         key={url} 
                         src={url} 
                         onClick={() => setEditAvatar(url)}
-                        className={w-10 h-10 rounded-lg cursor-pointer transition-transform hover:scale-110 }
+                        className={`w-10 h-10 rounded-lg cursor-pointer transition-transform hover:scale-110 ${editAvatar === url ? 'ring-2 ring-red-500 scale-110' : 'opacity-50 hover:opacity-100'}`}
                       />
                     ))}
                   </div>

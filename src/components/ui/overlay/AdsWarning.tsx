@@ -63,13 +63,13 @@ const AdsWarning: React.FC = () => {
               </h3>
               <ul className="space-y-3 text-sm">
                 <li className="flex items-start gap-2">
-                  <span className="text-red-500 font-bold">•</span>
+                  <span className="text-red-500 font-bold">ï¿½</span>
                   <span>
                     Use the <Link isExternal color="danger" href="https://brave.com/" className="font-semibold px-1">Brave Browser</Link> (Built-in ad blocking for mobile & desktop)
                   </span>
                 </li>
                 <li className="flex items-start gap-2">
-                  <span className="text-red-500 font-bold">•</span>
+                  <span className="text-red-500 font-bold">ï¿½</span>
                   <span>
                     Or install <Link isExternal color="danger" href="https://ublockorigin.com/" className="font-semibold px-1">uBlock Origin</Link> if you prefer Chrome/Firefox.
                   </span>
