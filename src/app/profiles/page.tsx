@@ -5,7 +5,7 @@ import { useProfile } from '@/contexts/ProfileContext';
 import { useRouter } from 'next/navigation';
 import { Button, Modal, ModalContent, ModalHeader, ModalBody, ModalFooter, useDisclosure, Input } from '@heroui/react';
 import { Switch } from '@heroui/switch';
-import { Plus, Edit2, CheckCircle2, AlertCircle } from 'lucide-react';
+import { Plus, Edit2, CheckCircle2, AlertCircle, Image as ImageIcon } from 'lucide-react';
 
 import { useFeatureAccess } from '@/hooks/useFeatureAccess';
 import UpgradeNotice from '@/components/ui/notice/Upgrade';
@@ -19,12 +19,23 @@ export default function ProfilesPage() {
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
   const [newName, setNewName] = useState('');
   const [isKids, setIsKids] = useState(false);
-  const [selectedAvatar, setSelectedAvatar] = useState('/avatars/1.png');
+    const avatarOptions = [
+    'https://api.dicebear.com/7.x/avataaars/svg?seed=Felix&backgroundColor=b6e3f4',
+    'https://api.dicebear.com/7.x/avataaars/svg?seed=Aneka&backgroundColor=ffdfbf',
+    'https://api.dicebear.com/7.x/avataaars/svg?seed=Zoey&backgroundColor=c0aede',
+    'https://api.dicebear.com/7.x/avataaars/svg?seed=Jack&backgroundColor=d1d4f9',
+    'https://api.dicebear.com/7.x/avataaars/svg?seed=Jude&backgroundColor=b6e3f4',
+    'https://api.dicebear.com/7.x/bottts/svg?seed=Robot1&backgroundColor=ffdfbf',
+    'https://api.dicebear.com/7.x/bottts/svg?seed=Robot2&backgroundColor=c0aede',
+    'https://api.dicebear.com/7.x/thumbs/svg?seed=Thumbs1&backgroundColor=d1d4f9'
+  ];
+  const [selectedAvatar, setSelectedAvatar] = useState(avatarOptions[0]);
 
   const { isOpen: isEditOpen, onOpen: onEditOpen, onOpenChange: onEditOpenChange } = useDisclosure();
   const [editingProfile, setEditingProfile] = useState<any>(null);
   const [editName, setEditName] = useState('');
   const [editIsKids, setEditIsKids] = useState(false);
+  const [editAvatar, setEditAvatar] = useState(avatarOptions[0]);
 
   if (isFeatureLoading || isLoading) {
     return <div className="min-h-screen flex items-center justify-center bg-background"><div className="w-16 h-16 border-4 border-primary border-t-transparent rounded-full animate-spin"/></div>;
@@ -48,6 +59,7 @@ export default function ProfilesPage() {
       setEditingProfile(profile);
       setEditName(profile.name);
       setEditIsKids(profile.isKids || false);
+      setEditAvatar(profile.avatar || avatarOptions[0]);
       onEditOpen();
       return;
     }
@@ -87,7 +99,7 @@ export default function ProfilesPage() {
         body: JSON.stringify({
           action: 'update',
           profileId: editingProfile.id,
-          updates: { name: editName, isKids: editIsKids }
+          updates: { name: editName, isKids: editIsKids, avatar: editAvatar }
         })
       });
       if (res.ok) {
@@ -198,8 +210,16 @@ export default function ProfilesPage() {
               <ModalHeader>Add Profile</ModalHeader>
               <ModalBody>
                 <div className="flex flex-col items-center mb-6">
-                  <div className="w-24 h-24 bg-gradient-to-br from-red-600 to-orange-500 rounded-xl mb-4 flex items-center justify-center text-2xl font-bold uppercase">
-                    {newName ? newName.substring(0,2) : '?'}
+                                    <img src={selectedAvatar} alt="Avatar Preview" className="w-24 h-24 rounded-xl border-4 border-white/20 mb-4 object-cover" />
+                  <div className="flex flex-wrap items-center justify-center gap-2 mb-2">
+                    {avatarOptions.map(url => (
+                      <img 
+                        key={url} 
+                        src={url} 
+                        onClick={() => setSelectedAvatar(url)}
+                        className={w-10 h-10 rounded-lg cursor-pointer transition-transform hover:scale-110 }
+                      />
+                    ))}
                   </div>
                 </div>
                 <Input
@@ -236,8 +256,16 @@ export default function ProfilesPage() {
               <ModalHeader>Edit Profile</ModalHeader>
               <ModalBody>
                 <div className="flex flex-col items-center mb-6">
-                  <div className="w-24 h-24 bg-gradient-to-br from-red-600 to-orange-500 rounded-xl mb-4 flex items-center justify-center text-2xl font-bold uppercase">
-                    {editName ? editName.substring(0,2) : '?'}
+                                    <img src={editAvatar} alt="Avatar Preview" className="w-24 h-24 rounded-xl border-4 border-white/20 mb-4 object-cover" />
+                  <div className="flex flex-wrap items-center justify-center gap-2 mb-2">
+                    {avatarOptions.map(url => (
+                      <img 
+                        key={url} 
+                        src={url} 
+                        onClick={() => setEditAvatar(url)}
+                        className={w-10 h-10 rounded-lg cursor-pointer transition-transform hover:scale-110 }
+                      />
+                    ))}
                   </div>
                 </div>
                 <Input
@@ -278,3 +306,8 @@ export default function ProfilesPage() {
     </div>
   );
 }
+
+
+
+
+
