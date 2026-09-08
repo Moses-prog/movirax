@@ -161,10 +161,13 @@ export default function ProfilesPage() {
           <div key={profile.id} className="group flex flex-col items-center gap-4 cursor-pointer" onClick={() => handleSelectProfile(profile)}>
             <div className="relative">
               <div className={`w-32 h-32 md:w-40 md:h-40 rounded-2xl overflow-hidden border-4 transition-all duration-300 ${isEditingMode ? 'border-white/20 opacity-70 group-hover:border-white' : 'border-transparent group-hover:border-white group-hover:scale-105'}`}>
-                {/* Fallback avatar if local missing */}
-                <div className="w-full h-full bg-gradient-to-br from-red-600/50 to-orange-500/50 flex items-center justify-center text-4xl font-bold uppercase">
-                  {profile.name.substring(0,2)}
-                </div>
+                {profile.avatar ? (
+                  <img src={profile.avatar} alt={profile.name} className="w-full h-full object-cover" />
+                ) : (
+                  <div className="w-full h-full bg-gradient-to-br from-red-600/50 to-orange-500/50 flex items-center justify-center text-4xl font-bold uppercase">
+                    {profile.name.substring(0,2)}
+                  </div>
+                )}
               </div>
               {isEditingMode && (
                 <div className="absolute inset-0 bg-black/50 flex items-center justify-center rounded-2xl border-4 border-transparent">
