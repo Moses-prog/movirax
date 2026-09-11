@@ -56,6 +56,7 @@ const ScrollBlurHeading = ({ text }: { text: string }) => {
 export default function LandingPage() {
   const [movies, setMovies] = useState<Movie[]>([]);
   const [moviesLoading, setMoviesLoading] = useState(true);
+  const [pageReady, setPageReady] = useState(false);
   const [isMuted, setIsMuted] = useState(true);
   const iframeRef = useRef<HTMLIFrameElement>(null);
   const { scrollYProgress } = useScroll();
@@ -128,6 +129,11 @@ export default function LandingPage() {
     fetchMovies();
   }, []);
 
+  useEffect(() => {
+    const timer = setTimeout(() => setPageReady(true), 600);
+    return () => clearTimeout(timer);
+  }, []);
+
   const bentoVariant = {
     hidden: { opacity: 0, filter: "blur(12px)", scale: 0.95, y: 30 },
     visible: { opacity: 1, filter: "blur(0px)", scale: 1, y: 0, transition: { duration: 0.8, ease: [0.22, 1, 0.36, 1] } }
@@ -167,35 +173,60 @@ export default function LandingPage() {
             <FilmStripPattern colorClass="text-red-500/30" bgClass="stroke-red-900/50" className="opacity-100 scale-[1.8] -translate-y-10 translate-x-20 origin-top-left" />
             
             <div className="relative z-10 max-w-2xl">
-              <motion.div variants={heroItemVariant} className="inline-flex items-center space-x-2 mb-8">
-                <span className="w-2 h-2 rounded-full bg-red-600 animate-pulse" />
-                <span className="text-xs font-semibold tracking-wider uppercase text-zinc-400">Movira X</span>
-              </motion.div>
-              <ScrollBlurHeading text="Your cinematic universe, curated perfectly." />
-              <motion.p variants={heroItemVariant} className="text-lg lg:text-xl text-zinc-400 mb-10 max-w-lg">
-                Track watched films, save favorites, and build your personal collection within an uncompromisingly clean ecosystem.
-              </motion.p>
-              <motion.div variants={heroItemVariant} className="flex flex-col sm:flex-row gap-4">
-                <Link href="/auth?form=register">
-                  <button className="px-8 py-4 bg-black dark:bg-white text-white dark:text-black rounded-2xl font-bold hover:scale-105 transition-transform shadow-xl dark:shadow-none">
-                    Start Free Trial
-                  </button>
-                </Link>
-                <Link href="/auth">
-                  <button className="px-8 py-4 bg-transparent border border-gray-300 dark:border-white/20 rounded-2xl font-bold text-gray-800 dark:text-white hover:bg-black/5 dark:hover:bg-white/10 transition-colors">
-                    Sign In
-                  </button>
-                </Link>
-              </motion.div>
+              {!pageReady ? (
+                <div className="space-y-6 animate-pulse">
+                  <Skeleton className="w-24 h-6 rounded-full" />
+                  <Skeleton className="w-full h-14 rounded-2xl" />
+                  <Skeleton className="w-3/4 h-14 rounded-2xl" />
+                  <Skeleton className="w-full h-6 rounded-xl" />
+                  <Skeleton className="w-2/3 h-6 rounded-xl" />
+                  <div className="flex gap-4 pt-4">
+                    <Skeleton className="w-44 h-14 rounded-2xl" />
+                    <Skeleton className="w-32 h-14 rounded-2xl" />
+                  </div>
+                </div>
+              ) : (
+                <>
+                  <motion.div variants={heroItemVariant} className="inline-flex items-center space-x-2 mb-8">
+                    <span className="w-2 h-2 rounded-full bg-red-600 animate-pulse" />
+                    <span className="text-xs font-semibold tracking-wider uppercase text-zinc-400">Movira X</span>
+                  </motion.div>
+                  <ScrollBlurHeading text="Your cinematic universe, curated perfectly." />
+                  <motion.p variants={heroItemVariant} className="text-lg lg:text-xl text-zinc-400 mb-10 max-w-lg">
+                    Track watched films, save favorites, and build your personal collection within an uncompromisingly clean ecosystem.
+                  </motion.p>
+                  <motion.div variants={heroItemVariant} className="flex flex-col sm:flex-row gap-4">
+                    <Link href="/auth?form=register">
+                      <button className="px-8 py-4 bg-black dark:bg-white text-white dark:text-black rounded-2xl font-bold hover:scale-105 transition-transform shadow-xl dark:shadow-none">
+                        Start Free Trial
+                      </button>
+                    </Link>
+                    <Link href="/auth">
+                      <button className="px-8 py-4 bg-transparent border border-gray-300 dark:border-white/20 rounded-2xl font-bold text-gray-800 dark:text-white hover:bg-black/5 dark:hover:bg-white/10 transition-colors">
+                        Sign In
+                      </button>
+                    </Link>
+                  </motion.div>
+                </>
+              )}
             </div>
           </motion.div>
 
-          {/* Quick Stat Cell (Spans 2 cols, 1 row) */}
           <motion.div variants={bentoVariant} className="md:col-span-2 xl:col-span-2 md:row-span-1 bg-white dark:bg-[#121212] rounded-[2.5rem] border border-gray-200 dark:border-white/5 p-8 flex flex-col justify-center relative overflow-hidden group shadow-sm dark:shadow-none transition-colors">
             <div className="absolute -bottom-10 -right-10 text-[180px] text-black/5 dark:text-white/5 font-black leading-none group-hover:scale-110 transition-transform duration-700">50K</div>
-            <h3 className="text-sm font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-widest mb-2 relative z-10">Database</h3>
-            <div className="text-5xl font-semibold mb-2 text-gray-900 dark:text-white relative z-10">50,000+</div>
-            <p className="text-gray-500 dark:text-gray-400 relative z-10">Movies updated daily.</p>
+            {!pageReady ? (
+              <div className="space-y-3 animate-pulse relative z-10">
+                <Skeleton className="w-20 h-4 rounded-lg" />
+                <Skeleton className="w-40 h-12 rounded-2xl" />
+                <Skeleton className="w-36 h-4 rounded-lg" />
+              </div>
+            ) : (
+              <>
+                <h3 className="text-sm font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-widest mb-2 relative z-10">Database</h3>
+                <div className="text-5xl font-semibold mb-2 text-gray-900 dark:text-white relative z-10">50,000+</div>
+                <p className="text-gray-500 dark:text-gray-400 relative z-10">Movies updated daily.</p>
+              </>
+            )}
           </motion.div>
 
           {/* Movie Stack Cell (Spans 2 cols, 1 row) */}
@@ -337,32 +368,52 @@ export default function LandingPage() {
 
           {/* Small Feature 1 */}
           <motion.div variants={bentoVariant} className="md:col-span-2 xl:col-span-2 md:row-span-1 bg-white dark:bg-[#121212] rounded-[2.5rem] border border-gray-200 dark:border-white/5 p-8 flex flex-col justify-between hover:bg-gray-50 dark:hover:bg-white/5 transition-colors cursor-pointer group shadow-sm dark:shadow-none">
-            <motion.div 
-              className="w-10 h-10 bg-red-100 dark:bg-white/10 rounded-xl flex items-center justify-center text-red-600 dark:text-red-500 origin-bottom-left"
-              whileHover={{ rotate: -15, scale: 1.2 }}
-            >
-              <History className="w-5 h-5" />
-            </motion.div>
-            <div>
-              <h4 className="text-xl font-semibold mb-2 text-gray-900 dark:text-white">Track History</h4>
-              <p className="text-gray-500 dark:text-gray-400 text-sm">Never forget what you watched or when you watched it.</p>
-            </div>
+            {!pageReady ? (
+              <div className="space-y-4 animate-pulse">
+                <Skeleton className="w-10 h-10 rounded-xl" />
+                <Skeleton className="w-32 h-6 rounded-lg" />
+                <Skeleton className="w-full h-4 rounded-lg" />
+              </div>
+            ) : (
+              <>
+                <motion.div 
+                  className="w-10 h-10 bg-red-100 dark:bg-white/10 rounded-xl flex items-center justify-center text-red-600 dark:text-red-500 origin-bottom-left"
+                  whileHover={{ rotate: -15, scale: 1.2 }}
+                >
+                  <History className="w-5 h-5" />
+                </motion.div>
+                <div>
+                  <h4 className="text-xl font-semibold mb-2 text-gray-900 dark:text-white">Track History</h4>
+                  <p className="text-gray-500 dark:text-gray-400 text-sm">Never forget what you watched or when you watched it.</p>
+                </div>
+              </>
+            )}
           </motion.div>
 
           {/* Small Feature 2 */}
           <motion.div variants={bentoVariant} className="md:col-span-2 xl:col-span-2 md:row-span-1 bg-white dark:bg-[#121212] rounded-[2.5rem] border border-gray-200 dark:border-white/5 p-8 flex flex-col justify-between hover:bg-gray-50 dark:hover:bg-white/5 transition-colors cursor-pointer group shadow-sm dark:shadow-none">
-            <motion.div 
-              className="w-10 h-10 bg-red-100 dark:bg-white/10 rounded-xl flex items-center justify-center text-red-600 dark:text-red-500"
-              whileHover={{ scale: 1.15, y: -2 }}
-              animate={{ rotate: [0, 5, -5, 0] }}
-              transition={{ repeat: Infinity, duration: 4, ease: "easeInOut" }}
-            >
-              <MonitorPlay className="w-5 h-5" />
-            </motion.div>
-            <div>
-              <h4 className="text-xl font-semibold mb-2 text-gray-900 dark:text-white">Resume Anywhere</h4>
-              <p className="text-gray-500 dark:text-gray-400 text-sm">Pick up exactly where you left off across all devices.</p>
-            </div>
+            {!pageReady ? (
+              <div className="space-y-4 animate-pulse">
+                <Skeleton className="w-10 h-10 rounded-xl" />
+                <Skeleton className="w-36 h-6 rounded-lg" />
+                <Skeleton className="w-full h-4 rounded-lg" />
+              </div>
+            ) : (
+              <>
+                <motion.div 
+                  className="w-10 h-10 bg-red-100 dark:bg-white/10 rounded-xl flex items-center justify-center text-red-600 dark:text-red-500"
+                  whileHover={{ scale: 1.15, y: -2 }}
+                  animate={{ rotate: [0, 5, -5, 0] }}
+                  transition={{ repeat: Infinity, duration: 4, ease: "easeInOut" }}
+                >
+                  <MonitorPlay className="w-5 h-5" />
+                </motion.div>
+                <div>
+                  <h4 className="text-xl font-semibold mb-2 text-gray-900 dark:text-white">Resume Anywhere</h4>
+                  <p className="text-gray-500 dark:text-gray-400 text-sm">Pick up exactly where you left off across all devices.</p>
+                </div>
+              </>
+            )}
           </motion.div>
 
           {/* CTA Box */}
