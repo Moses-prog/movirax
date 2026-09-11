@@ -173,29 +173,47 @@ export default function LandingPage() {
             <FilmStripPattern colorClass="text-red-500/30" bgClass="stroke-red-900/50" className="opacity-100 scale-[1.8] -translate-y-10 translate-x-20 origin-top-left" />
             
             <div className="relative z-10 max-w-2xl">
-              {!pageReady ? (
-                <div className="space-y-6 animate-pulse">
+              <motion.div variants={heroItemVariant} className="mb-8">
+                {!pageReady ? (
                   <Skeleton className="w-24 h-6 rounded-full" />
+                ) : (
+                  <div className="inline-flex items-center space-x-2">
+                    <span className="w-2 h-2 rounded-full bg-red-600 animate-pulse" />
+                    <span className="text-xs font-semibold tracking-wider uppercase text-zinc-400">Movira X</span>
+                  </div>
+                )}
+              </motion.div>
+              
+              {!pageReady ? (
+                <div className="space-y-2 mb-6 animate-pulse">
                   <Skeleton className="w-full h-14 rounded-2xl" />
                   <Skeleton className="w-3/4 h-14 rounded-2xl" />
-                  <Skeleton className="w-full h-6 rounded-xl" />
-                  <Skeleton className="w-2/3 h-6 rounded-xl" />
-                  <div className="flex gap-4 pt-4">
+                </div>
+              ) : (
+                <ScrollBlurHeading text="Your cinematic universe, curated perfectly." />
+              )}
+              
+              <motion.div variants={heroItemVariant} className="mb-10 max-w-lg">
+                {!pageReady ? (
+                  <div className="space-y-2 animate-pulse">
+                    <Skeleton className="w-full h-6 rounded-xl" />
+                    <Skeleton className="w-2/3 h-6 rounded-xl" />
+                  </div>
+                ) : (
+                  <p className="text-lg lg:text-xl text-zinc-400">
+                    Track watched films, save favorites, and build your personal collection within an uncompromisingly clean ecosystem.
+                  </p>
+                )}
+              </motion.div>
+              
+              <motion.div variants={heroItemVariant} className="flex flex-col sm:flex-row gap-4">
+                {!pageReady ? (
+                  <div className="flex gap-4 animate-pulse">
                     <Skeleton className="w-44 h-14 rounded-2xl" />
                     <Skeleton className="w-32 h-14 rounded-2xl" />
                   </div>
-                </div>
-              ) : (
-                <>
-                  <motion.div variants={heroItemVariant} className="inline-flex items-center space-x-2 mb-8">
-                    <span className="w-2 h-2 rounded-full bg-red-600 animate-pulse" />
-                    <span className="text-xs font-semibold tracking-wider uppercase text-zinc-400">Movira X</span>
-                  </motion.div>
-                  <ScrollBlurHeading text="Your cinematic universe, curated perfectly." />
-                  <motion.p variants={heroItemVariant} className="text-lg lg:text-xl text-zinc-400 mb-10 max-w-lg">
-                    Track watched films, save favorites, and build your personal collection within an uncompromisingly clean ecosystem.
-                  </motion.p>
-                  <motion.div variants={heroItemVariant} className="flex flex-col sm:flex-row gap-4">
+                ) : (
+                  <>
                     <Link href="/auth?form=register">
                       <button className="px-8 py-4 bg-black dark:bg-white text-white dark:text-black rounded-2xl font-bold hover:scale-105 transition-transform shadow-xl dark:shadow-none">
                         Start Free Trial
@@ -206,9 +224,9 @@ export default function LandingPage() {
                         Sign In
                       </button>
                     </Link>
-                  </motion.div>
-                </>
-              )}
+                  </>
+                )}
+              </motion.div>
             </div>
           </motion.div>
 
