@@ -45,43 +45,29 @@ export default function TestimonialsSection() {
   const duplicated = [...reviews, ...reviews];
 
   return (
-    <section className="py-24 overflow-hidden border-y border-gray-200 dark:border-white/5 bg-gray-50 dark:bg-[#0a0a0a] transition-colors">
-      <style jsx>{`
-        @keyframes marquee-scroll {
-          0% { transform: translate3d(0, 0, 0); }
-          100% { transform: translate3d(-50%, 0, 0); }
-        }
-        .marquee-track {
-          animation: marquee-scroll 50s linear infinite;
-          will-change: transform;
-        }
-        .marquee-track:hover {
-          animation-play-state: paused;
-        }
-      `}</style>
-
+    <section className="py-24 overflow-hidden border-y border-gray-200 dark:border-white/5 bg-gray-50 dark:bg-[#0a0a0a]">
       <div className="mb-12 text-center px-4">
         <div className="inline-flex items-center space-x-2 mb-6">
           <span className="w-2 h-2 rounded-full bg-red-600 animate-pulse" />
           <span className="text-xs font-semibold tracking-wider uppercase text-zinc-400">Reviews</span>
         </div>
-        <h2 className="text-3xl lg:text-4xl font-semibold tracking-tight text-gray-900 dark:text-white mb-2 transition-colors">
+        <h2 className="text-3xl lg:text-4xl font-semibold tracking-tight text-gray-900 dark:text-white mb-2">
           Real users. Real opinions.
         </h2>
-        <p className="text-gray-600 dark:text-gray-400 transition-colors">
+        <p className="text-gray-600 dark:text-gray-400">
           See what people are saying after making the switch.
         </p>
       </div>
 
       <div className="relative flex overflow-x-hidden">
-        <div className="absolute top-0 left-0 w-32 h-full bg-gradient-to-r from-gray-50 to-transparent dark:from-[#0a0a0a] dark:to-transparent z-10" />
-        <div className="absolute top-0 right-0 w-32 h-full bg-gradient-to-l from-gray-50 to-transparent dark:from-[#0a0a0a] dark:to-transparent z-10" />
+        <div className="absolute top-0 left-0 w-32 h-full bg-gradient-to-r from-gray-50 to-transparent dark:from-[#0a0a0a] dark:to-transparent z-10 pointer-events-none" />
+        <div className="absolute top-0 right-0 w-32 h-full bg-gradient-to-l from-gray-50 to-transparent dark:from-[#0a0a0a] dark:to-transparent z-10 pointer-events-none" />
 
-        <div className="marquee-track flex space-x-6 px-6">
+        <div className="marquee-track gap-6 px-6">
           {duplicated.map((review, i) => (
             <div
               key={i}
-              className="w-[380px] flex-shrink-0 bg-white dark:bg-[#121212] border border-gray-200 dark:border-white/5 rounded-[2.5rem] p-8 hover:bg-gray-50 dark:hover:bg-white/5 transition-colors shadow-sm dark:shadow-none cursor-default group"
+              className="w-[380px] flex-shrink-0 bg-white dark:bg-[#121212] border border-gray-200 dark:border-white/5 rounded-[2.5rem] p-8 shadow-sm dark:shadow-none cursor-default"
             >
               <div className="flex space-x-1 mb-5">
                 {Array.from({ length: 5 }).map((_, s) => (
@@ -92,7 +78,7 @@ export default function TestimonialsSection() {
                 ))}
               </div>
 
-              <p className="text-base text-gray-800 dark:text-gray-200 mb-8 leading-relaxed transition-colors">
+              <p className="text-base text-gray-800 dark:text-gray-200 mb-8 leading-relaxed">
                 &ldquo;{review.text}&rdquo;
               </p>
 
@@ -101,10 +87,11 @@ export default function TestimonialsSection() {
                   src={`https://api.dicebear.com/9.x/notionists/svg?seed=${review.handle}`}
                   alt={review.name}
                   className="w-10 h-10 rounded-full bg-gray-100 dark:bg-white/10"
+                  loading="lazy"
                 />
                 <div>
-                  <div className="text-sm font-semibold text-gray-900 dark:text-white transition-colors">{review.name}</div>
-                  <div className="text-xs text-gray-500 dark:text-gray-500 transition-colors">{review.handle}</div>
+                  <div className="text-sm font-semibold text-gray-900 dark:text-white">{review.name}</div>
+                  <div className="text-xs text-gray-500">{review.handle}</div>
                 </div>
               </div>
             </div>

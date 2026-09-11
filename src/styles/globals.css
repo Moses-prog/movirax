@@ -249,3 +249,21 @@ body {
 #nprogress .peg {
   box-shadow: 0 0 10px #f97316, 0 0 5px #dc2626 !important;
 }
+
+/* Reviews marquee - GPU accelerated */
+@keyframes marquee-scroll {
+  0% { transform: translate3d(0, 0, 0); }
+  100% { transform: translate3d(-50%, 0, 0); }
+}
+.marquee-track {
+  display: flex;
+  animation: marquee-scroll 60s linear infinite;
+  will-change: transform;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  perspective: 1000px;
+  -webkit-perspective: 1000px;
+}
+.marquee-track:hover {
+  animation-play-state: paused;
+}
