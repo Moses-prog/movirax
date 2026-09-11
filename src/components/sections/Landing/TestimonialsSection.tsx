@@ -1,6 +1,5 @@
 "use client";
 
-import { motion } from "framer-motion";
 import { Star } from "lucide-react";
 
 const reviews = [
@@ -47,6 +46,20 @@ export default function TestimonialsSection() {
 
   return (
     <section className="py-24 overflow-hidden border-y border-gray-200 dark:border-white/5 bg-gray-50 dark:bg-[#0a0a0a] transition-colors">
+      <style jsx>{`
+        @keyframes marquee-scroll {
+          0% { transform: translate3d(0, 0, 0); }
+          100% { transform: translate3d(-50%, 0, 0); }
+        }
+        .marquee-track {
+          animation: marquee-scroll 50s linear infinite;
+          will-change: transform;
+        }
+        .marquee-track:hover {
+          animation-play-state: paused;
+        }
+      `}</style>
+
       <div className="mb-12 text-center px-4">
         <div className="inline-flex items-center space-x-2 mb-6">
           <span className="w-2 h-2 rounded-full bg-red-600 animate-pulse" />
@@ -61,22 +74,15 @@ export default function TestimonialsSection() {
       </div>
 
       <div className="relative flex overflow-x-hidden">
-        {/* Left fade */}
         <div className="absolute top-0 left-0 w-32 h-full bg-gradient-to-r from-gray-50 to-transparent dark:from-[#0a0a0a] dark:to-transparent z-10" />
-        {/* Right fade */}
         <div className="absolute top-0 right-0 w-32 h-full bg-gradient-to-l from-gray-50 to-transparent dark:from-[#0a0a0a] dark:to-transparent z-10" />
 
-        <motion.div
-          className="flex space-x-6 px-6"
-          animate={{ x: ["0%", "-50%"] }}
-          transition={{ ease: "linear", duration: 50, repeat: Infinity }}
-        >
+        <div className="marquee-track flex space-x-6 px-6">
           {duplicated.map((review, i) => (
             <div
               key={i}
               className="w-[380px] flex-shrink-0 bg-white dark:bg-[#121212] border border-gray-200 dark:border-white/5 rounded-[2.5rem] p-8 hover:bg-gray-50 dark:hover:bg-white/5 transition-colors shadow-sm dark:shadow-none cursor-default group"
             >
-              {/* Stars */}
               <div className="flex space-x-1 mb-5">
                 {Array.from({ length: 5 }).map((_, s) => (
                   <Star
@@ -86,12 +92,10 @@ export default function TestimonialsSection() {
                 ))}
               </div>
 
-              {/* Quote */}
               <p className="text-base text-gray-800 dark:text-gray-200 mb-8 leading-relaxed transition-colors">
                 &ldquo;{review.text}&rdquo;
               </p>
 
-              {/* Author */}
               <div className="flex items-center space-x-3">
                 <img
                   src={`https://api.dicebear.com/9.x/notionists/svg?seed=${review.handle}`}
@@ -105,7 +109,7 @@ export default function TestimonialsSection() {
               </div>
             </div>
           ))}
-        </motion.div>
+        </div>
       </div>
     </section>
   );
