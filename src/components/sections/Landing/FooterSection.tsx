@@ -5,6 +5,16 @@ import BrandLogo from "@/components/ui/other/BrandLogo";
 export default function FooterSection() {
   return (
     <footer className="relative bg-[#0a0a0a] border-t border-white/10 pt-20 pb-10 overflow-hidden">
+      {/* Wavy Lines SVG Background */}
+      <div 
+        className="absolute inset-0 z-0 opacity-40 pointer-events-none"
+        style={{
+          backgroundImage: "url('/wavy-lines.svg')",
+          backgroundPosition: "center",
+          backgroundSize: "cover",
+          backgroundRepeat: "no-repeat"
+        }}
+      />
       {/* Subtle Dot Grid Pattern */}
       <div 
         className="absolute inset-0 z-0 opacity-20 pointer-events-none"
@@ -67,5 +77,7 @@ export default function FooterSection() {
     </footer>
   );
 }
+
+
 
 
