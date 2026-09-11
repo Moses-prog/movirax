@@ -5,9 +5,11 @@ import { Button } from "@heroui/react";
 import { Icon } from "@iconify/react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import useSupabaseUser from "@/hooks/useSupabaseUser";
 
 export default function ViewHistoryFAB() {
   const pathname = usePathname();
+  const { data: user } = useSupabaseUser();
   const [isMounted, setIsMounted] = useState(false);
   const [isExpanded, setIsExpanded] = useState(false);
   const [showContent, setShowContent] = useState(false);
@@ -74,8 +76,8 @@ export default function ViewHistoryFAB() {
     if (timerRef.current) clearTimeout(timerRef.current);
   };
 
-  // Don't render until mounted to avoid hydration mismatch
-  if (!isMounted || pathname.startsWith("/admin")) {
+  // Don't render until mounted, if unauthenticated, or on admin pages
+  if (!isMounted || !user || pathname.startsWith("/admin")) {
     return null;
   }
 
