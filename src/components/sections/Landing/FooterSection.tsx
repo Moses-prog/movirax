@@ -7,7 +7,7 @@ export default function FooterSection() {
     <footer className="relative bg-[#0a0a0a] border-t border-white/10 pt-20 pb-10 overflow-hidden">
       {/* Wavy Lines SVG Background */}
       <div 
-        className="absolute inset-0 z-0 opacity-40 pointer-events-none"
+        className="absolute inset-0 z-0 opacity-10 pointer-events-none"
         style={{
           backgroundImage: "url('/wavy-lines.svg')",
           backgroundPosition: "center",
