@@ -4,7 +4,8 @@
   "description": "Your only choice for a free movies and tv shows streaming website.",
   "theme_color": "#0D0C0F",
   "background_color": "#0D0C0F",
-  "start_url": "/?source=pwa",`n  "id": "/?source=pwa",
+  "start_url": "/",
+  "id": "/",
   "display": "standalone",
   "orientation": "portrait",
   "lang": "en-US",
@@ -583,5 +584,6 @@
     }
   ]
 }
+
 
 
