@@ -1,52 +1,107 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { Quote } from "lucide-react";
+import { Star } from "lucide-react";
 
-const testimonials = [
-  { quote: "The most beautiful way to track what I watch. It's ruined Letterboxd for me.", author: "TechRadar", role: "Review" },
-  { quote: "Finally, a movie app that feels like a premium cinematic experience. The UI is gorgeous.", author: "Sarah Jenkins", role: "Film Critic" },
-  { quote: "Organizing my 2,000+ watchlist has never been easier. The smart tags are a lifesaver.", author: "Marcus D.", role: "Power User" },
-  { quote: "It’s like having a personal IMAX theater database in my pocket. Absolutely stunning.", author: "IndieWire", role: "Review" },
-  { quote: "The performance is buttery smooth. Movira X is setting the new standard for web apps.", author: "UX Collective", role: "Design Review" },
+const reviews = [
+  {
+    text: "I cancelled three streaming subscriptions after finding this. Everything is here and it actually works.",
+    name: "Daniel K.",
+    handle: "@dkfilm",
+    stars: 5,
+  },
+  {
+    text: "The UI is cleaner than most paid apps. Dark mode is chef's kiss. My go-to for movie nights now.",
+    name: "Amara T.",
+    handle: "@amarawatches",
+    stars: 5,
+  },
+  {
+    text: "16 servers means something is always working. Haven't had a dead link in weeks.",
+    name: "Chris R.",
+    handle: "@chrisr_dev",
+    stars: 5,
+  },
+  {
+    text: "Installed as a PWA on my phone and it feels like a native app. Crazy smooth for a web app.",
+    name: "Priya M.",
+    handle: "@priyamov",
+    stars: 4,
+  },
+  {
+    text: "Watch history syncing across devices is underrated. I started a movie on my laptop and finished on my phone.",
+    name: "Jordan L.",
+    handle: "@jordanl",
+    stars: 5,
+  },
+  {
+    text: "No ads, no popups, no sketchy redirects. Just click and watch. How is this free?",
+    name: "Sofia N.",
+    handle: "@sofianx",
+    stars: 5,
+  },
 ];
 
 export default function TestimonialsSection() {
-  // Duplicate array to create a seamless infinite loop
-  const duplicatedTestimonials = [...testimonials, ...testimonials];
+  const duplicated = [...reviews, ...reviews];
 
   return (
     <section className="py-24 overflow-hidden border-y border-gray-200 dark:border-white/5 bg-gray-50 dark:bg-[#0a0a0a] transition-colors">
-      <div className="mb-12 text-center">
-         <h2 className="text-3xl font-semibold tracking-tight text-gray-900 dark:text-white mb-2 transition-colors">Don't just take our word for it</h2>
-         <p className="text-gray-600 dark:text-gray-400 transition-colors">Join thousands of cinephiles who have already made the switch.</p>
+      <div className="mb-12 text-center px-4">
+        <div className="inline-flex items-center space-x-2 mb-6">
+          <span className="w-2 h-2 rounded-full bg-red-600 animate-pulse" />
+          <span className="text-xs font-semibold tracking-wider uppercase text-zinc-400">Reviews</span>
+        </div>
+        <h2 className="text-3xl lg:text-4xl font-semibold tracking-tight text-gray-900 dark:text-white mb-2 transition-colors">
+          Real users. Real opinions.
+        </h2>
+        <p className="text-gray-600 dark:text-gray-400 transition-colors">
+          See what people are saying after making the switch.
+        </p>
       </div>
 
       <div className="relative flex overflow-x-hidden">
-        {/* Left Gradient Mask */}
+        {/* Left fade */}
         <div className="absolute top-0 left-0 w-32 h-full bg-gradient-to-r from-gray-50 to-transparent dark:from-[#0a0a0a] dark:to-transparent z-10" />
-        
-        {/* Right Gradient Mask */}
+        {/* Right fade */}
         <div className="absolute top-0 right-0 w-32 h-full bg-gradient-to-l from-gray-50 to-transparent dark:from-[#0a0a0a] dark:to-transparent z-10" />
 
         <motion.div
           className="flex space-x-6 px-6"
           animate={{ x: ["0%", "-50%"] }}
-          transition={{ ease: "linear", duration: 40, repeat: Infinity }}
+          transition={{ ease: "linear", duration: 50, repeat: Infinity }}
         >
-          {duplicatedTestimonials.map((testimonial, i) => (
-            <div 
-              key={i} 
-              className="w-[400px] flex-shrink-0 bg-white dark:bg-[#121212] border border-gray-200 dark:border-white/5 rounded-3xl p-8 hover:bg-gray-100 dark:hover:bg-white/5 transition-colors shadow-sm dark:shadow-none cursor-default group"
+          {duplicated.map((review, i) => (
+            <div
+              key={i}
+              className="w-[380px] flex-shrink-0 bg-white dark:bg-[#121212] border border-gray-200 dark:border-white/5 rounded-[2.5rem] p-8 hover:bg-gray-50 dark:hover:bg-white/5 transition-colors shadow-sm dark:shadow-none cursor-default group"
             >
-              <Quote className="w-8 h-8 text-red-600/20 dark:text-red-500/20 group-hover:text-red-600/50 dark:group-hover:text-red-500/50 transition-colors mb-6" />
-              <p className="text-lg text-gray-800 dark:text-gray-200 mb-8 font-medium leading-relaxed transition-colors">"{testimonial.quote}"</p>
+              {/* Stars */}
+              <div className="flex space-x-1 mb-5">
+                {Array.from({ length: 5 }).map((_, s) => (
+                  <Star
+                    key={s}
+                    className={`w-4 h-4 ${s < review.stars ? "text-red-500 fill-red-500" : "text-gray-300 dark:text-gray-700"}`}
+                  />
+                ))}
+              </div>
+
+              {/* Quote */}
+              <p className="text-base text-gray-800 dark:text-gray-200 mb-8 leading-relaxed transition-colors">
+                &ldquo;{review.text}&rdquo;
+              </p>
+
+              {/* Author */}
               <div className="flex items-center space-x-3">
-                 <div className="w-10 h-10 rounded-full bg-gradient-to-br from-gray-300 to-gray-400 dark:from-gray-700 dark:to-gray-900" />
-                 <div>
-                    <div className="text-sm font-semibold text-gray-900 dark:text-white transition-colors">{testimonial.author}</div>
-                    <div className="text-xs text-red-600 dark:text-red-400 uppercase tracking-wider transition-colors">{testimonial.role}</div>
-                 </div>
+                <img
+                  src={`https://api.dicebear.com/9.x/notionists/svg?seed=${review.handle}`}
+                  alt={review.name}
+                  className="w-10 h-10 rounded-full bg-gray-100 dark:bg-white/10"
+                />
+                <div>
+                  <div className="text-sm font-semibold text-gray-900 dark:text-white transition-colors">{review.name}</div>
+                  <div className="text-xs text-gray-500 dark:text-gray-500 transition-colors">{review.handle}</div>
+                </div>
               </div>
             </div>
           ))}
