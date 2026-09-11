@@ -18,7 +18,7 @@ const InstallAppButton: React.FC = () => {
     setIsInstalled(standalone);
 
     const handleBeforeInstallPrompt = (event: Event) => {
-      event.preventDefault();
+      // event.preventDefault(); // Let the browser show its native prompt
       setInstallPrompt(event as BeforeInstallPromptEvent);
     };
 
@@ -55,3 +55,4 @@ const InstallAppButton: React.FC = () => {
 };
 
 export default InstallAppButton;
+
