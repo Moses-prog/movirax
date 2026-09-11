@@ -25,6 +25,11 @@ export const metadata: Metadata = {
   applicationName: siteConfig.name,
   description: siteConfig.description,
   manifest: "/manifest.json",
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: "default",
+    title: siteConfig.name,
+  },
   icons: {
     icon: siteConfig.favicon,
   },
@@ -92,4 +97,5 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
     </html>
   );
 }
+
 
