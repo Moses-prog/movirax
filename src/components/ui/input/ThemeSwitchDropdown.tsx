@@ -16,7 +16,7 @@ const ThemeSwitchDropdown = () => {
     setMounted(true);
   }, []);
 
-  if (!mounted) {
+  if (!mounted || themes.length <= 1) {
     return null;
   }
 

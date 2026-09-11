@@ -50,18 +50,18 @@ export const siteConfig: SiteConfigType = {
     },
   ],
   themes: [
-    {
-      name: "light",
-      icon: <IoIosSunny className="size-full" />,
-    },
+    // {
+    //   name: "light",
+    //   icon: <IoIosSunny className="size-full" />,
+    // },
     {
       name: "dark",
       icon: <IoMoon className="size-full" />,
     },
-    {
-      name: "system",
-      icon: <HiComputerDesktop className="size-full" />,
-    },
+    // {
+    //   name: "system",
+    //   icon: <HiComputerDesktop className="size-full" />,
+    // },
   ],
   queryLists: {
     movies: [

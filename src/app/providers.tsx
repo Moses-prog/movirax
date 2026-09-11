@@ -39,7 +39,7 @@ export default function Providers({ children }: PropsWithChildren) {
               },
             }}
           />
-          <NextThemesProvider attribute="class" defaultTheme="dark" enableSystem>
+          <NextThemesProvider attribute="class" defaultTheme="dark" forcedTheme="dark">
             <BrowserThemeColor />
             {/* https://github.com/vercel/next.js/discussions/61654#discussioncomment-8480088 */}
             <Suspense>
