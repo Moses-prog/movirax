@@ -16,6 +16,7 @@ import dynamic from "next/dynamic";
 import { NuqsAdapter } from "nuqs/adapters/next/app";
 import { Suspense } from "react";
 import PullToRefresh from "@/components/ui/PullToRefresh";
+import NetworkStatus from "@/components/NetworkStatus";
 
 const CookieConsent = dynamic(() => import("@/components/ui/overlay/CookieConsent"));
 const BanWarning = dynamic(() => import("@/components/ui/overlay/BanWarning"));
@@ -87,6 +88,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
                 </main>
               </Sidebar>
               <BottomNavbar />
+                <NetworkStatus />
               <ViewHistoryFAB />
             </Providers>
           </NuqsAdapter>
