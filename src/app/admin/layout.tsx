@@ -91,14 +91,14 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
         });
 
         if (!response.ok) {
-          router.push('/admin-login');
+          router.push('/admin/login');
           return;
         }
 
         setIsChecking(false);
       } catch (error) {
         console.error('Auth check failed:', error);
-        router.push('/admin-login');
+        router.push('/admin/login');
       }
     };
 

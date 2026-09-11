@@ -2,10 +2,11 @@
 
 import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { CreditCard, TrendingDown, TrendingUp, UserRound, Users, Ticket, AlertCircle } from 'lucide-react';
+import { CreditCard, TrendingDown, TrendingUp, UserRound, Users, Ticket, AlertCircle, ExternalLink } from 'lucide-react';
 import { getAdminUsers } from '@/actions/admin';
 import { getAllTickets, SupportTicket } from '@/actions/support';
-import { Chip, Spinner } from '@heroui/react';
+import { Chip, Spinner, Card, CardBody, CardHeader, Table, TableHeader, TableColumn, TableBody, TableRow, TableCell, User, Button } from '@heroui/react';
+import Link from 'next/link';
 
 export default function AdminDashboard() {
   const router = useRouter();
@@ -22,11 +23,10 @@ export default function AdminDashboard() {
         });
 
         if (!authResponse.ok) {
-          router.push('/admin-login');
+          router.push('/admin/login');
           return;
         }
 
-        // Fetch data
         const [usersRes, ticketsRes] = await Promise.all([
           getAdminUsers(),
           getAllTickets()
@@ -53,43 +53,43 @@ export default function AdminDashboard() {
 
   const statCards = [
     {
-      label: 'All Users',
+      label: 'Total Users',
       value: users.length.toString(),
       Icon: Users,
-      bgGradient: 'var(--admin-accent-gradient)',
+      color: "danger",
     },
     {
-      label: 'Active Support Tickets',
+      label: 'Active Tickets',
       value: activeTicketsCount.toString(),
       Icon: Ticket,
-      bgGradient: 'linear-gradient(135deg, #3f3f46 0%, #f59e0b 100%)',
+      color: "warning",
     },
     {
       label: 'Total Revenue',
-      value: 'Coming soon',
+      value: 'TBD',
       Icon: TrendingUp,
-      bgGradient: 'linear-gradient(135deg, #1f2937 0%, #e11d48 100%)',
+      color: "success",
     },
     {
-      label: 'Active Subscriptions',
-      value: 'Coming soon',
+      label: 'Active Subs',
+      value: 'TBD',
       Icon: CreditCard,
-      bgGradient: 'linear-gradient(135deg, #3f1f1f 0%, #dc2626 100%)',
+      color: "primary",
     },
   ];
 
   if (isLoading) {
     return (
-      <div className="flex justify-center items-center h-64">
-        <Spinner size="lg" color="danger" />
+      <div className="flex h-[60vh] w-full items-center justify-center">
+        <Spinner size="lg" color="danger" label="Loading dashboard..." />
       </div>
     );
   }
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case 'open': return 'warning';
-      case 'in_progress': return 'primary';
+      case 'open': return 'danger';
+      case 'in_progress': return 'warning';
       case 'resolved':
       case 'closed': return 'success';
       default: return 'default';
@@ -97,186 +97,124 @@ export default function AdminDashboard() {
   };
 
   return (
-    <div>
-      <div style={{ marginBottom: '2.5rem' }}>
-        <h1
-          style={{
-            fontSize: '28px',
-            fontWeight: '700',
-            margin: '0 0 0.5rem 0',
-            color: 'var(--admin-text)',
-            letterSpacing: '-0.5px',
-          }}
-        >
-          Dashboard
-        </h1>
-        <p
-          style={{
-            fontSize: '14px',
-            color: 'var(--admin-muted)',
-            margin: 0,
-            fontWeight: '500',
-          }}
-        >
-          Welcome back! Here's your platform overview.
-        </p>
+    <div className="flex flex-col gap-8 w-full max-w-7xl mx-auto pb-10">
+      {/* Header */}
+      <div>
+        <h1 className="text-3xl font-bold tracking-tight text-foreground">Overview Dashboard</h1>
+        <p className="text-default-500 mt-1">Welcome back. Here's what's happening today.</p>
       </div>
 
-      {/* Stat Cards */}
-      <div
-        style={{
-          display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))',
-          gap: '1.5rem',
-          marginBottom: '2.5rem',
-        }}
-      >
-        {statCards.map((card) => {
-          const IconComponent = card.Icon;
-          return (
-            <div
-              key={card.label}
-              style={{
-                backgroundColor: 'var(--admin-surface)',
-                borderRadius: '12px',
-                padding: '1.5rem',
-                boxShadow: '0 2px 8px rgba(0, 0, 0, 0.08)',
-                border: '1px solid var(--admin-border)',
-                transition: 'all 0.3s ease',
-                position: 'relative',
-                overflow: 'hidden',
-              }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.boxShadow = '0 8px 16px rgba(0, 0, 0, 0.1)';
-                e.currentTarget.style.transform = 'translateY(-2px)';
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.boxShadow = '0 2px 8px rgba(0, 0, 0, 0.08)';
-                e.currentTarget.style.transform = 'translateY(0)';
-              }}
-            >
-              <div
-                style={{
-                  display: 'flex',
-                  alignItems: 'flex-start',
-                  justifyContent: 'space-between',
-                  marginBottom: '1rem',
-                }}
-              >
-                <p
-                  style={{
-                    margin: '0',
-                    fontSize: '12px',
-                    color: 'var(--admin-muted)',
-                    fontWeight: '600',
-                    letterSpacing: '0.3px',
-                    textTransform: 'uppercase',
-                  }}
-                >
-                  {card.label}
-                </p>
-                <div
-                  style={{
-                    width: '40px',
-                    height: '40px',
-                    borderRadius: '10px',
-                    background: card.bgGradient,
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    color: 'white',
-                  }}
-                >
-                  <IconComponent size={20} />
-                </div>
+      {/* Stats Grid */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        {statCards.map((stat, idx) => (
+          <Card key={idx} className="border-none bg-background/60 dark:bg-default-100/50 shadow-sm">
+            <CardBody className="p-6 flex flex-row items-center justify-between gap-4">
+              <div className="flex flex-col gap-1">
+                <span className="text-default-500 text-sm font-medium uppercase tracking-wider">{stat.label}</span>
+                <span className="text-3xl font-bold text-foreground">{stat.value}</span>
               </div>
-              <p
-                style={{
-                  margin: 0,
-                  fontSize: '24px',
-                  fontWeight: '700',
-                  color: 'var(--admin-text)',
-                  letterSpacing: '-0.5px',
-                }}
-              >
-                {card.value}
-              </p>
-            </div>
-          );
-        })}
+              <div className={`p-4 rounded-full bg-${stat.color}/10 text-${stat.color}`}>
+                <stat.Icon size={28} className="opacity-80" />
+              </div>
+            </CardBody>
+          </Card>
+        ))}
       </div>
 
-      {/* Main Lists Area */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-10">
+      {/* Tables Grid */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
         
-        {/* Support Tickets List */}
-        <div className="bg-background/80 backdrop-blur-xl border border-white/5 rounded-2xl p-6 shadow-sm flex flex-col h-[500px]">
-          <div className="flex items-center justify-between mb-6">
-            <h3 className="text-[15px] font-bold text-foreground">Recent Support Tickets</h3>
-            <button onClick={() => router.push('/admin/tickets')} className="text-xs text-red-500 font-bold hover:underline">
+        {/* Recent Tickets */}
+        <Card className="border-none bg-background/60 dark:bg-default-100/50 shadow-sm flex flex-col h-full">
+          <CardHeader className="flex flex-row items-center justify-between px-6 pt-6 pb-4">
+            <div className="flex flex-col gap-1">
+              <h2 className="text-xl font-bold text-foreground">Recent Tickets</h2>
+              <p className="text-sm text-default-500">Latest support requests</p>
+            </div>
+            <Button as={Link} href="/admin/tickets" size="sm" variant="flat" endContent={<ExternalLink size={14} />}>
               View All
-            </button>
-          </div>
-          
-          <div className="flex-1 overflow-y-auto custom-scrollbar pr-2">
+            </Button>
+          </CardHeader>
+          <CardBody className="px-6 pb-6 pt-0">
             {tickets.length > 0 ? (
-              <div className="flex flex-col gap-3">
-                {tickets.slice(0, 10).map((ticket) => (
-                  <div key={ticket.id} onClick={() => router.push(`/admin/tickets?id=${ticket.id}`)} className="p-3 rounded-xl border border-white/5 bg-white/5 hover:bg-white/10 transition-colors cursor-pointer flex justify-between items-start gap-4">
-                    <div className="min-w-0">
-                      <p className="font-bold text-[13px] text-foreground truncate">{ticket.subject}</p>
-                      <p className="text-[11px] text-muted-foreground mt-1 truncate">{ticket.ticket_number} • {new Date(ticket.created_at).toLocaleDateString()}</p>
-                    </div>
-                    <Chip size="sm" variant="flat" color={getStatusColor(ticket.status) as any} className="shrink-0 scale-90 origin-right">
-                      {ticket.status.replace('_', ' ')}
-                    </Chip>
-                  </div>
-                ))}
-              </div>
+              <Table aria-label="Recent Tickets" removeWrapper classNames={{ th: "bg-transparent text-default-500", td: "py-3" }}>
+                <TableHeader>
+                  <TableColumn>SUBJECT</TableColumn>
+                  <TableColumn>STATUS</TableColumn>
+                </TableHeader>
+                <TableBody>
+                  {tickets.slice(0, 5).map((ticket) => (
+                    <TableRow key={ticket.id}>
+                      <TableCell>
+                        <div className="flex flex-col">
+                          <span className="font-semibold text-sm truncate max-w-[200px]">{ticket.subject}</span>
+                          <span className="text-xs text-default-500 truncate max-w-[200px]">{ticket.description}</span>
+                        </div>
+                      </TableCell>
+                      <TableCell>
+                        <Chip size="sm" variant="flat" color={getStatusColor(ticket.status) as any} className="capitalize">
+                          {ticket.status.replace('_', ' ')}
+                        </Chip>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
             ) : (
-              <div className="h-full flex flex-col items-center justify-center text-center text-muted-foreground">
-                <AlertCircle className="opacity-20 mb-2" size={32} />
-                <p className="text-sm font-medium">No support tickets found.</p>
+              <div className="flex flex-col items-center justify-center py-10 text-default-500">
+                <AlertCircle size={32} className="mb-2 opacity-50" />
+                <p>No recent tickets</p>
               </div>
             )}
-          </div>
-        </div>
+          </CardBody>
+        </Card>
 
-        {/* Users List */}
-        <div className="bg-background/80 backdrop-blur-xl border border-white/5 rounded-2xl p-6 shadow-sm flex flex-col h-[500px]">
-          <div className="flex items-center justify-between mb-6">
-            <h3 className="text-[15px] font-bold text-foreground">Registered Users</h3>
-          </div>
-          
-          <div className="flex-1 overflow-y-auto custom-scrollbar pr-2">
+        {/* Recent Users */}
+        <Card className="border-none bg-background/60 dark:bg-default-100/50 shadow-sm flex flex-col h-full">
+          <CardHeader className="flex flex-row items-center justify-between px-6 pt-6 pb-4">
+            <div className="flex flex-col gap-1">
+              <h2 className="text-xl font-bold text-foreground">Recent Users</h2>
+              <p className="text-sm text-default-500">Latest signups</p>
+            </div>
+            <Button as={Link} href="/admin/users" size="sm" variant="flat" endContent={<ExternalLink size={14} />}>
+              View All
+            </Button>
+          </CardHeader>
+          <CardBody className="px-6 pb-6 pt-0">
             {users.length > 0 ? (
-              <div className="flex flex-col gap-3">
-                {users.slice(0, 20).map((u) => (
-                  <div key={u.id} className="p-3 rounded-xl border border-white/5 bg-white/5 flex justify-between items-center gap-4">
-                    <div className="flex items-center gap-3 min-w-0">
-                      <div className="w-8 h-8 rounded-full bg-gradient-to-br from-red-600 to-orange-500 flex items-center justify-center text-white font-bold text-xs shrink-0">
-                        {u.user_metadata?.username?.charAt(0)?.toUpperCase() || u.email?.charAt(0)?.toUpperCase() || '?'}
-                      </div>
-                      <div className="min-w-0">
-                        <p className="font-bold text-[13px] text-foreground truncate">{u.user_metadata?.username || 'No username'}</p>
-                        <p className="text-[11px] text-muted-foreground truncate">{u.email}</p>
-                      </div>
-                    </div>
-                    <div className="text-[10px] text-muted-foreground whitespace-nowrap">
-                      Joined {new Date(u.created_at).toLocaleDateString()}
-                    </div>
-                  </div>
-                ))}
-              </div>
+              <Table aria-label="Recent Users" removeWrapper classNames={{ th: "bg-transparent text-default-500", td: "py-3" }}>
+                <TableHeader>
+                  <TableColumn>USER</TableColumn>
+                  <TableColumn>ROLE</TableColumn>
+                </TableHeader>
+                <TableBody>
+                  {users.slice(0, 5).map((user) => (
+                    <TableRow key={user.id}>
+                      <TableCell>
+                        <User
+                          avatarProps={{ radius: "md", src: user.avatar_url || `https://api.dicebear.com/9.x/notionists/svg?seed=${user.email}` }}
+                          description={user.email}
+                          name={user.full_name || 'Anonymous'}
+                          classNames={{ name: "font-semibold text-sm", description: "text-xs" }}
+                        />
+                      </TableCell>
+                      <TableCell>
+                        <Chip size="sm" variant="dot" color={user.role === 'admin' ? 'danger' : 'default'} className="border-none capitalize">
+                          {user.role || 'user'}
+                        </Chip>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
             ) : (
-              <div className="h-full flex flex-col items-center justify-center text-center text-muted-foreground">
-                <Users className="opacity-20 mb-2" size={32} />
-                <p className="text-sm font-medium">No users found.</p>
+              <div className="flex flex-col items-center justify-center py-10 text-default-500">
+                <UserRound size={32} className="mb-2 opacity-50" />
+                <p>No recent users</p>
               </div>
             )}
-          </div>
-        </div>
-
+          </CardBody>
+        </Card>
       </div>
     </div>
   );

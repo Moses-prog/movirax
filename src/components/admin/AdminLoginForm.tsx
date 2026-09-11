@@ -2,11 +2,13 @@
 
 import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { Lock, Mail, ShieldCheck } from 'lucide-react';
+import { Lock, Mail, ShieldAlert } from 'lucide-react';
 import FullscreenToggleButton from '@/components/ui/button/FullscreenToggleButton';
 import ThemeSwitchDropdown from '@/components/ui/input/ThemeSwitchDropdown';
 import BrandLogo from '@/components/ui/other/BrandLogo';
 import { createClient } from '@/utils/supabase/client';
+import { Card, CardBody, CardHeader, Input, Button, Link as NextLink, Chip } from "@heroui/react";
+import { cn } from "@/utils/helpers";
 
 export default function AdminLoginForm() {
   const router = useRouter();
@@ -56,242 +58,108 @@ export default function AdminLoginForm() {
     }
   };
 
-  const inputBaseStyle: React.CSSProperties = {
-    width: '100%',
-    height: '46px',
-    padding: '0 14px 0 42px',
-    border: '1px solid var(--admin-border)',
-    borderRadius: '10px',
-    backgroundColor: 'var(--admin-input-bg)',
-    color: 'var(--admin-text)',
-    fontSize: '14px',
-    boxSizing: 'border-box',
-    outline: 'none',
-    transition: 'border-color 0.2s ease, background-color 0.2s ease, box-shadow 0.2s ease',
-    opacity: isLoading ? 0.72 : 1,
-  };
-
   return (
-    <main
-      style={{
-        minHeight: '100dvh',
-        display: 'grid',
-        placeItems: 'center',
-        background:
-          'radial-gradient(circle at top left, rgba(244, 63, 63, 0.16), transparent 34%), var(--admin-bg)',
-        padding: '24px',
-        fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
-      }}
+    <div
+      className={cn(
+        "relative flex min-h-dvh w-screen flex-col items-center justify-center overflow-hidden",
+        "before:pointer-events-none before:absolute before:inset-0 before:z-0 before:opacity-40 dark:before:opacity-70",
+        "dark:before:bg-[radial-gradient(circle_at_center,transparent_0%,black_100%)]",
+        "before:bg-[radial-gradient(circle_at_center,transparent_0%,white_100%)]",
+        "bg-background text-foreground"
+      )}
     >
-      <div
-        style={{
-          position: 'fixed',
-          top: '16px',
-          right: '16px',
-          display: 'flex',
-          alignItems: 'center',
-          gap: '4px',
-          zIndex: 2,
-        }}
-      >
+      <div className="absolute top-4 right-4 z-50 flex items-center gap-2">
         <ThemeSwitchDropdown />
         <FullscreenToggleButton />
       </div>
 
-      <section
-        style={{
-          width: '100%',
-          maxWidth: '440px',
-          backgroundColor: 'var(--admin-surface)',
-          border: '1px solid var(--admin-border)',
-          borderRadius: '14px',
-          boxShadow: 'var(--admin-popover-shadow)',
-          overflow: 'hidden',
-        }}
-      >
-        <div
-          style={{
-            padding: '28px 28px 22px',
-            borderBottom: '1px solid var(--admin-border)',
-            background:
-              'linear-gradient(135deg, rgba(244, 63, 63, 0.12), transparent 42%), var(--admin-surface)',
-          }}
+      <div className="pointer-events-none relative z-10 container mx-auto flex size-full flex-col items-center justify-center p-4">
+        <Card
+          shadow="lg"
+          className="border-foreground-200 bg-background/70 dark:bg-background/80 pointer-events-auto w-full max-w-md border-2 p-2 backdrop-blur-md md:p-4"
         >
-          <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '18px' }}>
-            <BrandLogo className="max-h-12" />
-          </div>
-          <div
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              gap: '8px',
-              color: 'var(--admin-muted)',
-              fontSize: '13px',
-              fontWeight: '600',
-              letterSpacing: '0.4px',
-              textTransform: 'uppercase',
-            }}
-          >
-            <ShieldCheck size={16} style={{ color: 'var(--admin-accent)' }} />
-            Admin Portal
-          </div>
-        </div>
-
-        <div style={{ padding: '28px' }}>
-          {error && (
-            <div
-              role="alert"
-              style={{
-                backgroundColor: 'var(--admin-danger-soft)',
-                color: 'var(--admin-danger-strong)',
-                padding: '12px 14px',
-                borderRadius: '10px',
-                marginBottom: '1.25rem',
-                fontSize: '13px',
-                fontWeight: '600',
-                border: '1px solid rgba(239, 68, 68, 0.35)',
-              }}
+          <CardHeader className="flex flex-col items-center justify-center gap-4 pb-6 pt-4">
+            <BrandLogo className="max-h-12 pointer-events-auto" />
+            <Chip 
+              color="danger" 
+              variant="flat" 
+              startContent={<ShieldAlert size={16} />}
+              className="px-2 border border-danger-500/30 font-semibold tracking-widest uppercase text-xs"
             >
-              {error}
+              Admin Portal
+            </Chip>
+          </CardHeader>
+          
+          <CardBody>
+            <form onSubmit={handleLogin} className="flex flex-col gap-5">
+              {error && (
+                <div className="rounded-xl border border-danger-500/30 bg-danger-50 p-3 text-sm font-semibold text-danger-600 dark:bg-danger-500/10 dark:text-danger-500 text-center animate-in fade-in slide-in-from-top-2">
+                  {error}
+                </div>
+              )}
+
+              <Input
+                autoFocus
+                isRequired
+                type="email"
+                label="Email Address"
+                placeholder="admin@movirax.com"
+                value={email}
+                onValueChange={setEmail}
+                isDisabled={isLoading}
+                autoComplete="email"
+                variant="bordered"
+                startContent={<Mail size={18} className="text-default-400" />}
+                classNames={{
+                  inputWrapper: "border-foreground-200 data-[hover=true]:border-danger focus-within:!border-danger",
+                }}
+              />
+
+              <Input
+                isRequired
+                type="password"
+                label="Password"
+                placeholder="Enter admin password"
+                value={password}
+                onValueChange={setPassword}
+                isDisabled={isLoading}
+                autoComplete="current-password"
+                variant="bordered"
+                startContent={<Lock size={18} className="text-default-400" />}
+                classNames={{
+                  inputWrapper: "border-foreground-200 data-[hover=true]:border-danger focus-within:!border-danger",
+                }}
+              />
+
+              <Button
+                type="submit"
+                color="danger"
+                size="lg"
+                isLoading={isLoading}
+                className="mt-2 font-bold shadow-lg shadow-danger-500/30"
+              >
+                {isLoading ? "Authenticating..." : "Login to Dashboard"}
+              </Button>
+            </form>
+
+            <div className="mt-8 flex justify-center">
+              <NextLink 
+                href="/auth" 
+                color="foreground" 
+                className="text-sm font-medium hover:text-danger transition-colors"
+              >
+                Not a staff member? Switch to User Login
+              </NextLink>
             </div>
-          )}
-
-          <form onSubmit={handleLogin} style={{ display: 'flex', flexDirection: 'column', gap: '1.1rem' }}>
-            <label style={{ display: 'block' }}>
-              <span
-                style={{
-                  display: 'block',
-                  fontSize: '12px',
-                  fontWeight: '700',
-                  color: 'var(--admin-text-soft)',
-                  marginBottom: '0.55rem',
-                  textTransform: 'uppercase',
-                  letterSpacing: '0.45px',
-                }}
-              >
-                Email Address
-              </span>
-              <div style={{ position: 'relative' }}>
-                <Mail
-                  size={17}
-                  style={{
-                    position: 'absolute',
-                    left: '14px',
-                    top: '50%',
-                    transform: 'translateY(-50%)',
-                    color: 'var(--admin-muted)',
-                    pointerEvents: 'none',
-                  }}
-                />
-                <input
-                  type="email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  placeholder="admin@example.com"
-                  required
-                  disabled={isLoading}
-                  autoComplete="email"
-                  style={inputBaseStyle}
-                  onFocus={(e) => {
-                    e.currentTarget.style.borderColor = 'var(--admin-accent)';
-                    e.currentTarget.style.boxShadow = '0 0 0 3px rgba(244, 63, 63, 0.12)';
-                  }}
-                  onBlur={(e) => {
-                    e.currentTarget.style.borderColor = 'var(--admin-border)';
-                    e.currentTarget.style.boxShadow = 'none';
-                  }}
-                />
-              </div>
-            </label>
-
-            <label style={{ display: 'block' }}>
-              <span
-                style={{
-                  display: 'block',
-                  fontSize: '12px',
-                  fontWeight: '700',
-                  color: 'var(--admin-text-soft)',
-                  marginBottom: '0.55rem',
-                  textTransform: 'uppercase',
-                  letterSpacing: '0.45px',
-                }}
-              >
-                Password
-              </span>
-              <div style={{ position: 'relative' }}>
-                <Lock
-                  size={17}
-                  style={{
-                    position: 'absolute',
-                    left: '14px',
-                    top: '50%',
-                    transform: 'translateY(-50%)',
-                    color: 'var(--admin-muted)',
-                    pointerEvents: 'none',
-                  }}
-                />
-                <input
-                  type="password"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  placeholder="Password"
-                  required
-                  disabled={isLoading}
-                  autoComplete="current-password"
-                  style={inputBaseStyle}
-                  onFocus={(e) => {
-                    e.currentTarget.style.borderColor = 'var(--admin-accent)';
-                    e.currentTarget.style.boxShadow = '0 0 0 3px rgba(244, 63, 63, 0.12)';
-                  }}
-                  onBlur={(e) => {
-                    e.currentTarget.style.borderColor = 'var(--admin-border)';
-                    e.currentTarget.style.boxShadow = 'none';
-                  }}
-                />
-              </div>
-            </label>
-
-            <button
-              type="submit"
-              disabled={isLoading}
-              className={isLoading ? 'admin-shimmer' : undefined}
-              style={{
-                height: '46px',
-                marginTop: '0.35rem',
-                background: isLoading ? 'var(--admin-input-bg)' : 'var(--admin-accent-gradient)',
-                color: isLoading ? 'var(--admin-muted)' : 'white',
-                border: isLoading ? '1px solid var(--admin-border)' : 'none',
-                borderRadius: '10px',
-                fontSize: '14px',
-                fontWeight: '700',
-                cursor: isLoading ? 'not-allowed' : 'pointer',
-                transition: 'transform 0.2s ease, box-shadow 0.2s ease, opacity 0.2s ease',
-                position: 'relative',
-                overflow: 'hidden',
-              }}
-              onMouseEnter={(e) => {
-                if (!isLoading) {
-                  e.currentTarget.style.transform = 'translateY(-1px)';
-                  e.currentTarget.style.boxShadow = '0 14px 30px rgba(225, 29, 72, 0.22)';
-                }
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.transform = 'translateY(0)';
-                e.currentTarget.style.boxShadow = 'none';
-              }}
-            >
-              {isLoading ? 'Checking access...' : 'Login'}
-            </button>
-          </form>
-
-                    <div style={{ marginTop: '1.5rem', textAlign: 'center', fontSize: '13px' }}>
-            <span style={{ color: 'var(--admin-muted)' }}>Not a staff member? </span>
-            <a href="/auth" style={{ color: 'white', textDecoration: 'none', fontWeight: 'bold' }}>Switch to User Login</a>
-          </div>
-        </div>
-      </section>
-    </main>
+          </CardBody>
+        </Card>
+      </div>
+      
+      {/* Dynamic Background Pattern */}
+      <div className="pointer-events-none absolute inset-0 z-0 h-full w-full bg-black/60 backdrop-blur-[2px] dark:bg-black/20" />
+      <div 
+        className="absolute inset-0 z-[-1] bg-[url('https://images.unsplash.com/photo-1595769816263-9b910be24d5f?q=80&w=2000')] bg-cover bg-center opacity-10 dark:opacity-20"
+      />
+    </div>
   );
 }
-
