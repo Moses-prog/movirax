@@ -13,7 +13,7 @@ export const getMoviePlayers = (id: string | number, startAt?: number): PlayersP
   return [
     {
       title: "Movirax Server 1",
-      source: `https://vidlink.pro/movie/${id}?player=jw&primaryColor=006fee&secondaryColor=a2a2a2&iconColor=eefdec&autoplay=false&startAt=${startAt || ""}`,
+      source: `https://vidlink.pro/movie/${id}?player=jw&primaryColor=e50914&secondaryColor=a2a2a2&iconColor=eefdec&autoplay=false&startAt=${startAt || ""}`,
       recommended: true,
       fast: true,
       ads: true,
@@ -21,7 +21,7 @@ export const getMoviePlayers = (id: string | number, startAt?: number): PlayersP
     },
     {
       title: "Movirax Server 2",
-      source: `https://vidlink.pro/movie/${id}?primaryColor=006fee&autoplay=false&startAt=${startAt}`,
+      source: `https://vidlink.pro/movie/${id}?primaryColor=e50914&autoplay=false&startAt=${startAt}`,
       recommended: true,
       fast: true,
       ads: true,
@@ -29,7 +29,7 @@ export const getMoviePlayers = (id: string | number, startAt?: number): PlayersP
     },
     {
       title: "Movirax Server 3",
-      source: `https://www.vidking.net/embed/movie/${id}?color=006fee&autoplay=false`,
+      source: `https://www.vidking.net/embed/movie/${id}?color=e50914&autoplay=false`,
       recommended: true,
       fast: true,
       resumable: true,
@@ -104,7 +104,7 @@ export const getTvShowPlayers = (
   return [
     {
       title: "Movirax Server 1",
-      source: `https://vidlink.pro/tv/${id}/${season}/${episode}?player=jw&primaryColor=f5a524&secondaryColor=a2a2a2&iconColor=eefdec&autoplay=false&startAt=${startAt || ""}`,
+      source: `https://vidlink.pro/tv/${id}/${season}/${episode}?player=jw&primaryColor=e50914&secondaryColor=a2a2a2&iconColor=eefdec&autoplay=false&startAt=${startAt || ""}`,
       recommended: true,
       fast: true,
       ads: true,
@@ -112,7 +112,7 @@ export const getTvShowPlayers = (
     },
     {
       title: "Movirax Server 2",
-      source: `https://vidlink.pro/tv/${id}/${season}/${episode}?primaryColor=f5a524&autoplay=false&startAt=${startAt}`,
+      source: `https://vidlink.pro/tv/${id}/${season}/${episode}?primaryColor=e50914&autoplay=false&startAt=${startAt}`,
       recommended: true,
       fast: true,
       ads: true,
@@ -120,7 +120,7 @@ export const getTvShowPlayers = (
     },
     {
       title: "Movirax Server 3",
-      source: `https://www.vidking.net/embed/tv/${id}/${season}/${episode}?color=f5a524&autoplay=false`,
+      source: `https://www.vidking.net/embed/tv/${id}/${season}/${episode}?color=e50914&autoplay=false`,
       recommended: true,
       fast: true,
       resumable: true,
