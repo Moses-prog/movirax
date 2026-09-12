@@ -7,7 +7,7 @@ const IS_TEST = process.env.NODE_ENV === "test";
 
 // Storage keys
 const DISCLAIMER_STORAGE_KEY = "disclaimer-agreed";
-const ADS_WARNING_STORAGE_KEY = "ads-warning-seen";
+const ADS_WARNING_STORAGE_KEY = "ads-warning-seen-v2";
 const LIBRARY_STORAGE_KEY = "bookmarks";
 const SEARCH_HISTORY_STORAGE_KEY = "search-histories";
 

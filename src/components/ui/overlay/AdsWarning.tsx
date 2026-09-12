@@ -15,7 +15,7 @@ import { ADS_WARNING_STORAGE_KEY, IS_BROWSER } from "@/utils/constants";
 
 const AdsWarning: React.FC = () => {
   const [seen, setSeen] = useLocalStorage<boolean>({
-    key: "${ADS_WARNING_STORAGE_KEY}-v2", // Reset key so everyone sees the new sleek design
+    key: ADS_WARNING_STORAGE_KEY,
     getInitialValueInEffect: false,
   });
   const [opened, handlers] = useDisclosure(!seen && IS_BROWSER);
