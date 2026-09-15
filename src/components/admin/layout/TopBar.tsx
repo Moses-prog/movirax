@@ -7,6 +7,7 @@ import FullscreenToggleButton from '@/components/ui/button/FullscreenToggleButto
 import ThemeSwitchDropdown from '@/components/ui/input/ThemeSwitchDropdown';
 import BrandLogo from '@/components/ui/other/BrandLogo';
 import { Input, Badge, Dropdown, DropdownTrigger, DropdownMenu, DropdownItem, Avatar, Button } from "@heroui/react";
+import { createClient } from '@/utils/supabase/client';
 
 interface NotificationItem {
   id: string;
@@ -27,8 +28,10 @@ export function TopBar({ onMenuClick, notifications = [], setNotifications }: To
 
   const handleLogout = async () => {
     try {
-      await fetch('/api/auth/logout', { method: 'POST' });
+      const supabase = createClient();
+      await supabase.auth.signOut();
       router.push('/admin/login');
+      router.refresh();
     } catch (error) {
       console.error('Logout failed:', error);
     }

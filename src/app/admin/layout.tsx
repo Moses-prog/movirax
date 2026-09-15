@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
+import { useRouter, usePathname } from 'next/navigation';
 import { Sidebar } from '@/components/admin/layout/Sidebar';
 import { TopBar } from '@/components/admin/layout/TopBar';
 
@@ -77,6 +77,8 @@ function getParsedMessages(ticket: SupportTicket): TicketMessage[] {
 
 export default function AdminLayout({ children }: AdminLayoutProps) {
   const router = useRouter();
+  const pathname = usePathname();
+  const isLoginPage = pathname === '/admin/login' || pathname === '/admin-login';
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [isChecking, setIsChecking] = useState(true);
   
@@ -99,6 +101,11 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
   }, [notifications]);
 
   useEffect(() => {
+    if (isLoginPage) {
+      setIsChecking(false);
+      return;
+    }
+
     const checkAuth = async () => {
       try {
         const response = await fetch('/api/admin/check-auth', {
@@ -118,7 +125,7 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
     };
 
     checkAuth();
-  }, [router]);
+  }, [router, isLoginPage]);
 
   const fetchTickets = async () => {
     const res = await getAllTickets();
@@ -129,14 +136,14 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
 
   // Fetch initial tickets
   useEffect(() => {
-    if (!isChecking) {
+    if (!isChecking && !isLoginPage) {
       fetchTickets();
     }
-  }, [isChecking]);
+  }, [isChecking, isLoginPage]);
 
   // Subscribe to global broadcasts from users
   useEffect(() => {
-    if (isChecking) return;
+    if (isChecking || isLoginPage) return;
     const supabase = createClient();
     
     const channel = supabase.channel('admin-global-tickets')
@@ -190,6 +197,16 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
     const hasUnread = msgs.some(m => m.sender === 'user' && !m.read);
     return count + (hasUnread ? 1 : 0);
   }, 0);
+
+  if (isLoginPage) {
+    return (
+      <div className="flex h-[100dvh] bg-background font-sans overflow-hidden text-foreground">
+        <main className="flex-1 overflow-y-auto">
+          {children}
+        </main>
+      </div>
+    );
+  }
 
   return (
     <div className="flex h-[100dvh] bg-background font-sans overflow-hidden text-foreground">
