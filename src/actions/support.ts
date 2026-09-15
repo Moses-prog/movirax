@@ -32,6 +32,37 @@ function generateTicketNumber() {
   return 'TKT-' + Math.floor(100000 + Math.random() * 900000).toString();
 }
 
+async function broadcastToAdmins(event: string, payload: any) {
+  try {
+    const { createClient: createSupabaseJs } = require('@supabase/supabase-js');
+    const supabaseAdmin = createSupabaseJs(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.SUPABASE_SERVICE_ROLE_KEY!,
+      { auth: { autoRefreshToken: false, persistSession: false } }
+    );
+    
+    await new Promise((resolve) => {
+      const channel = supabaseAdmin.channel('admin-global-tickets');
+      channel.subscribe(async (status: string) => {
+        if (status === 'SUBSCRIBED') {
+          await channel.send({
+            type: 'broadcast',
+            event,
+            payload
+          });
+          supabaseAdmin.removeChannel(channel);
+          resolve(true);
+        } else if (status === 'CLOSED' || status === 'CHANNEL_ERROR') {
+          resolve(false);
+        }
+      });
+      setTimeout(() => resolve(false), 2000);
+    });
+  } catch (e) {
+    console.error('Broadcast error:', e);
+  }
+}
+
 export async function createTicket(data: {
   subject: string;
   description: string;
@@ -62,6 +93,9 @@ export async function createTicket(data: {
       console.error('Error creating ticket:', error);
       return { success: false, error: error.message };
     }
+
+    // Broadcast new ticket to admins
+    await broadcastToAdmins('new_ticket', { ticketNumber: ticket.ticket_number });
 
     revalidatePath('/support');
     return { success: true, data: ticket };
@@ -316,7 +350,16 @@ export async function addTicketMessage(ticketId: string, message: string, sender
       newStatus = 'in_progress';
     }
 
-    return await updateTicketStatus(ticketId, newStatus, newResolution);
+    const result = await updateTicketStatus(ticketId, newStatus, newResolution);
+
+    if (result.success && sender === 'user') {
+      await broadcastToAdmins('new_message', { 
+        ticketId, 
+        ticketNumber: ticket.ticket_number 
+      });
+    }
+
+    return result;
   } catch (error) {
     console.error('Action error:', error);
     return { success: false, error: 'Failed to add message' };
