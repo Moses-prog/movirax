@@ -20,11 +20,6 @@ export const GET = async (request: Request) => {
     } = await supabase.auth.exchangeCodeForSession(code);
 
     if (!error) {
-      if (user?.user_metadata?.status === 'suspended') {
-        await supabase.auth.signOut();
-        return NextResponse.redirect(`${origin}/auth?error=true&suspended=true`);
-      }
-
       // Insert username
       if (user) {
         console.info({ user });

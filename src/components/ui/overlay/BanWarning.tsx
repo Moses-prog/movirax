@@ -19,7 +19,8 @@ export default function BanWarning({ children }: { children: React.ReactNode }) 
 
   if (isLoading || !user) return <>{children}</>;
 
-  if (user.user_metadata?.status !== "banned") return <>{children}</>;
+  const status = user.user_metadata?.status;
+  if (status !== "banned" && status !== "suspended") return <>{children}</>;
 
   const handleLogout = async () => {
     if (isLoggingOut) return;
@@ -35,6 +36,12 @@ export default function BanWarning({ children }: { children: React.ReactNode }) 
     }
     router.push("/auth");
   };
+
+  const isBanned = status === "banned";
+  const title = isBanned ? "Account Banned" : "Account Suspended";
+  const message = isBanned 
+    ? "Your account has been permanently banned due to a violation of our terms. You no longer have access to this application. If you believe this is a mistake, please contact support."
+    : "Your account is currently suspended. You temporarily do not have access to this application. Please contact support for more information.";
 
   return (
     <>
@@ -58,10 +65,10 @@ export default function BanWarning({ children }: { children: React.ReactNode }) 
             <AlertTriangle className="size-7 text-yellow-500" />
           </div>
           <h2 className="mb-2 text-2xl font-bold tracking-tight text-yellow-500">
-            Account Restricted
+            {title}
           </h2>
           <p className="mb-8 text-sm leading-relaxed text-yellow-500/80">
-            Your account has been banned due to a violation of our terms. You no longer have access to this application. If you believe this is a mistake, please contact support.
+            {message}
           </p>
           
           <div className="flex flex-col gap-3 w-full">

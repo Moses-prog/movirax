@@ -111,12 +111,9 @@ export async function PATCH(request: Request) {
     // 2. Update auth metadata (this is what the GET route relies on)
     const attributes: any = { user_metadata: { status } };
     
-    // Also use native Supabase ban if they are being banned
-    if (status === 'banned') {
-      attributes.ban_duration = '876000h'; // 100 years
-    } else if (status === 'active') {
-      attributes.ban_duration = 'none'; // Unban
-    }
+    // We no longer use native ban_duration because we want them to stay logged in
+    // to see the in-app Ban Popup and be able to contact support.
+    attributes.ban_duration = 'none';
 
     const { error: authError } = await supabaseAdmin.auth.admin.updateUserById(userId, attributes);
 

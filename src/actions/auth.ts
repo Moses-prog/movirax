@@ -72,11 +72,6 @@ const signInWithEmailAction: AuthAction<LoginFormInput> = async (data, supabase)
 
   if (error) return { success: false, message: error.message };
 
-  if (user?.user?.user_metadata?.status === 'suspended') {
-    await supabase.auth.signOut();
-    return { success: false, message: "Your account is currently suspended. Please contact support." };
-  }
-
   const { data: username, error: usernameError } = await supabase
     .from("profiles")
     .select("username")
