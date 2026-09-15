@@ -56,6 +56,7 @@ const ScrollBlurHeading = ({ text }: { text: string }) => {
 
 export default function LandingPage() {
   const [movies, setMovies] = useState<Movie[]>([]);
+  const [trendingTitles, setTrendingTitles] = useState<string[]>([]);
   const [moviesLoading, setMoviesLoading] = useState(true);
   const [pageReady, setPageReady] = useState(false);
   const [isMuted, setIsMuted] = useState(true);
@@ -76,6 +77,7 @@ export default function LandingPage() {
           return;
         }
 
+        // Fetch page 1 and 2 to get a good pool of trending movies for the constellation
         const response = await fetch(`https://api.themoviedb.org/3/discover/movie?sort_by=popularity.desc&page=1`, {
           method: "GET",
           headers: {
@@ -88,7 +90,11 @@ export default function LandingPage() {
         const data = await response.json();
 
         if (data?.results && Array.isArray(data.results)) {
-          // Filter to movies with backdrops and posters
+          // Store all titles for the Cinematic Universe mind map
+          const titles = data.results.map((m: any) => m.title).filter(Boolean);
+          setTrendingTitles(titles);
+
+          // Filter to movies with backdrops and posters for the UI cards
           const validMovies = data.results.filter((movie: any) => movie.poster_path && movie.backdrop_path);
           
           if (validMovies.length > 0) {
@@ -188,7 +194,7 @@ export default function LandingPage() {
             
             {/* Interactive Cinematic Universe Particle System (Desktop Only, Right Side) */}
             <div className="hidden lg:block absolute right-0 top-0 w-1/2 h-full z-0">
-              <CinematicUniverse />
+              {!moviesLoading && <CinematicUniverse dynamicMovies={trendingTitles} />}
             </div>
 
             <div className="relative z-10 max-w-2xl pointer-events-none">

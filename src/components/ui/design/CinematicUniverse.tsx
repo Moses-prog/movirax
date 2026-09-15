@@ -14,9 +14,13 @@ interface Particle {
 }
 
 const GENRES = ["Sci-Fi", "Action", "Drama", "Thriller", "Comedy", "Horror", "Romance", "Adventure", "Fantasy", "Mystery", "Animation", "Crime", "Documentary"];
-const MOVIES = ["Inception", "The Dark Knight", "Interstellar", "The Matrix", "Pulp Fiction", "Dune", "Oppenheimer", "Avatar", "Gladiator", "Titanic", "Jurassic Park", "The Shining", "Alien", "Jaws", "Blade Runner", "Mad Max", "Goodfellas", "Fight Club", "Se7en", "The Godfather", "Parasite", "Whiplash", "Everything Everywhere", "Spider-Verse"];
+const FALLBACK_MOVIES = ["Inception", "The Dark Knight", "Interstellar", "The Matrix", "Pulp Fiction", "Dune", "Oppenheimer", "Avatar", "Gladiator", "Titanic", "Jurassic Park", "The Shining", "Alien", "Jaws", "Blade Runner", "Mad Max", "Goodfellas", "Fight Club", "Se7en", "The Godfather", "Parasite", "Whiplash", "Everything Everywhere", "Spider-Verse"];
 
-export const CinematicUniverse = () => {
+interface Props {
+  dynamicMovies?: string[];
+}
+
+export const CinematicUniverse = ({ dynamicMovies = [] }: Props) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
   useEffect(() => {
@@ -57,7 +61,8 @@ export const CinematicUniverse = () => {
       const h = parent.clientHeight;
 
       let availableGenres = [...GENRES].sort(() => 0.5 - Math.random());
-      let availableMovies = [...MOVIES].sort(() => 0.5 - Math.random());
+      const sourceMovies = dynamicMovies.length > 0 ? dynamicMovies : FALLBACK_MOVIES;
+      let availableMovies = [...sourceMovies].sort(() => 0.5 - Math.random());
 
       for (let i = 0; i < PARTICLE_COUNT; i++) {
         const isRed = Math.random() > 0.7;
