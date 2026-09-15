@@ -6,7 +6,7 @@ import { addToast, Input, Button } from '@heroui/react';
 import { CheckCircle2 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { validatePromoCode } from '@/lib/promotions';
-import { initializePaystackSubscription } from '@/app/actions/paystack';
+import { usePaystackPayment } from 'react-paystack';
 
 const FilmStripPattern = ({ colorClass, bgClass }: { colorClass: string, bgClass: string }) => (
   <svg 
@@ -124,6 +124,26 @@ function PlanCard({ plan, user, onSuccess, router, paymentSettings }: { plan: an
 
   const handleFlutterPayment = useFlutterwave(config);
 
+  const paystackConfig = {
+    reference: `movirax-${Date.now()}-${Math.floor(Math.random() * 1000)}`,
+    email: user?.email || '',
+    amount: Number(finalPrice) * 100, // Paystack expects kobo
+    publicKey: paymentSettings?.paystackPublicKey || '',
+    plan: plan.paystack_plan_code,
+    currency: plan.currency || 'NGN',
+    metadata: {
+      custom_fields: [
+        {
+          display_name: "Type",
+          variable_name: "type",
+          value: "subscription"
+        }
+      ]
+    }
+  };
+  // We disable the hook conditionally if no key is present to avoid errors, but it expects a string.
+  const initializePaystack = usePaystackPayment(paymentSettings?.paystackEnabled ? paystackConfig : { ...paystackConfig, publicKey: 'pk_test_dummy' });
+
   const isAnnual = plan.interval === 'annual';
   const themeColor = isAnnual ? 'text-yellow-500' : 'text-red-500';
   const buttonBg = isAnnual ? 'bg-yellow-500 text-black hover:bg-yellow-400' : 'bg-red-600 text-white hover:bg-red-500';
@@ -238,18 +258,21 @@ function PlanCard({ plan, user, onSuccess, router, paymentSettings }: { plan: an
                   return;
                 }
                 
-                // Initialize Paystack Checkout
-                const res = await initializePaystackSubscription(
-                  user.email,
-                  plan.paystack_plan_code,
-                  Number(finalPrice)
-                );
-                
-                if (res.error) {
-                  addToast({ title: res.error, color: 'danger' });
-                } else if (res.authorization_url) {
-                  window.location.href = res.authorization_url;
-                }
+                // Initialize Paystack Embedded Popup
+                initializePaystack({
+                  onSuccess: (response: any) => {
+                    // Paystack response contains reference, transaction, status
+                    const unifiedResponse = {
+                      transaction_id: response.reference,
+                      tx_ref: response.reference,
+                      status: response.status
+                    };
+                    onSuccess(unifiedResponse, plan);
+                  },
+                  onClose: () => {
+                    addToast({ title: 'Payment cancelled', color: 'default' });
+                  }
+                });
               }}
             >
               Pay via Card (Paystack)
