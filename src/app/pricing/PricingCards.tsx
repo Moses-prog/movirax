@@ -248,7 +248,7 @@ function PlanCard({ plan, user, onSuccess, router, paymentSettings }: { plan: an
           )}
         </div>
 
-        <div className="flex flex-col gap-3 mb-6">
+        <div className="flex flex-col gap-3 mt-auto">
           {paymentSettings?.paystackEnabled && (
             <Button 
               className={`w-full font-bold text-base h-12 shadow-xl rounded-xl ${buttonBg}`}
