@@ -248,7 +248,8 @@ export default function LandingPage() {
                 )}
               </motion.div>
             </div>
-          </motion.div>
+          </div>
+        </motion.div>
 
           <motion.div variants={bentoVariant} className="md:col-span-2 xl:col-span-2 md:row-span-1 bg-white dark:bg-[#121212] rounded-[2.5rem] border border-gray-200 dark:border-white/5 p-8 flex flex-col justify-center relative overflow-hidden group shadow-sm dark:shadow-none transition-colors">
             <div className="absolute -bottom-10 -right-10 text-[180px] text-black/5 dark:text-white/5 font-black leading-none group-hover:scale-110 transition-transform duration-700">50K</div>
