@@ -103,13 +103,17 @@ export default function ServersPage() {
               selectedKeys={[movieServer]}
               onChange={(e) => setMovieServer(e.target.value)}
               className="max-w-full"
-            >
-              {mockPlayersMovie.map((player, idx) => (
-                <SelectItem key={idx.toString()}>
-                  {player.title} {player.fast ? '(Fast)' : ''}
+              items={mockPlayersMovie.map((player, idx) => ({ 
+                id: idx.toString(), 
+                title: player.title, 
+                fast: player.fast 
+              }))}
+              children={(item: any) => (
+                <SelectItem key={item.id}>
+                  {item.title} {item.fast ? '(Fast)' : ''}
                 </SelectItem>
-              ))}
-            </Select>
+              )}
+            />
           </CardBody>
         </Card>
 
@@ -134,13 +138,17 @@ export default function ServersPage() {
               selectedKeys={[tvServer]}
               onChange={(e) => setTvServer(e.target.value)}
               className="max-w-full"
-            >
-              {mockPlayersTv.map((player, idx) => (
-                <SelectItem key={idx.toString()}>
-                  {player.title} {player.fast ? '(Fast)' : ''}
+              items={mockPlayersTv.map((player, idx) => ({
+                id: idx.toString(),
+                title: player.title,
+                fast: player.fast
+              }))}
+              children={(item: any) => (
+                <SelectItem key={item.id}>
+                  {item.title} {item.fast ? '(Fast)' : ''}
                 </SelectItem>
-              ))}
-            </Select>
+              )}
+            />
           </CardBody>
         </Card>
       </div>
