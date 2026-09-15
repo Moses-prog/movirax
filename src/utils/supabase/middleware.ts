@@ -27,7 +27,31 @@ export async function updateSession(request: NextRequest) {
   });
 
   // This refreshes a user's session in the background
-  await supabase.auth.getUser();
+  const { data: { user }, error } = await supabase.auth.getUser();
+
+  // Instant-kick mechanism for Banned or Suspended users
+  if (user?.user_metadata?.status === 'suspended' || error?.message?.toLowerCase().includes('banned')) {
+    await supabase.auth.signOut();
+    
+    // Only redirect if it's a page request, not an API route
+    if (!request.nextUrl.pathname.startsWith('/api/') && !request.nextUrl.pathname.startsWith('/auth')) {
+      const redirectUrl = request.nextUrl.clone();
+      redirectUrl.pathname = '/auth';
+      redirectUrl.searchParams.set('error', 'true');
+      if (user?.user_metadata?.status === 'suspended') {
+        redirectUrl.searchParams.set('suspended', 'true');
+      }
+      
+      const redirectResponse = NextResponse.redirect(redirectUrl);
+      
+      // Transfer the cleared cookies from the signOut operation
+      supabaseResponse.cookies.getAll().forEach((cookie) => {
+        redirectResponse.cookies.set(cookie);
+      });
+      
+      return redirectResponse;
+    }
+  }
 
   return supabaseResponse;
 }
