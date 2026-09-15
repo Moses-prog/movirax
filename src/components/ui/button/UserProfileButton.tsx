@@ -3,7 +3,7 @@ import useBreakpoints from "@/hooks/useBreakpoints";
 import useSupabaseUser from "@/hooks/useSupabaseUser";
 import { DropdownItemProps } from "@/types/component";
 import { env } from "@/utils/env";
-import { Gear, Logout, User } from "@/utils/icons";
+import { Gear, Logout, User, Help } from "@/utils/icons";
 import { useRouter } from "@bprogress/next/app";
 import {
   addToast,
@@ -88,6 +88,10 @@ const UserProfileButton: React.FC = () => {
       >
         <DropdownItem key="profile" href="/profile" startContent={<User />}>
           Profile
+        </DropdownItem>
+        
+        <DropdownItem key="support" href="/support" startContent={<Help />}>
+          Support
         </DropdownItem>
         
         {profiles.length > 0 && (
