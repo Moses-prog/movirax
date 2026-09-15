@@ -12,6 +12,7 @@ import PricingSection from "./PricingSection";
 import FAQSection from "./FAQSection";
 import FooterSection from "./FooterSection";
 import { FilmStripPattern } from "@/components/ui/design/FilmStripPattern";
+import { CinematicUniverse } from "@/components/ui/design/CinematicUniverse";
 
 interface Movie {
   id: number;
@@ -185,8 +186,14 @@ export default function LandingPage() {
             {/* SVG Movie Ribbon Texture - Anchored broadly behind the hero area */}
             <FilmStripPattern colorClass="text-red-500/30" bgClass="stroke-red-900/50" className="opacity-100 scale-[1.8] -translate-y-10 translate-x-20 origin-top-left" />
             
-            <div className="relative z-10 max-w-2xl">
-              <motion.div variants={heroItemVariant} className="mb-8">
+            {/* Interactive Cinematic Universe Particle System (Desktop Only, Right Side) */}
+            <div className="hidden lg:block absolute right-0 top-0 w-1/2 h-full z-0">
+              <CinematicUniverse />
+            </div>
+
+            <div className="relative z-10 max-w-2xl pointer-events-none">
+              <div className="pointer-events-auto">
+                <motion.div variants={heroItemVariant} className="mb-8">
                 {!pageReady ? (
                   <Skeleton className="w-24 h-6 rounded-full" />
                 ) : (
