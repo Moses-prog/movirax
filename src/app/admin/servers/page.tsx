@@ -1,8 +1,8 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { Settings2, Save, Server, Tv, Film } from 'lucide-react';
-import { Button, Card, CardBody, CardHeader, Select, SelectItem, addToast, Spinner } from '@heroui/react';
+import { Save, Server, Tv, Film } from 'lucide-react';
+import { Button, Card, CardBody, CardHeader, Select, SelectItem, addToast, Spinner, Divider } from '@heroui/react';
 import { fetchServerSettings, saveServerSettings } from '@/actions/settings';
 import { getMoviePlayers, getTvShowPlayers } from '@/utils/players';
 
@@ -51,56 +51,61 @@ export default function ServersPage() {
   };
 
   if (isLoading) {
-    return <div className="flex h-64 items-center justify-center"><Spinner size="lg" color="danger" /></div>;
+    return (
+      <div className="flex justify-center items-center h-[50vh]">
+        <Spinner size="lg" color="danger" />
+      </div>
+    );
   }
 
   return (
-    <div className="p-6 md:p-10 max-w-5xl mx-auto">
-      <div className="mb-10 flex flex-col items-start justify-between gap-4 md:flex-row md:items-center">
+    <div className="mx-auto max-w-7xl flex flex-col gap-6 pb-10">
+      <header className="flex flex-wrap items-center justify-between gap-4">
         <div>
-          <h1 className="flex items-center gap-3 text-3xl font-bold text-white tracking-tight">
-            <Server className="size-8 text-red-500" />
+          <h1 className="text-3xl font-bold tracking-tight text-foreground flex items-center gap-3">
+            <Server className="size-8 text-danger" />
             Server Configuration
           </h1>
-          <p className="mt-2 text-muted-foreground">
+          <p className="text-default-500 mt-1">
             Manage the primary default streaming servers for Movies and TV Shows.
           </p>
         </div>
         <Button 
           color="danger" 
-          startContent={<Save className="size-4" />}
+          startContent={<Save size={18} />}
           onPress={handleSave}
           isLoading={isSaving}
-          className="font-semibold shadow-lg shadow-red-500/20"
+          className="font-bold shadow-lg shadow-danger-500/30"
         >
           Save Changes
         </Button>
-      </div>
+      </header>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-        <Card className="bg-zinc-900/50 border border-white/10 backdrop-blur-sm">
-          <CardHeader className="border-b border-white/10 p-6">
-            <h2 className="flex items-center gap-3 text-xl font-semibold text-white">
-              <Film className="size-5 text-red-500" />
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <Card className="border-none shadow-sm bg-background/60 dark:bg-default-100/50">
+          <CardHeader className="flex items-center gap-3 px-6 pt-6 pb-4">
+            <div className="flex size-10 items-center justify-center rounded-xl bg-danger/10 text-danger">
+              <Film size={20} />
+            </div>
+            <h2 className="text-lg font-bold text-foreground">
               Movie Default Server
             </h2>
           </CardHeader>
+          <Divider />
           <CardBody className="p-6">
-            <p className="mb-6 text-sm text-zinc-400 leading-relaxed">
+            <p className="mb-6 text-sm text-default-500 leading-relaxed">
               Select the primary server that will automatically load when a user plays a movie. If this server fails, they can still manually switch to others.
             </p>
             <Select 
               label="Primary Movie Server"
-              variant="bordered"
+              labelPlacement="outside"
+              variant="faded"
               selectedKeys={[movieServer]}
               onChange={(e) => setMovieServer(e.target.value)}
               className="max-w-full"
-              classNames={{
-                trigger: "bg-zinc-900 border-white/20 hover:border-red-500/50 transition-colors",
-              }}
             >
               {mockPlayersMovie.map((player, idx) => (
-                <SelectItem key={idx.toString()} value={idx.toString()}>
+                <SelectItem key={idx.toString()}>
                   {player.title} {player.fast ? '(Fast)' : ''}
                 </SelectItem>
               ))}
@@ -108,29 +113,30 @@ export default function ServersPage() {
           </CardBody>
         </Card>
 
-        <Card className="bg-zinc-900/50 border border-white/10 backdrop-blur-sm">
-          <CardHeader className="border-b border-white/10 p-6">
-            <h2 className="flex items-center gap-3 text-xl font-semibold text-white">
-              <Tv className="size-5 text-red-500" />
+        <Card className="border-none shadow-sm bg-background/60 dark:bg-default-100/50">
+          <CardHeader className="flex items-center gap-3 px-6 pt-6 pb-4">
+            <div className="flex size-10 items-center justify-center rounded-xl bg-danger/10 text-danger">
+              <Tv size={20} />
+            </div>
+            <h2 className="text-lg font-bold text-foreground">
               TV Show Default Server
             </h2>
           </CardHeader>
+          <Divider />
           <CardBody className="p-6">
-            <p className="mb-6 text-sm text-zinc-400 leading-relaxed">
+            <p className="mb-6 text-sm text-default-500 leading-relaxed">
               Select the primary server that will automatically load when a user plays a TV Show episode. 
             </p>
             <Select 
               label="Primary TV Server"
-              variant="bordered"
+              labelPlacement="outside"
+              variant="faded"
               selectedKeys={[tvServer]}
               onChange={(e) => setTvServer(e.target.value)}
               className="max-w-full"
-              classNames={{
-                trigger: "bg-zinc-900 border-white/20 hover:border-red-500/50 transition-colors",
-              }}
             >
               {mockPlayersTv.map((player, idx) => (
-                <SelectItem key={idx.toString()} value={idx.toString()}>
+                <SelectItem key={idx.toString()}>
                   {player.title} {player.fast ? '(Fast)' : ''}
                 </SelectItem>
               ))}
