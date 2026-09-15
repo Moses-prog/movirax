@@ -44,7 +44,7 @@ const ScrollBlurHeading = ({ text }: { text: string }) => {
   return (
     <h1 className="text-5xl lg:text-7xl font-bold tracking-tight leading-[1.1] mb-6 text-white flex flex-wrap gap-x-[0.25em] gap-y-2">
       {words.map((word, i) => {
-        if (i === 0) {
+        if (i < 3) {
           return <span key={i} className="text-white">{word}</span>;
         }
         
