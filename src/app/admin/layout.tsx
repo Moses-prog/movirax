@@ -83,6 +83,21 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
   const [tickets, setTickets] = useState<SupportTicket[]>([]);
   const [notifications, setNotifications] = useState<{id: string, message: string, time: string, href: string, read: boolean}[]>([]);
 
+  // Load notifications from local storage on mount
+  useEffect(() => {
+    const saved = localStorage.getItem('admin_notifications');
+    if (saved) {
+      try {
+        setNotifications(JSON.parse(saved));
+      } catch (e) {}
+    }
+  }, []);
+
+  // Save notifications to local storage on change
+  useEffect(() => {
+    localStorage.setItem('admin_notifications', JSON.stringify(notifications));
+  }, [notifications]);
+
   useEffect(() => {
     const checkAuth = async () => {
       try {

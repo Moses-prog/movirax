@@ -7,6 +7,7 @@ import { getAdminUsers } from '@/actions/admin';
 import { getAllTickets, SupportTicket } from '@/actions/support';
 import { Chip, Spinner, Card, CardBody, CardHeader, Table, TableHeader, TableColumn, TableBody, TableRow, TableCell, User, Button } from '@heroui/react';
 import Link from 'next/link';
+import { createClient } from '@/utils/supabase/client';
 
 export default function AdminDashboard() {
   const router = useRouter();
@@ -40,13 +41,32 @@ export default function AdminDashboard() {
         }
 
       } catch (error) {
-        console.error('Error:', error);
+        console.error('Data fetch failed:', error);
       } finally {
         setIsLoading(false);
       }
     };
 
     checkAuthAndFetchData();
+    
+    // Subscribe to realtime updates for instant dashboard refreshes
+    const supabase = createClient();
+    const channel = supabase.channel('admin-dashboard-updates')
+      .on('broadcast', { event: 'new_ticket' }, () => {
+        getAllTickets().then(res => {
+          if (res.success && res.data) setTickets(res.data);
+        });
+      })
+      .on('broadcast', { event: 'new_message' }, () => {
+        getAllTickets().then(res => {
+          if (res.success && res.data) setTickets(res.data);
+        });
+      })
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
   }, [router]);
 
   const activeTicketsCount = tickets.filter(t => t.status !== 'closed' && t.status !== 'resolved').length;
