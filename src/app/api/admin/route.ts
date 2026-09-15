@@ -102,23 +102,26 @@ export async function PATCH(request: Request) {
       }
     );
 
-    // 1. Update user_profiles table
-    const is_banned = status === 'banned';
+    // 1. Try to update user_profiles table if the column exists
     const { error: profileError } = await supabaseAdmin
       .from('user_profiles')
-      .update({ 
-        is_banned,
-        banned_at: is_banned ? new Date().toISOString() : null
-      })
+      .update({ status })
       .eq('id', userId);
 
-    // 2. Update auth metadata
-    const { error: authError } = await supabaseAdmin.auth.admin.updateUserById(userId, {
-      user_metadata: { status },
-    });
+    // 2. Update auth metadata (this is what the GET route relies on)
+    const attributes: any = { user_metadata: { status } };
+    
+    // Also use native Supabase ban if they are being banned
+    if (status === 'banned') {
+      attributes.ban_duration = '876000h'; // 100 years
+    } else if (status === 'active') {
+      attributes.ban_duration = 'none'; // Unban
+    }
 
-    if (profileError || authError) {
-      throw new Error(profileError?.message || authError?.message);
+    const { error: authError } = await supabaseAdmin.auth.admin.updateUserById(userId, attributes);
+
+    if (authError) {
+      throw new Error(authError.message);
     }
 
     return NextResponse.json({ success: true });
