@@ -1,9 +1,8 @@
-﻿'use client';
+'use client';
 
 import React, { useState, useEffect } from 'react';
-import { DollarSign, Save, ShieldCheck, Clock, Gift, Percent, RefreshCcw } from 'lucide-react';
-import { Button, Input, addToast, Card, CardBody, CardHeader, Divider } from '@heroui/react';
-import { Switch } from '@heroui/switch';
+import { DollarSign, Save, RefreshCcw, Percent } from 'lucide-react';
+import { Button, Input, addToast, Card, CardBody, CardHeader, Divider, Spinner } from '@heroui/react';
 import { getPricingPlans, updatePricingPlan, PricingPlan } from '@/lib/subscriptions';
 
 export default function PricingSettingsPage() {
@@ -41,66 +40,76 @@ export default function PricingSettingsPage() {
   };
 
   if (isLoading) {
-    return <div className="p-8 text-center"><div className="animate-spin size-8 border-4 border-danger border-t-transparent rounded-full mx-auto" /></div>;
+    return (
+      <div className="flex justify-center items-center h-[50vh]">
+        <Spinner size="lg" color="danger" />
+      </div>
+    );
   }
 
   return (
-    <div className="mx-auto max-w-7xl">
-      <header className="mb-8 flex flex-wrap items-center justify-between gap-4">
+    <div className="mx-auto max-w-7xl flex flex-col gap-6 pb-10">
+      <header className="flex flex-wrap items-center justify-between gap-4">
         <div>
-          <h1 className="m-0 mb-1 text-3xl font-extrabold tracking-tight text-foreground">Pricing Settings</h1>
-          <p className="m-0 text-sm font-medium text-muted-foreground">Configure global pricing and payment gateways</p>
+          <h1 className="text-3xl font-bold tracking-tight text-foreground">Pricing Settings</h1>
+          <p className="text-default-500 mt-1">Configure global pricing and payment gateways</p>
         </div>
         
         <Button
           color="danger"
-          className="bg-gradient-to-r from-red-600 to-orange-500 font-bold text-white shadow-md"
           startContent={<Save size={18} />}
           onPress={handleSave}
           isLoading={isSaving}
+          className="font-bold shadow-lg shadow-danger-500/30"
         >
           Save Changes
         </Button>
       </header>
 
       <div className="grid gap-6">
-        <Card className="border border-[#0EA5E9]/20 bg-background/50 shadow-[0_0_20px_rgba(14,165,233,0.05)] backdrop-blur-xl relative overflow-hidden">
+        <Card className="border-none shadow-sm bg-background/60 dark:bg-default-100/50">
           <CardHeader className="flex items-center gap-3 px-6 pt-6 pb-4">
-            <div className="flex size-10 items-center justify-center rounded-xl bg-[#0EA5E9]/20 text-[#0EA5E9]">
+            <div className="flex size-10 items-center justify-center rounded-xl bg-danger/10 text-danger">
               <DollarSign size={20} />
             </div>
             <div>
-              <h3 className="text-[16px] font-bold text-foreground">Flutterwave Pricing (NGN)</h3>
-              <p className="text-[12px] font-medium text-muted-foreground">Localized African pricing</p>
+              <h3 className="text-lg font-bold text-foreground">Flutterwave Pricing (NGN)</h3>
+              <p className="text-sm text-default-500">Localized African pricing</p>
             </div>
           </CardHeader>
-          <Divider className="bg-white/5" />
+          <Divider />
           <CardBody className="px-6 py-6">
             <div className="grid gap-6 md:grid-cols-3">
               {plans.map(plan => (
-                <div key={plan.id} className="flex flex-col gap-4 rounded-xl border border-white/5 bg-white/5 p-5">
-                  <h4 className="text-[13px] font-bold uppercase tracking-widest text-muted-foreground flex items-center gap-2">
-                    <RefreshCcw size={14} /> {plan.name} ({plan.interval})
-                  </h4>
-                  <div className="flex flex-col gap-3">
-                    <Input
-                      label="Price"
-                      type="number"
-                      value={plan.price.toString()}
-                      onValueChange={(v) => handleUpdatePrice(plan.id, 'price', v)}
-                      startContent={<span className="text-muted-foreground font-bold">₦</span>}
-                      classNames={{ inputWrapper: "bg-background border border-white/10" }}
-                    />
-                    <Input
-                      label="Discount"
-                      type="number"
-                      value={(plan.discount || 0).toString()}
-                      onValueChange={(v) => handleUpdatePrice(plan.id, 'discount', v)}
-                      endContent={<Percent size={14} className="text-muted-foreground" />}
-                      classNames={{ inputWrapper: "bg-background border border-white/10" }}
-                    />
-                  </div>
-                </div>
+                <Card key={plan.id} className="border border-divider bg-transparent shadow-none">
+                  <CardBody className="flex flex-col gap-5 p-5">
+                    <h4 className="text-xs font-bold uppercase tracking-wider text-default-500 flex items-center gap-2">
+                      <RefreshCcw size={14} /> {plan.name} ({plan.interval})
+                    </h4>
+                    <div className="flex flex-col gap-4">
+                      <Input
+                        label="Price"
+                        labelPlacement="outside"
+                        placeholder="0.00"
+                        type="number"
+                        value={plan.price.toString()}
+                        onValueChange={(v) => handleUpdatePrice(plan.id, 'price', v)}
+                        startContent={<span className="text-default-400 font-bold">₦</span>}
+                        variant="faded"
+                      />
+                      <Input
+                        label="Discount"
+                        labelPlacement="outside"
+                        placeholder="0"
+                        type="number"
+                        value={(plan.discount || 0).toString()}
+                        onValueChange={(v) => handleUpdatePrice(plan.id, 'discount', v)}
+                        endContent={<Percent size={14} className="text-default-400" />}
+                        variant="faded"
+                      />
+                    </div>
+                  </CardBody>
+                </Card>
               ))}
             </div>
           </CardBody>
