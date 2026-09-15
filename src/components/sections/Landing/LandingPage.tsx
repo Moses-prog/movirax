@@ -56,7 +56,7 @@ const ScrollBlurHeading = ({ text }: { text: string }) => {
 
 export default function LandingPage() {
   const [movies, setMovies] = useState<Movie[]>([]);
-  const [trendingTitles, setTrendingTitles] = useState<string[]>([]);
+  const [trendingTitles, setTrendingTitles] = useState<any[]>([]);
   const [moviesLoading, setMoviesLoading] = useState(true);
   const [pageReady, setPageReady] = useState(false);
   const [isMuted, setIsMuted] = useState(true);
@@ -90,8 +90,13 @@ export default function LandingPage() {
         const data = await response.json();
 
         if (data?.results && Array.isArray(data.results)) {
-          // Store all titles for the Cinematic Universe mind map
-          const titles = data.results.map((m: any) => m.title).filter(Boolean);
+          // Store titles and posters for the Cinematic Universe mind map
+          const titles = data.results
+            .filter((m: any) => m.title)
+            .map((m: any) => ({ 
+              title: m.title, 
+              posterPath: m.poster_path 
+            }));
           setTrendingTitles(titles);
 
           // Filter to movies with backdrops and posters for the UI cards

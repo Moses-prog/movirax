@@ -2,6 +2,11 @@
 
 import React, { useRef, useEffect } from 'react';
 
+interface DynamicMovie {
+  title: string;
+  posterPath?: string;
+}
+
 interface Particle {
   x: number;
   y: number;
@@ -11,13 +16,17 @@ interface Particle {
   color: string;
   label?: string;
   isGenre?: boolean;
+  img?: HTMLImageElement;
 }
 
 const GENRES = ["Sci-Fi", "Action", "Drama", "Thriller", "Comedy", "Horror", "Romance", "Adventure", "Fantasy", "Mystery", "Animation", "Crime", "Documentary"];
-const FALLBACK_MOVIES = ["Inception", "The Dark Knight", "Interstellar", "The Matrix", "Pulp Fiction", "Dune", "Oppenheimer", "Avatar", "Gladiator", "Titanic", "Jurassic Park", "The Shining", "Alien", "Jaws", "Blade Runner", "Mad Max", "Goodfellas", "Fight Club", "Se7en", "The Godfather", "Parasite", "Whiplash", "Everything Everywhere", "Spider-Verse"];
+const FALLBACK_MOVIES = [
+  { title: "Inception" }, { title: "The Dark Knight" }, { title: "Interstellar" }, 
+  { title: "The Matrix" }, { title: "Dune" }, { title: "Oppenheimer" }
+];
 
 interface Props {
-  dynamicMovies?: string[];
+  dynamicMovies?: DynamicMovie[];
 }
 
 export const CinematicUniverse = ({ dynamicMovies = [] }: Props) => {
@@ -43,7 +52,6 @@ export const CinematicUniverse = ({ dynamicMovies = [] }: Props) => {
     const resize = () => {
       const parent = canvas.parentElement;
       if (parent) {
-        // Handle high-DPI displays for crisp text
         const dpr = window.devicePixelRatio || 1;
         canvas.width = parent.clientWidth * dpr;
         canvas.height = parent.clientHeight * dpr;
@@ -67,27 +75,39 @@ export const CinematicUniverse = ({ dynamicMovies = [] }: Props) => {
       for (let i = 0; i < PARTICLE_COUNT; i++) {
         const isRed = Math.random() > 0.7;
         
-        // Assign labels to some particles
         let label = undefined;
         let isGenre = false;
+        let img = undefined;
+        let pRadius = Math.random() * 1.5 + 0.5;
         
-        // About 15 genres, 25 movies, 30 empty dots
         if (i < 15 && availableGenres.length > 0) {
           label = availableGenres.pop();
           isGenre = true;
+          pRadius = 2.5;
         } else if (i >= 15 && i < 40 && availableMovies.length > 0) {
-          label = availableMovies.pop();
+          const movie = availableMovies.pop();
+          if (movie) {
+            label = movie.title;
+            if (movie.posterPath) {
+              img = new Image();
+              img.src = `https://image.tmdb.org/t/p/w92${movie.posterPath}`;
+              pRadius = 10; // larger radius for poster nodes
+            } else {
+              pRadius = 2.0;
+            }
+          }
         }
 
         particles.push({
           x: Math.random() * w,
           y: Math.random() * h,
-          vx: (Math.random() - 0.5) * 0.5, // slower movement for readability
+          vx: (Math.random() - 0.5) * 0.5,
           vy: (Math.random() - 0.5) * 0.5,
-          radius: label ? (isGenre ? 2.5 : 1.5) : (Math.random() * 1.5 + 0.5),
+          radius: pRadius,
           color: isRed ? '220, 38, 38' : '255, 255, 255',
           label,
-          isGenre
+          isGenre,
+          img
         });
       }
     };
@@ -112,7 +132,7 @@ export const CinematicUniverse = ({ dynamicMovies = [] }: Props) => {
         p.x = Math.max(0, Math.min(w, p.x));
         p.y = Math.max(0, Math.min(h, p.y));
 
-        // Draw connections first so they are under the dots/text
+        // Draw connections
         for (let j = i + 1; j < particles.length; j++) {
           const p2 = particles[j];
           const dx = p.x - p2.x;
@@ -125,7 +145,6 @@ export const CinematicUniverse = ({ dynamicMovies = [] }: Props) => {
             ctx.lineTo(p2.x, p2.y);
             const opacity = 1 - (dist / CONNECTION_DISTANCE);
             
-            // Highlight connections between genres and movies
             const isMeaningfulConnection = (p.isGenre && p2.label) || (p2.isGenre && p.label);
             const isRedConnection = p.color === '220, 38, 38' || p2.color === '220, 38, 38';
             const colorRGB = isRedConnection ? '220, 38, 38' : '255, 255, 255';
@@ -137,26 +156,46 @@ export const CinematicUniverse = ({ dynamicMovies = [] }: Props) => {
         }
       }
 
-      // Draw dots and text on top of lines
+      // Draw dots, posters, and text
       for (let i = 0; i < particles.length; i++) {
         const p = particles[i];
 
-        // Draw dot
-        ctx.beginPath();
-        ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
-        ctx.fillStyle = `rgba(${p.color}, ${p.label ? 1 : 0.6})`;
-        ctx.fill();
+        if (p.img && p.img.complete && p.img.naturalWidth > 0) {
+          // Draw tiny poster in a circle
+          ctx.save();
+          ctx.beginPath();
+          ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
+          ctx.clip();
+          // Draw image to fill the circle (assuming typical poster aspect ratio 2:3, we center it)
+          const imgWidth = p.radius * 2;
+          const imgHeight = p.radius * 3;
+          ctx.drawImage(p.img, p.x - p.radius, p.y - p.radius * 1.5, imgWidth, imgHeight);
+          ctx.restore();
+          
+          // Subtle border around the poster circle
+          ctx.beginPath();
+          ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
+          ctx.strokeStyle = `rgba(${p.color}, 0.7)`;
+          ctx.lineWidth = 1.5;
+          ctx.stroke();
+        } else {
+          // Normal dot
+          ctx.beginPath();
+          ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
+          ctx.fillStyle = `rgba(${p.color}, ${p.label ? 1 : 0.6})`;
+          ctx.fill();
+        }
 
-        // Draw text
+        // Draw text offset
         if (p.label) {
           ctx.font = p.isGenre ? "bold 13px system-ui, sans-serif" : "11px system-ui, sans-serif";
           ctx.fillStyle = p.isGenre ? `rgba(255, 255, 255, 0.95)` : `rgba(161, 161, 170, 0.8)`;
-          
-          // Add a subtle glow/shadow to text for readability against lines
           ctx.shadowColor = "rgba(0,0,0,0.8)";
           ctx.shadowBlur = 4;
-          ctx.fillText(p.label, p.x + 8, p.y + 4);
-          ctx.shadowBlur = 0; // reset
+          // Offset text based on whether it has a poster (which is much wider)
+          const offset = (p.img && p.img.complete) ? p.radius + 6 : 8;
+          ctx.fillText(p.label, p.x + offset, p.y + 4);
+          ctx.shadowBlur = 0;
         }
 
         // Mouse interaction
