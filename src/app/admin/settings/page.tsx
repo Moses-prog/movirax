@@ -7,7 +7,8 @@ import {
   Globe,
   Mail,
   Shield,
-  Bell
+  Bell,
+  CreditCard
 } from 'lucide-react';
 import { 
   Card, 
@@ -21,7 +22,7 @@ import {
   addToast,
   Spinner
 } from '@heroui/react';
-import { getServerSettings, updateServerSettings } from '@/lib/settings';
+import { getServerSettings, updateServerSettings, getPaymentSettings, updatePaymentSettings, PaymentSettings } from '@/lib/settings';
 
 export default function SettingsPage() {
   const [loading, setLoading] = useState(true);
@@ -37,6 +38,16 @@ export default function SettingsPage() {
   const [maintenanceMode, setMaintenanceMode] = useState(false);
   const [registrationEnabled, setRegistrationEnabled] = useState(true);
 
+  // Payment Settings
+  const [paymentSettings, setPaymentSettings] = useState<PaymentSettings>({
+    paystackEnabled: false,
+    paystackPublicKey: '',
+    paystackSecretKey: '',
+    flutterwaveEnabled: false,
+    flutterwavePublicKey: '',
+    flutterwaveSecretKey: '',
+  });
+
   useEffect(() => {
     loadSettings();
   }, []);
@@ -47,6 +58,9 @@ export default function SettingsPage() {
       const serverStats = await getServerSettings();
       setMovieServer(String(serverStats.defaultMovie || 0));
       setTvServer(String(serverStats.defaultTv || 0));
+
+      const payments = await getPaymentSettings();
+      setPaymentSettings(payments);
     } catch (error) {
       console.error("Failed to load settings:", error);
     } finally {
@@ -77,6 +91,22 @@ export default function SettingsPage() {
       setSaving(false);
       addToast({ title: "General settings saved successfully", color: "success" });
     }, 800);
+  };
+
+  const handleSavePayments = async () => {
+    setSaving(true);
+    try {
+      const success = await updatePaymentSettings(paymentSettings);
+      if (success) {
+        addToast({ title: "Payment settings saved successfully", color: "success" });
+      } else {
+        addToast({ title: "Failed to save payment settings", color: "danger" });
+      }
+    } catch (error) {
+      addToast({ title: "Error saving payment settings", color: "danger" });
+    } finally {
+      setSaving(false);
+    }
   };
 
   if (loading) {
@@ -232,6 +262,98 @@ export default function SettingsPage() {
                     isLoading={saving}
                   >
                     Save Server Settings
+                  </Button>
+                </div>
+              </div>
+            </Tab>
+
+            {/* Payment Gateways Tab */}
+            <Tab
+              key="payments"
+              title={
+                <div className="flex items-center space-x-2">
+                  <CreditCard size={18} />
+                  <span>Payment Gateways</span>
+                </div>
+              }
+            >
+              <div className="p-6 flex flex-col gap-8">
+                {/* Paystack Section */}
+                <div className="flex flex-col gap-4 bg-default-50 p-6 rounded-2xl border border-default-200">
+                  <div className="flex justify-between items-center mb-2">
+                    <div>
+                      <h3 className="text-lg font-semibold flex items-center gap-2">Paystack Integration <span className="text-xs bg-primary/20 text-primary px-2 py-1 rounded">Card Payments</span></h3>
+                      <p className="text-sm text-default-500">Configure Paystack API keys for primary subscription billing.</p>
+                    </div>
+                    <Switch 
+                      color="success" 
+                      isSelected={paymentSettings.paystackEnabled}
+                      onValueChange={(val) => setPaymentSettings({...paymentSettings, paystackEnabled: val})}
+                    >
+                      Enabled
+                    </Switch>
+                  </div>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <Input 
+                      label="Public Key" 
+                      placeholder="pk_test_..." 
+                      variant="faded" 
+                      value={paymentSettings.paystackPublicKey}
+                      onValueChange={(val) => setPaymentSettings({...paymentSettings, paystackPublicKey: val})}
+                    />
+                    <Input 
+                      label="Secret Key" 
+                      placeholder="sk_test_..." 
+                      type="password"
+                      variant="faded" 
+                      value={paymentSettings.paystackSecretKey}
+                      onValueChange={(val) => setPaymentSettings({...paymentSettings, paystackSecretKey: val})}
+                    />
+                  </div>
+                </div>
+
+                {/* Flutterwave Section */}
+                <div className="flex flex-col gap-4 bg-default-50 p-6 rounded-2xl border border-default-200">
+                  <div className="flex justify-between items-center mb-2">
+                    <div>
+                      <h3 className="text-lg font-semibold flex items-center gap-2">Flutterwave Integration <span className="text-xs bg-secondary/20 text-secondary px-2 py-1 rounded">Checkout Options</span></h3>
+                      <p className="text-sm text-default-500">Configure Flutterwave API keys for alternative checkout methods.</p>
+                    </div>
+                    <Switch 
+                      color="success" 
+                      isSelected={paymentSettings.flutterwaveEnabled}
+                      onValueChange={(val) => setPaymentSettings({...paymentSettings, flutterwaveEnabled: val})}
+                    >
+                      Enabled
+                    </Switch>
+                  </div>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <Input 
+                      label="Public Key" 
+                      placeholder="FLWPUBK_TEST-..." 
+                      variant="faded" 
+                      value={paymentSettings.flutterwavePublicKey}
+                      onValueChange={(val) => setPaymentSettings({...paymentSettings, flutterwavePublicKey: val})}
+                    />
+                    <Input 
+                      label="Secret Key" 
+                      placeholder="FLWSECK_TEST-..." 
+                      type="password"
+                      variant="faded" 
+                      value={paymentSettings.flutterwaveSecretKey}
+                      onValueChange={(val) => setPaymentSettings({...paymentSettings, flutterwaveSecretKey: val})}
+                    />
+                  </div>
+                </div>
+
+                <div className="flex justify-end pt-4 border-t border-divider">
+                  <Button 
+                    color="danger" 
+                    startContent={<Save size={18} />}
+                    onPress={handleSavePayments}
+                    isLoading={saving}
+                  >
+                    Save Payment Gateways
                   </Button>
                 </div>
               </div>

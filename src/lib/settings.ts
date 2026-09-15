@@ -47,4 +47,64 @@ export async function updateServerSettings(movie: number, tv: number): Promise<b
     };
     return await addFeature(newFeature);
   }
+}export interface PaymentSettings {
+  paystackEnabled: boolean;
+  paystackPublicKey: string;
+  paystackSecretKey: string;
+  flutterwaveEnabled: boolean;
+  flutterwavePublicKey: string;
+  flutterwaveSecretKey: string;
+}
+
+const PAYMENT_SETTINGS_ID = 'sys_payment_gateways';
+
+export async function getPaymentSettings(): Promise<PaymentSettings> {
+  const features = await getFeatures();
+  const setting = features.find(f => f.id === PAYMENT_SETTINGS_ID);
+  
+  if (setting && setting.description) {
+    try {
+      const parsed = JSON.parse(setting.description);
+      return {
+        paystackEnabled: !!parsed.paystackEnabled,
+        paystackPublicKey: parsed.paystackPublicKey || '',
+        paystackSecretKey: parsed.paystackSecretKey || '',
+        flutterwaveEnabled: !!parsed.flutterwaveEnabled,
+        flutterwavePublicKey: parsed.flutterwavePublicKey || '',
+        flutterwaveSecretKey: parsed.flutterwaveSecretKey || '',
+      };
+    } catch (e) {
+      console.error("Failed to parse payment settings", e);
+    }
+  }
+  
+  return {
+    paystackEnabled: false,
+    paystackPublicKey: '',
+    paystackSecretKey: '',
+    flutterwaveEnabled: false,
+    flutterwavePublicKey: '',
+    flutterwaveSecretKey: '',
+  };
+}
+
+export async function updatePaymentSettings(settings: PaymentSettings): Promise<boolean> {
+  const features = await getFeatures();
+  const setting = features.find(f => f.id === PAYMENT_SETTINGS_ID);
+  
+  const description = JSON.stringify(settings);
+  
+  if (setting) {
+    return await updateFeature(PAYMENT_SETTINGS_ID, { description });
+  } else {
+    const newFeature: FeatureFlag = {
+      id: PAYMENT_SETTINGS_ID,
+      name: 'System Payment Gateways',
+      description,
+      enabled: true,
+      free_tier: true,
+      pro_tier: true
+    };
+    return await addFeature(newFeature);
+  }
 }
