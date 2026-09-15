@@ -3,42 +3,24 @@
 import React, { useState, useEffect } from 'react';
 import {
   BarChart3,
-  TrendingUp,
-  TrendingDown,
   Users,
-  CreditCard,
   DollarSign,
   Activity,
-  PieChart
 } from 'lucide-react';
 import {
   Chart as ChartJS,
-  CategoryScale,
-  LinearScale,
-  PointElement,
-  LineElement,
-  BarElement,
   ArcElement,
-  Title,
   Tooltip,
   Legend,
-  Filler
 } from 'chart.js';
-import { Line, Bar, Doughnut } from 'react-chartjs-2';
+import { Doughnut } from 'react-chartjs-2';
 import { getAnalyticsStats, AnalyticsStats } from '@/lib/analytics';
 import { Card, CardHeader, CardBody } from '@heroui/react';
 
 ChartJS.register(
-  CategoryScale,
-  LinearScale,
-  PointElement,
-  LineElement,
-  BarElement,
   ArcElement,
-  Title,
   Tooltip,
   Legend,
-  Filler
 );
 
 export default function AnalyticsPage() {
@@ -60,13 +42,9 @@ export default function AnalyticsPage() {
   }, []);
 
   const mrr = stats?.mrr || 0;
-  const mrrGrowth = 12.5; // Mock growth %
   const totalUsers = stats?.totalUsers || 0;
-  const userGrowth = 8.2; // Mock growth %
   const churnRate = stats?.churnRate || 0;
-  const churnChange = -0.5; // Mock growth %
   const conversionRate = stats?.conversionRate || 0;
-  const conversionChange = 1.2; // Mock growth %
 
   // Common chart options matching the Movira X dark theme
   const chartOptions = {
@@ -88,49 +66,7 @@ export default function AnalyticsPage() {
         padding: 12,
         boxPadding: 6,
       }
-    },
-    scales: {
-      x: {
-        grid: { color: 'rgba(255, 255, 255, 0.05)' },
-        ticks: { color: 'rgba(255, 255, 255, 0.5)' }
-      },
-      y: {
-        grid: { color: 'rgba(255, 255, 255, 0.05)' },
-        ticks: { color: 'rgba(255, 255, 255, 0.5)' }
-      }
     }
-  };
-
-  // Mock revenue line chart
-  const revenueData = {
-    labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul'],
-    datasets: [
-      {
-        label: 'Revenue (NGN/USD)',
-        data: [0, 0, 0, 0, 0, 0, mrr],
-        borderColor: '#f31260',
-        backgroundColor: 'rgba(243, 18, 96, 0.1)',
-        borderWidth: 2,
-        fill: true,
-        tension: 0.4,
-        pointBackgroundColor: '#f31260',
-        pointBorderColor: '#fff',
-        pointHoverBackgroundColor: '#fff',
-        pointHoverBorderColor: '#f31260',
-      }
-    ]
-  };
-
-  const userGrowthData = {
-    labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul'],
-    datasets: [
-      {
-        label: 'New Users',
-        data: [0, 0, 0, 0, 0, 0, totalUsers],
-        backgroundColor: 'rgba(243, 18, 96, 0.8)',
-        borderRadius: 4,
-      }
-    ]
   };
 
   // Plans Doughnut Chart Data based on DB stats
@@ -195,58 +131,29 @@ export default function AnalyticsPage() {
 
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
         <MetricCard 
-          title="MRR" 
+          title="Monthly Revenue" 
           value={`₦${mrr.toLocaleString()}`} 
-          change={mrrGrowth} 
           icon={<DollarSign size={20} />} 
           loading={loading}
         />
         <MetricCard 
-          title="Total Users" 
+          title="Total Registered Users" 
           value={totalUsers.toLocaleString()} 
-          change={userGrowth} 
           icon={<Users size={20} />} 
           loading={loading}
         />
         <MetricCard 
-          title="Conversion Rate" 
+          title="Paid Users (%)" 
           value={`${conversionRate}%`} 
-          change={conversionChange} 
           icon={<Activity size={20} />} 
           loading={loading}
         />
         <MetricCard 
-          title="Churn Rate" 
+          title="Cancelled Subscriptions" 
           value={`${churnRate}%`} 
-          change={churnChange} 
           icon={<BarChart3 size={20} />} 
-          inverseColor
           loading={loading}
         />
-      </div>
-
-      <div className="grid gap-6 lg:grid-cols-2">
-        <Card className="border-none shadow-sm bg-background/60 dark:bg-default-100/50">
-          <CardHeader className="px-6 pt-6 pb-2">
-            <h3 className="text-base font-bold text-foreground">Revenue Dashboard</h3>
-          </CardHeader>
-          <CardBody className="px-6 pb-6 pt-2">
-            <div className="h-[300px] w-full">
-              {loading ? <ChartSkeleton /> : <Line data={revenueData} options={chartOptions} />}
-            </div>
-          </CardBody>
-        </Card>
-
-        <Card className="border-none shadow-sm bg-background/60 dark:bg-default-100/50">
-          <CardHeader className="px-6 pt-6 pb-2">
-            <h3 className="text-base font-bold text-foreground">User Growth</h3>
-          </CardHeader>
-          <CardBody className="px-6 pb-6 pt-2">
-            <div className="h-[300px] w-full">
-              {loading ? <ChartSkeleton /> : <Bar data={userGrowthData} options={chartOptions} />}
-            </div>
-          </CardBody>
-        </Card>
       </div>
 
       <div className="grid gap-6 lg:grid-cols-3">
@@ -262,7 +169,6 @@ export default function AnalyticsPage() {
                     data={plansData} 
                     options={{
                       ...chartOptions,
-                      scales: { x: { display: false }, y: { display: false } },
                       cutout: '70%'
                     }} 
                   />
@@ -294,7 +200,6 @@ export default function AnalyticsPage() {
                   data={paymentsData} 
                   options={{
                     ...chartOptions,
-                    scales: { x: { display: false }, y: { display: false } },
                     plugins: { ...chartOptions.plugins, legend: { position: 'bottom', labels: { color: 'rgba(255,255,255,0.7)', padding: 20 } } },
                     cutout: '65%'
                   }} 
@@ -308,10 +213,7 @@ export default function AnalyticsPage() {
   );
 }
 
-function MetricCard({ title, value, change, icon, inverseColor = false, loading = false }: any) {
-  const isPositive = change >= 0;
-  const isGood = inverseColor ? !isPositive : isPositive;
-  
+function MetricCard({ title, value, icon, loading = false }: any) {
   return (
     <Card className="border-none shadow-sm bg-background/60 dark:bg-default-100/50 h-[140px]">
       <CardBody className="flex flex-col justify-between p-6">
@@ -325,10 +227,6 @@ function MetricCard({ title, value, change, icon, inverseColor = false, loading 
         ) : (
           <div className="flex items-end gap-3">
             <h2 className="text-3xl font-black text-foreground">{value}</h2>
-            <span className={`flex items-center gap-1 text-xs font-bold mb-1 ${isGood ? 'text-success' : 'text-danger'}`}>
-              {isPositive ? <TrendingUp size={14} /> : <TrendingDown size={14} />}
-              {Math.abs(change)}%
-            </span>
           </div>
         )}
       </CardBody>
@@ -344,22 +242,5 @@ function ChartSkeleton({ circular = false }: { circular?: boolean }) {
       </div>
     );
   }
-  
-  return (
-    <div className="flex h-full w-full items-end gap-2 pb-6 pl-8 relative">
-      <div className="absolute bottom-6 left-6 top-6 w-[1px] bg-default-200" />
-      <div className="absolute bottom-6 left-6 right-6 h-[1px] bg-default-200" />
-      {Array.from({ length: 7 }).map((_, i) => {
-        const height = 20 + Math.random() * 60;
-        return (
-          <div key={i} className="flex flex-1 flex-col items-center justify-end h-full z-10">
-            <div 
-              className="w-4/5 animate-pulse rounded-t-sm bg-default-200" 
-              style={{ height: `${height}%` }}
-            />
-          </div>
-        );
-      })}
-    </div>
-  );
+  return null;
 }
