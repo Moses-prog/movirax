@@ -87,10 +87,23 @@ export default function LandingPage() {
         const data = await response.json();
 
         if (data?.results && Array.isArray(data.results)) {
-          const moviesData = data.results
-            .filter((movie: any) => movie.poster_path)
-            .slice(0, 8) // Fetch 8 movies for the grid
-            .map((movie: any) => ({
+          // Filter to movies with backdrops and posters
+          const validMovies = data.results.filter((movie: any) => movie.poster_path && movie.backdrop_path);
+          
+          if (validMovies.length > 0) {
+            // Sort valid movies by vote average to get the highest rated popular movies
+            const sortedByRating = [...validMovies].sort((a, b) => b.vote_average - a.vote_average);
+            
+            // Pick a random movie from the top 5 highest rated to be the hero
+            const top5 = sortedByRating.slice(0, 5);
+            const randomIndex = Math.floor(Math.random() * top5.length);
+            const heroMovie = top5[randomIndex];
+            
+            // Reconstruct the array with heroMovie first, then 7 others
+            const remainingMovies = validMovies.filter((m: any) => m.id !== heroMovie.id);
+            const finalMoviesList = [heroMovie, ...remainingMovies.slice(0, 7)];
+
+            const moviesData = finalMoviesList.map((movie: any) => ({
               id: movie.id,
               poster_path: movie.poster_path,
               backdrop_path: movie.backdrop_path,
@@ -98,7 +111,6 @@ export default function LandingPage() {
               vote_average: movie.vote_average,
             }));
             
-          if (moviesData.length > 0) {
             try {
               const videoRes = await fetch(`https://api.themoviedb.org/3/movie/${moviesData[0].id}/videos`, {
                 headers: {
@@ -116,8 +128,9 @@ export default function LandingPage() {
             } catch (e) {
               console.error("Failed to fetch trailer:", e);
             }
+            
+            setMovies(moviesData);
           }
-          setMovies(moviesData);
         }
       } catch (error) {
         console.error("Failed to fetch movies:", error);
