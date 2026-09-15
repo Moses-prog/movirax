@@ -8,12 +8,21 @@ import ThemeSwitchDropdown from '@/components/ui/input/ThemeSwitchDropdown';
 import BrandLogo from '@/components/ui/other/BrandLogo';
 import { Input, Badge, Dropdown, DropdownTrigger, DropdownMenu, DropdownItem, Avatar, Button } from "@heroui/react";
 
-interface TopBarProps {
-  onMenuClick: () => void;
-  notifications?: {id: string, message: string, time: string}[];
+interface NotificationItem {
+  id: string;
+  message: string;
+  time: string;
+  href: string;
+  read: boolean;
 }
 
-export function TopBar({ onMenuClick, notifications = [] }: TopBarProps) {
+interface TopBarProps {
+  onMenuClick: () => void;
+  notifications?: NotificationItem[];
+  setNotifications?: React.Dispatch<React.SetStateAction<NotificationItem[]>>;
+}
+
+export function TopBar({ onMenuClick, notifications = [], setNotifications }: TopBarProps) {
   const router = useRouter();
 
   const handleLogout = async () => {
@@ -24,6 +33,8 @@ export function TopBar({ onMenuClick, notifications = [] }: TopBarProps) {
       console.error('Logout failed:', error);
     }
   };
+
+  const unreadCount = notifications.filter(n => !n.read).length;
 
   return (
     <div className="sticky top-0 z-20 flex items-center justify-between border-b border-divider bg-background/80 px-4 md:px-8 py-3 shadow-sm backdrop-blur-md">
@@ -76,19 +87,34 @@ export function TopBar({ onMenuClick, notifications = [] }: TopBarProps) {
               variant="light"
               className="text-default-500 hover:text-foreground"
             >
-              <Badge color="danger" content={notifications.length} isInvisible={notifications.length === 0} shape="circle">
+              <Badge color="danger" content={unreadCount} isInvisible={unreadCount === 0} shape="circle">
                 <Bell size={18} />
               </Badge>
             </Button>
           </DropdownTrigger>
-          <DropdownMenu aria-label="Notifications" className="w-[300px]" disabledKeys={notifications.length === 0 ? ["empty"] : []}>
+          <DropdownMenu 
+            aria-label="Notifications" 
+            className="w-[300px]" 
+            disabledKeys={notifications.length === 0 ? ["empty"] : []}
+          >
             <DropdownItem key="header" className="h-10 gap-2 font-bold cursor-default" isReadOnly>
               Notifications
             </DropdownItem>
             {notifications.length > 0 ? (
               notifications.map((notif) => (
-                <DropdownItem key={notif.id} description={notif.time} className="py-2">
-                  {notif.message}
+                <DropdownItem 
+                  key={notif.id} 
+                  description={notif.time} 
+                  className="py-2"
+                  onPress={() => {
+                    if (setNotifications) {
+                      setNotifications(prev => prev.map(n => n.id === notif.id ? { ...n, read: true } : n));
+                    }
+                    router.push(notif.href);
+                  }}
+                  endContent={!notif.read && <div className="h-2 w-2 rounded-full bg-danger shrink-0" />}
+                >
+                  <span className={!notif.read ? "font-semibold" : ""}>{notif.message}</span>
                 </DropdownItem>
               ))
             ) : (

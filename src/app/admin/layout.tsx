@@ -81,7 +81,7 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
   const [isChecking, setIsChecking] = useState(true);
   
   const [tickets, setTickets] = useState<SupportTicket[]>([]);
-  const [notifications, setNotifications] = useState<{id: string, message: string, time: string}[]>([]);
+  const [notifications, setNotifications] = useState<{id: string, message: string, time: string, href: string, read: boolean}[]>([]);
 
   useEffect(() => {
     const checkAuth = async () => {
@@ -132,19 +132,23 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
         const newNotif = {
           id: Date.now().toString(),
           message: `User sent a message on ticket #${ticketNumber || ticketId}`,
-          time: 'Just now'
+          time: 'Just now',
+          href: `/admin/tickets?id=${ticketId}`,
+          read: false
         };
         setNotifications(n => [newNotif, ...n].slice(0, 10));
         addToast({ title: newNotif.message, color: "primary" });
       })
       .on('broadcast', { event: 'new_ticket' }, (payload) => {
-        const { ticketNumber } = payload.payload;
+        const { ticketId, ticketNumber } = payload.payload;
         fetchTickets(); // Refresh tickets list
         
         const newNotif = {
           id: Date.now().toString(),
           message: `New ticket created: #${ticketNumber}`,
-          time: 'Just now'
+          time: 'Just now',
+          href: `/admin/tickets?id=${ticketId}`,
+          read: false
         };
         setNotifications(n => [newNotif, ...n].slice(0, 10));
         addToast({ title: newNotif.message, color: "primary" });
@@ -184,6 +188,7 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
         <TopBar 
           onMenuClick={() => setSidebarOpen(!sidebarOpen)} 
           notifications={notifications}
+          setNotifications={setNotifications}
         />
 
         <main className="flex-1 p-6 md:p-8 bg-background overflow-y-auto">
