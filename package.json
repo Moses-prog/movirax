@@ -49,6 +49,7 @@
     "react-hook-form": "^7.62.0",
     "react-icons": "^5.5.0",
     "react-intersection-observer": "^9.16.0",
+    "react-paystack": "^6.0.0",
     "react-resizable-panels": "^4.11.2",
     "react-share": "^5.2.2",
     "string-ts": "^2.2.1",
