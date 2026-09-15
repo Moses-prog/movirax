@@ -6,6 +6,7 @@ import { addToast, Input, Button } from '@heroui/react';
 import { CheckCircle2 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { validatePromoCode } from '@/lib/promotions';
+import { initializePaystackSubscription } from '@/app/actions/paystack';
 
 const FilmStripPattern = ({ colorClass, bgClass }: { colorClass: string, bgClass: string }) => (
   <svg 
@@ -28,7 +29,7 @@ const FilmStripPattern = ({ colorClass, bgClass }: { colorClass: string, bgClass
   </svg>
 );
 
-export default function PricingCards({ plans, user }: { plans: any[], user: any }) {
+export default function PricingCards({ plans, user, paymentSettings }: { plans: any[], user: any, paymentSettings?: any }) {
   const router = useRouter();
 
   const handlePaymentSuccess = async (response: any, plan: any) => {
@@ -66,14 +67,14 @@ export default function PricingCards({ plans, user }: { plans: any[], user: any 
     <div className="flex flex-col md:flex-row flex-wrap justify-center items-stretch gap-8 max-w-6xl mx-auto px-4">
       {plans.map((plan) => (
         <div key={plan.id} className="w-full md:w-[380px]">
-          <PlanCard plan={plan} user={user} onSuccess={handlePaymentSuccess} router={router} />
+          <PlanCard plan={plan} user={user} onSuccess={handlePaymentSuccess} router={router} paymentSettings={paymentSettings} />
         </div>
       ))}
     </div>
   );
 }
 
-function PlanCard({ plan, user, onSuccess, router }: { plan: any, user: any, onSuccess: any, router: any }) {
+function PlanCard({ plan, user, onSuccess, router, paymentSettings }: { plan: any, user: any, onSuccess: any, router: any, paymentSettings: any }) {
   const [promoCode, setPromoCode] = useState('');
   const [appliedDiscount, setAppliedDiscount] = useState<number | null>(null);
   const [checkingPromo, setCheckingPromo] = useState(false);
@@ -226,24 +227,56 @@ function PlanCard({ plan, user, onSuccess, router }: { plan: any, user: any, onS
           )}
         </div>
 
-        <Button 
-          className={`w-full font-bold text-base h-12 shadow-xl rounded-xl ${buttonBg}`}
-          onPress={() => {
-            if (!user) {
-              addToast({ title: 'Please login to subscribe', color: 'danger' });
-              router.push('/auth'); 
-              return;
-            }
-            handleFlutterPayment({
-              callback: (response) => onSuccess(response, plan),
-              onClose: () => {
-                addToast({ title: 'Payment cancelled', color: 'default' });
-              },
-            });
-          }}
-        >
-          Subscribe Now
-        </Button>
+        <div className="flex flex-col gap-3 mb-6">
+          {paymentSettings?.paystackEnabled && (
+            <Button 
+              className={`w-full font-bold text-base h-12 shadow-xl rounded-xl ${buttonBg}`}
+              onPress={async () => {
+                if (!user) {
+                  addToast({ title: 'Please login to subscribe', color: 'danger' });
+                  router.push('/auth'); 
+                  return;
+                }
+                
+                // Initialize Paystack Checkout
+                const res = await initializePaystackSubscription(
+                  user.email,
+                  plan.paystack_plan_code,
+                  Number(finalPrice)
+                );
+                
+                if (res.error) {
+                  addToast({ title: res.error, color: 'danger' });
+                } else if (res.authorization_url) {
+                  window.location.href = res.authorization_url;
+                }
+              }}
+            >
+              Pay via Card (Paystack)
+            </Button>
+          )}
+
+          {(paymentSettings?.flutterwaveEnabled || !paymentSettings?.paystackEnabled) && (
+            <Button 
+              className={`w-full font-bold text-base h-12 shadow-xl rounded-xl bg-zinc-800 text-white hover:bg-zinc-700`}
+              onPress={() => {
+                if (!user) {
+                  addToast({ title: 'Please login to subscribe', color: 'danger' });
+                  router.push('/auth'); 
+                  return;
+                }
+                handleFlutterPayment({
+                  callback: (response) => onSuccess(response, plan),
+                  onClose: () => {
+                    addToast({ title: 'Payment cancelled', color: 'default' });
+                  },
+                });
+              }}
+            >
+              Pay via Checkout (Flutterwave)
+            </Button>
+          )}
+        </div>
       </div>
     </div>
   );

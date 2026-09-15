@@ -1,5 +1,6 @@
-﻿import React from 'react';
+import React from 'react';
 import { getPricingPlans } from '@/lib/subscriptions';
+import { getPaymentSettings } from '@/lib/settings';
 import { createClient } from '@/utils/supabase/server';
 import PricingCards from './PricingCards';
 
@@ -8,7 +9,9 @@ export default async function PricingPage() {
   const { data: { user } } = await supabase.auth.getUser();
   
   const allPlans = await getPricingPlans();
-  const flutterwavePlans = allPlans.filter(p => p.gateway === 'flutterwave' && p.is_active !== false);
+  const activePlans = allPlans.filter(p => p.is_active !== false);
+  
+  const paymentSettings = await getPaymentSettings();
 
   const userData = user ? {
     id: user.id,
@@ -25,7 +28,7 @@ export default async function PricingPage() {
         </p>
       </div>
 
-      <PricingCards plans={flutterwavePlans} user={userData} />
+      <PricingCards plans={activePlans} user={userData} paymentSettings={paymentSettings} />
     </div>
   );
 }

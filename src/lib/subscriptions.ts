@@ -1,4 +1,4 @@
-﻿'use server';
+'use server';
 
 import { createClient } from '@/utils/supabase/server';
 
@@ -11,6 +11,7 @@ export interface PricingPlan {
   currency: string;
   gateway: string;
   is_active?: boolean;
+  paystack_plan_code?: string;
 }
 
 export interface UserSubscription {
@@ -23,6 +24,7 @@ export interface UserSubscription {
   current_period_end: string;
   reference: string;
   payment_method: string;
+  paystack_subscription_code?: string;
   pricing_plans?: PricingPlan;
   created_at?: string;
 }
@@ -71,7 +73,8 @@ export async function activateSubscription(
   planId: string, 
   reference: string, 
   paymentMethod: string,
-  daysValid: number
+  daysValid: number,
+  paystackSubscriptionCode?: string
 ): Promise<boolean> {
   const supabase = await createClient(true);
   
@@ -86,8 +89,30 @@ export async function activateSubscription(
     status: 'active',
     current_period_end: endDate.toISOString(),
     reference: reference,
-    payment_method: paymentMethod
+    payment_method: paymentMethod,
+    paystack_subscription_code: paystackSubscriptionCode
   });
   
+  return !error;
+}
+
+export async function updateSubscriptionStatus(
+  referenceOrSubCode: string, 
+  updates: { status?: string, current_period_end?: string }
+): Promise<boolean> {
+  const supabase = await createClient(true);
+  
+  // Try matching by reference or subscription_code
+  const { data: subs } = await supabase.from('user_subscriptions')
+    .select('id')
+    .or(`reference.eq.${referenceOrSubCode},paystack_subscription_code.eq.${referenceOrSubCode}`)
+    .limit(1);
+
+  if (!subs || subs.length === 0) return false;
+
+  const { error } = await supabase.from('user_subscriptions')
+    .update(updates)
+    .eq('id', subs[0].id);
+
   return !error;
 }
