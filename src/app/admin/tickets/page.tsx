@@ -260,13 +260,14 @@ export default function SupportTicketsPage() {
                   aria-label="Filter by status"
                   startContent={<Filter size={18} className="text-default-400" />}
                   variant="faded"
-                >
-                  <SelectItem key="all">All Statuses</SelectItem>
-                  <SelectItem key="open">Open</SelectItem>
-                  <SelectItem key="in_progress">In Progress</SelectItem>
-                  <SelectItem key="resolved">Resolved</SelectItem>
-                  <SelectItem key="closed">Closed</SelectItem>
-                </Select>
+                  children={[
+                    <SelectItem key="all">All Statuses</SelectItem>,
+                    <SelectItem key="open">Open</SelectItem>,
+                    <SelectItem key="in_progress">In Progress</SelectItem>,
+                    <SelectItem key="resolved">Resolved</SelectItem>,
+                    <SelectItem key="closed">Closed</SelectItem>
+                  ]}
+                />
               </Panel>
 
               <Separator className="h-4 flex items-center justify-center group cursor-row-resize relative z-10">
@@ -347,12 +348,13 @@ export default function SupportTicketsPage() {
                       size="sm"
                       className="w-[140px]"
                       variant="faded"
-                    >
-                      <SelectItem key="open" startContent={<AlertCircle size={14} className="text-warning" />}>Open</SelectItem>
-                      <SelectItem key="in_progress" startContent={<Clock size={14} className="text-primary" />}>In Progress</SelectItem>
-                      <SelectItem key="resolved" startContent={<CheckCircle2 size={14} className="text-success" />}>Resolved</SelectItem>
-                      <SelectItem key="closed" startContent={<CheckCircle2 size={14} className="text-default-500" />}>Closed</SelectItem>
-                    </Select>
+                      children={[
+                        <SelectItem key="open" startContent={<AlertCircle size={14} className="text-warning" />}>Open</SelectItem>,
+                        <SelectItem key="in_progress" startContent={<Clock size={14} className="text-primary" />}>In Progress</SelectItem>,
+                        <SelectItem key="resolved" startContent={<CheckCircle2 size={14} className="text-success" />}>Resolved</SelectItem>,
+                        <SelectItem key="closed" startContent={<CheckCircle2 size={14} className="text-default-500" />}>Closed</SelectItem>
+                      ]}
+                    />
                   </div>
                 </div>
               </Panel>
