@@ -201,10 +201,10 @@ export default function AdminUsersPage() {
           variant="faded"
           aria-label="Filter by Status"
         >
-          <SelectItem key="all" value="all">All Status</SelectItem>
-          <SelectItem key="active" value="active">Active</SelectItem>
-          <SelectItem key="suspended" value="suspended">Suspended</SelectItem>
-          <SelectItem key="banned" value="banned">Banned</SelectItem>
+          <SelectItem key="all">All Status</SelectItem>
+          <SelectItem key="active">Active</SelectItem>
+          <SelectItem key="suspended">Suspended</SelectItem>
+          <SelectItem key="banned">Banned</SelectItem>
         </Select>
       </div>
 
@@ -239,12 +239,11 @@ export default function AdminUsersPage() {
           <TableColumn align="end">ACTIONS</TableColumn>
         </TableHeader>
         <TableBody 
-          items={paginatedUsers}
           isLoading={loading}
           loadingContent={<Spinner color="danger" label="Loading users..." />}
           emptyContent={loading ? " " : "No users found"}
         >
-          {(user) => (
+          {paginatedUsers.map((user) => (
             <TableRow key={user.id}>
               <TableCell>
                 <HeroUser
@@ -291,7 +290,7 @@ export default function AdminUsersPage() {
                 </Dropdown>
               </TableCell>
             </TableRow>
-          )}
+          ))}
         </TableBody>
       </Table>
     </div>
