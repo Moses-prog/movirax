@@ -110,13 +110,6 @@ function TicketChatView({ ticket, onReplySent, onBack }: { ticket: SupportTicket
         channelRef.current.send({ type: 'broadcast', event: 'typing', payload: { sender: 'user', isTyping: false } });
       }
       
-      // Send global broadcast to admin layout
-      supabase.channel('admin-global-tickets').send({
-        type: 'broadcast',
-        event: 'new_message',
-        payload: { ticketId: ticket.id, ticketNumber: ticket.ticket_number }
-      });
-      
       addToast({ title: "Reply sent", color: "success" });
       setReplyContent('');
       onReplySent();
@@ -290,14 +283,6 @@ export default function UserSupportPage() {
     });
     
     if (res.success && res.data) {
-      // Send global broadcast to admin layout
-      const supabase = createClient();
-      supabase.channel('admin-global-tickets').send({
-        type: 'broadcast',
-        event: 'new_ticket',
-        payload: { ticketNumber: res.data.ticket_number }
-      });
-
       addToast({ title: "Ticket created successfully", color: "success" });
       refetch();
       setNewSubject('');

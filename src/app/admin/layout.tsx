@@ -160,8 +160,13 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
     return <AdminShellSkeleton />;
   }
 
-  // Calculate unread count (tickets with at least one unread user message)
+  // Calculate unread count (tickets with at least one unread user message, or new open tickets)
   const unreadSupportCount = tickets.reduce((count, ticket) => {
+    // A brand new ticket with no messages is inherently unread
+    if (ticket.status === 'open' && (!ticket.resolution || ticket.resolution === '[]')) {
+      return count + 1;
+    }
+    
     const msgs = getParsedMessages(ticket);
     const hasUnread = msgs.some(m => m.sender === 'user' && !m.read);
     return count + (hasUnread ? 1 : 0);
