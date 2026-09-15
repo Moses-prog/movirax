@@ -4,6 +4,7 @@ import { useEffect } from 'react';
 import { AlertCircle, RefreshCcw, Home } from 'lucide-react';
 import { Button, Card, CardBody, CardFooter, CardHeader } from '@heroui/react';
 import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 
 export default function Error({
   error,
@@ -12,6 +13,11 @@ export default function Error({
   error: Error & { digest?: string };
   reset: () => void;
 }) {
+  const pathname = usePathname();
+  const isAdmin = pathname?.startsWith('/admin');
+  const returnHref = isAdmin ? '/admin' : '/';
+  const returnText = isAdmin ? 'Admin' : 'Home';
+
   useEffect(() => {
     console.error(error);
   }, [error]);
@@ -39,9 +45,9 @@ export default function Error({
             variant="flat" 
             startContent={<Home size={18} />}
             as={Link}
-            href="/"
+            href={returnHref}
           >
-            Home
+            {returnText}
           </Button>
           <Button 
             color="danger" 

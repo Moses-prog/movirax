@@ -2,12 +2,19 @@
 
 import { siteConfig } from "@/config/site";
 import { useDocumentTitle } from "@mantine/hooks";
-import { Search, Home } from "lucide-react";
+import { Search, Home, ArrowLeft } from "lucide-react";
 import { Button, Card, CardBody, CardFooter, CardHeader } from "@heroui/react";
 import Link from "next/link";
+import { usePathname, useRouter } from "next/navigation";
 
 export default function NotFound() {
   useDocumentTitle(`404 Not Found | ${siteConfig.name}`);
+  const pathname = usePathname();
+  const router = useRouter();
+  
+  const isAdmin = pathname?.startsWith('/admin');
+  const returnHref = isAdmin ? '/admin' : '/';
+  const returnText = isAdmin ? 'Admin Dashboard' : 'Return Home';
 
   return (
     <div className="flex min-h-[70vh] items-center justify-center p-6">
@@ -24,13 +31,20 @@ export default function NotFound() {
         </CardBody>
         <CardFooter className="flex gap-4 justify-center pb-8 pt-0">
           <Button 
+            variant="flat" 
+            startContent={<ArrowLeft size={18} />}
+            onPress={() => router.back()}
+          >
+            Go Back
+          </Button>
+          <Button 
             color="danger" 
             startContent={<Home size={18} />}
             as={Link}
-            href="/"
+            href={returnHref}
             className="font-bold shadow-md"
           >
-            Return Home
+            {returnText}
           </Button>
         </CardFooter>
       </Card>
