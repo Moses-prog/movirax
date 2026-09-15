@@ -29,13 +29,11 @@ export default function AdminDashboard() {
         }
 
         const [usersRes, ticketsRes] = await Promise.all([
-          getAdminUsers(),
+          fetch('/api/admin').then(res => res.ok ? res.json() : []),
           getAllTickets()
         ]);
 
-        if (usersRes.success && usersRes.data) {
-          setUsers(usersRes.data);
-        }
+        setUsers(Array.isArray(usersRes) ? usersRes : []);
         if (ticketsRes.success && ticketsRes.data) {
           setTickets(ticketsRes.data);
         }
@@ -203,29 +201,29 @@ export default function AdminDashboard() {
           <CardBody className="px-6 pb-6 pt-0">
             {users.length > 0 ? (
               <Table aria-label="Recent Users" removeWrapper classNames={{ th: "bg-transparent text-default-500", td: "py-3" }}>
-                <TableHeader>
-                  <TableColumn>USER</TableColumn>
-                  <TableColumn>ROLE</TableColumn>
-                </TableHeader>
-                <TableBody>
-                  {users.slice(0, 5).map((user) => (
-                    <TableRow key={user.id}>
-                      <TableCell>
-                        <User
-                          avatarProps={{ radius: "md", src: user.avatar_url || `https://api.dicebear.com/9.x/notionists/svg?seed=${user.email}` }}
-                          description={user.email}
-                          name={user.full_name || 'Anonymous'}
-                          classNames={{ name: "font-semibold text-sm", description: "text-xs" }}
-                        />
-                      </TableCell>
-                      <TableCell>
-                        <Chip size="sm" variant="dot" color={user.role === 'admin' ? 'danger' : 'default'} className="border-none capitalize">
-                          {user.role || 'user'}
-                        </Chip>
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
+                  <TableHeader>
+                    <TableColumn>USER</TableColumn>
+                    <TableColumn>TIER</TableColumn>
+                  </TableHeader>
+                  <TableBody>
+                    {users.slice(0, 5).map((user) => (
+                      <TableRow key={user.id}>
+                        <TableCell>
+                          <User
+                            avatarProps={{ radius: "md", src: user.avatar_url || `https://api.dicebear.com/9.x/notionists/svg?seed=${user.email}` }}
+                            description={user.email}
+                            name={user.display_name?.trim() || 'Anonymous'}
+                            classNames={{ name: "font-semibold text-sm", description: "text-xs" }}
+                          />
+                        </TableCell>
+                        <TableCell>
+                          <Chip size="sm" variant="dot" color={user.subscription_tier === 'premium' ? 'primary' : 'default'} className="border-none capitalize font-medium">
+                            {user.subscription_tier || 'free'}
+                          </Chip>
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
               </Table>
             ) : (
               <div className="flex flex-col items-center justify-center py-10 text-default-500">
