@@ -97,3 +97,49 @@ export async function cancelPaystackSubscription(subscriptionCode: string, email
     return { error: error.message };
   }
 }
+
+export async function syncPlanToPaystack(planData: { id: string, name: string, interval: string, amount: number, currency: string, paystack_plan_code?: string }) {
+  const settings = await getPaymentSettings();
+  if (!settings.paystackSecretKey) return { error: 'Paystack is not configured.' };
+
+  try {
+    let endpoint = 'https://api.paystack.co/plan';
+    let method = 'POST';
+    
+    if (planData.paystack_plan_code) {
+      endpoint = \https://api.paystack.co/plan/\\;
+      method = 'PUT';
+    }
+
+    const res = await fetch(endpoint, {
+      method,
+      headers: {
+        Authorization: \Bearer \\,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        name: planData.name,
+        interval: planData.interval === 'annual' ? 'annually' : 'monthly',
+        amount: Math.round(planData.amount * 100),
+        currency: planData.currency || 'NGN'
+      })
+    });
+
+    const data = await res.json();
+    
+    if (!data.status) {
+      return { error: data.message };
+    }
+
+    // Save back to DB
+    if (!planData.paystack_plan_code) {
+      const { createClient } = await import('@/utils/supabase/server');
+      const supabase = await createClient(true);
+      await supabase.from('pricing_plans').update({ paystack_plan_code: data.data.plan_code }).eq('id', planData.id);
+    }
+    
+    return { success: true, plan_code: data.data.plan_code };
+  } catch (err: any) {
+    return { error: err.message };
+  }
+}

@@ -131,6 +131,7 @@ function PlanCard({ plan, user, onSuccess, router, paymentSettings }: { plan: an
     publicKey: paymentSettings?.paystackPublicKey || '',
     plan: plan.paystack_plan_code,
     currency: plan.currency || 'NGN',
+    channels: ['card'], // Force card for subscriptions
     metadata: {
       custom_fields: [
         {

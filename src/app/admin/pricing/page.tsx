@@ -1,19 +1,22 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { DollarSign, Save, RefreshCcw, Percent } from 'lucide-react';
-import { Button, Input, addToast, Card, CardBody, CardHeader, Divider, Spinner } from '@heroui/react';
+import { DollarSign, Save, RefreshCcw, Percent, CreditCard } from 'lucide-react';
+import { Button, Input, addToast, Card, CardBody, CardHeader, Divider, Spinner, Chip } from '@heroui/react';
 import { getPricingPlans, updatePricingPlan, PricingPlan } from '@/lib/subscriptions';
+import { syncPlanToPaystack } from '@/app/actions/paystack';
 
 export default function PricingSettingsPage() {
   const [isSaving, setIsSaving] = useState(false);
+  const [isSyncing, setIsSyncing] = useState<string | null>(null);
   const [plans, setPlans] = useState<PricingPlan[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     async function load() {
       const dbPlans = await getPricingPlans();
-      setPlans(dbPlans.filter(p => p.gateway === 'flutterwave'));
+      // Load all plans, remove flutterwave filter
+      setPlans(dbPlans.filter(p => p.is_active !== false));
       setIsLoading(false);
     }
     load();
@@ -39,6 +42,27 @@ export default function PricingSettingsPage() {
     }
   };
 
+  const handleSyncPaystack = async (plan: PricingPlan) => {
+    setIsSyncing(plan.id);
+    const res = await syncPlanToPaystack({
+      id: plan.id,
+      name: plan.name,
+      interval: plan.interval,
+      amount: plan.price,
+      currency: plan.currency,
+      paystack_plan_code: plan.paystack_plan_code
+    });
+
+    if (res.error) {
+      addToast({ title: `Paystack Sync Failed: ${res.error}`, color: 'danger' });
+    } else {
+      addToast({ title: 'Synced with Paystack!', color: 'success' });
+      // Update local state
+      setPlans(plans.map(p => p.id === plan.id ? { ...p, paystack_plan_code: res.plan_code } : p));
+    }
+    setIsSyncing(null);
+  };
+
   if (isLoading) {
     return (
       <div className="flex justify-center items-center h-[50vh]">
@@ -52,7 +76,7 @@ export default function PricingSettingsPage() {
       <header className="flex flex-wrap items-center justify-between gap-4">
         <div>
           <h1 className="text-3xl font-bold tracking-tight text-foreground">Pricing Settings</h1>
-          <p className="text-default-500 mt-1">Configure global pricing and payment gateways</p>
+          <p className="text-default-500 mt-1">Configure global pricing and synchronize with payment gateways.</p>
         </div>
         
         <Button
@@ -73,43 +97,84 @@ export default function PricingSettingsPage() {
               <DollarSign size={20} />
             </div>
             <div>
-              <h3 className="text-lg font-bold text-foreground">Flutterwave Pricing (NGN)</h3>
-              <p className="text-sm text-default-500">Localized African pricing</p>
+              <h3 className="text-lg font-bold text-foreground">Subscription Plans</h3>
+              <p className="text-sm text-default-500">Manage plan pricing and Paystack sync</p>
             </div>
           </CardHeader>
           <Divider />
-          <CardBody className="px-6 py-6">
-            <div className="grid gap-6 md:grid-cols-3">
-              {plans.map(plan => (
-                <Card key={plan.id} className="border border-divider bg-transparent shadow-none">
-                  <CardBody className="flex flex-col gap-5 p-5">
-                    <h4 className="text-xs font-bold uppercase tracking-wider text-default-500 flex items-center gap-2">
-                      <RefreshCcw size={14} /> {plan.name} ({plan.interval})
-                    </h4>
-                    <div className="flex flex-col gap-4">
-                      <Input
-                        label="Price"
-                        labelPlacement="outside"
-                        placeholder="0.00"
-                        type="number"
-                        value={plan.price.toString()}
-                        onValueChange={(v) => handleUpdatePrice(plan.id, 'price', v)}
-                        startContent={<span className="text-default-400 font-bold">₦</span>}
-                        variant="faded"
-                      />
-                      <Input
-                        label="Discount"
-                        labelPlacement="outside"
-                        placeholder="0"
-                        type="number"
-                        value={(plan.discount || 0).toString()}
-                        onValueChange={(v) => handleUpdatePrice(plan.id, 'discount', v)}
-                        endContent={<Percent size={14} className="text-default-400" />}
-                        variant="faded"
-                      />
+          <CardBody className="p-0">
+            <div className="flex flex-col">
+              {plans.map((plan, index) => (
+                <React.Fragment key={plan.id}>
+                  <div className="p-6 flex flex-col lg:flex-row lg:items-center justify-between gap-6">
+                    <div className="flex flex-col gap-1 min-w-[200px]">
+                      <div className="flex items-center gap-2">
+                        <h4 className="text-lg font-semibold text-foreground">{plan.name}</h4>
+                        <Chip size="sm" color="default" variant="flat" className="uppercase text-xs font-bold">
+                          {plan.interval}
+                        </Chip>
+                      </div>
+                      <p className="text-sm text-default-500">
+                        {plan.currency === 'NGN' ? '₦' : '$'}{plan.price} / {plan.interval}
+                      </p>
                     </div>
-                  </CardBody>
-                </Card>
+
+                    <div className="flex flex-wrap items-center gap-4 flex-grow max-w-2xl">
+                      <Input
+                        type="number"
+                        label="Base Price"
+                        placeholder="0.00"
+                        value={plan.price.toString()}
+                        onValueChange={(val) => handleUpdatePrice(plan.id, 'price', val)}
+                        startContent={
+                          <div className="pointer-events-none flex items-center">
+                            <span className="text-default-400 text-sm">{plan.currency}</span>
+                          </div>
+                        }
+                        className="w-full sm:w-32"
+                        variant="bordered"
+                      />
+                      
+                      <Input
+                        type="number"
+                        label="Admin Discount"
+                        placeholder="0"
+                        value={plan.discount.toString()}
+                        onValueChange={(val) => handleUpdatePrice(plan.id, 'discount', val)}
+                        startContent={
+                          <div className="pointer-events-none flex items-center">
+                            <Percent size={14} className="text-default-400" />
+                          </div>
+                        }
+                        endContent={
+                          <div className="pointer-events-none flex items-center">
+                            <span className="text-default-400 text-sm">%</span>
+                          </div>
+                        }
+                        className="w-full sm:w-32"
+                        variant="bordered"
+                      />
+
+                      <div className="flex flex-col items-end gap-2 ml-auto">
+                        <Button 
+                          color={plan.paystack_plan_code ? "success" : "primary"}
+                          variant="flat"
+                          startContent={<CreditCard size={16} />}
+                          isLoading={isSyncing === plan.id}
+                          onPress={() => handleSyncPaystack(plan)}
+                        >
+                          {plan.paystack_plan_code ? "Update Paystack Plan" : "Create on Paystack"}
+                        </Button>
+                        {plan.paystack_plan_code && (
+                          <span className="text-xs text-success-500 font-mono">
+                            Synced: {plan.paystack_plan_code}
+                          </span>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                  {index < plans.length - 1 && <Divider className="mx-6 w-auto" />}
+                </React.Fragment>
               ))}
             </div>
           </CardBody>
