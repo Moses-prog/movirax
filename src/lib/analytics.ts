@@ -1,4 +1,4 @@
-﻿'use server';
+'use server';
 
 import { createClient } from '@/utils/supabase/server';
 
@@ -6,6 +6,7 @@ export interface AnalyticsStats {
   mrr: number;
   totalUsers: number;
   activeSubscribers: number;
+  cancelledSubscribers: number;
   churnRate: number;
   conversionRate: number;
   plansDistribution: Record<string, number>;
@@ -64,6 +65,7 @@ export async function getAnalyticsStats(): Promise<AnalyticsStats> {
     mrr: Math.round(mrr),
     totalUsers: users,
     activeSubscribers,
+    cancelledSubscribers: cancelledSubs,
     churnRate: Number(churnRate.toFixed(1)),
     conversionRate: Number(conversionRate.toFixed(1)),
     plansDistribution,

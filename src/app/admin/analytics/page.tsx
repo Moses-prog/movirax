@@ -43,8 +43,8 @@ export default function AnalyticsPage() {
 
   const mrr = stats?.mrr || 0;
   const totalUsers = stats?.totalUsers || 0;
-  const churnRate = stats?.churnRate || 0;
-  const conversionRate = stats?.conversionRate || 0;
+  const activeSubscribers = stats?.activeSubscribers || 0;
+  const cancelledSubscribers = stats?.cancelledSubscribers || 0;
 
   // Common chart options matching the Movira X dark theme
   const chartOptions = {
@@ -143,14 +143,14 @@ export default function AnalyticsPage() {
           loading={loading}
         />
         <MetricCard 
-          title="Paid Users (%)" 
-          value={`${conversionRate}%`} 
+          title="Active Subscriptions" 
+          value={activeSubscribers.toLocaleString()} 
           icon={<Activity size={20} />} 
           loading={loading}
         />
         <MetricCard 
           title="Cancelled Subscriptions" 
-          value={`${churnRate}%`} 
+          value={cancelledSubscribers.toLocaleString()} 
           icon={<BarChart3 size={20} />} 
           loading={loading}
         />
