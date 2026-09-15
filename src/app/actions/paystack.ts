@@ -107,14 +107,14 @@ export async function syncPlanToPaystack(planData: { id: string, name: string, i
     let method = 'POST';
     
     if (planData.paystack_plan_code) {
-      endpoint = \https://api.paystack.co/plan/\\;
+      endpoint = `https://api.paystack.co/plan/${planData.paystack_plan_code}`;
       method = 'PUT';
     }
 
     const res = await fetch(endpoint, {
       method,
       headers: {
-        Authorization: \Bearer \\,
+        Authorization: `Bearer ${settings.paystackSecretKey}`,
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
