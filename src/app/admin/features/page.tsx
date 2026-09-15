@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { 
   Zap, 
   Plus, 
@@ -11,8 +11,29 @@ import {
   Trash2,
   AlertCircle
 } from 'lucide-react';
-import { Button, Input, Modal, ModalContent, ModalHeader, ModalBody, ModalFooter, useDisclosure, addToast, Spinner } from '@heroui/react';
-import { Switch } from '@heroui/switch';
+import { 
+  Button, 
+  Input, 
+  Modal, 
+  ModalContent, 
+  ModalHeader, 
+  ModalBody, 
+  ModalFooter, 
+  useDisclosure, 
+  addToast, 
+  Spinner,
+  Table,
+  TableHeader,
+  TableColumn,
+  TableBody,
+  TableRow,
+  TableCell,
+  Card,
+  CardBody,
+  Chip,
+  Pagination,
+  Switch
+} from '@heroui/react';
 
 interface Feature {
   id: string;
@@ -27,11 +48,14 @@ export default function FeaturesPage() {
   const [features, setFeatures] = useState<Feature[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
+  const [page, setPage] = useState(1);
+  const rowsPerPage = 10;
   
   // Add Feature Modal
   const {isOpen, onOpen, onOpenChange} = useDisclosure();
   const [newFeatureName, setNewFeatureName] = useState('');
   const [newFeatureDesc, setNewFeatureDesc] = useState('');
+  const [isAdding, setIsAdding] = useState(false);
 
   useEffect(() => {
     fetchFeatures();
@@ -51,14 +75,22 @@ export default function FeaturesPage() {
     }
   };
 
-  const filteredFeatures = features.filter(f => 
-    !f.id.startsWith('sys_') &&
-    (f.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-     f.description.toLowerCase().includes(searchQuery.toLowerCase()))
-  );
+  const filteredFeatures = useMemo(() => {
+    return features.filter(f => 
+      !f.id.startsWith('sys_') &&
+      (f.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+       f.description.toLowerCase().includes(searchQuery.toLowerCase()))
+    );
+  }, [features, searchQuery]);
+
+  const pages = Math.ceil(filteredFeatures.length / rowsPerPage);
+  const paginatedFeatures = useMemo(() => {
+    const start = (page - 1) * rowsPerPage;
+    const end = start + rowsPerPage;
+    return filteredFeatures.slice(start, end);
+  }, [page, filteredFeatures]);
 
   const toggleStatus = async (id: string, field: 'enabled' | 'free_tier' | 'pro_tier') => {
-    // Optimistic update
     const featureToUpdate = features.find(f => f.id === id);
     if (!featureToUpdate) return;
     
@@ -71,7 +103,6 @@ export default function FeaturesPage() {
       return f;
     }));
 
-    // Server update
     try {
       const res = await fetch('/api/admin/features', {
         method: 'POST',
@@ -87,25 +118,37 @@ export default function FeaturesPage() {
       if (json.success) {
         addToast({ title: "Settings saved", color: "success" });
       } else {
-        // Revert on failure
         setFeatures(features);
         addToast({ title: "Failed to update", color: "danger" });
       }
     } catch (e) {
-      setFeatures(features); // Revert
+      setFeatures(features);
       addToast({ title: "Network error", color: "danger" });
     }
   };
 
-  const deleteFeature = (id: string) => {
-    setFeatures(features.filter(f => f.id !== id));
-    addToast({ title: "Feature removed", color: "danger" });
-    // TODO: backend delete if needed
+  const deleteFeature = async (id: string) => {
+    if (confirm('Are you sure you want to delete this feature?')) {
+      const backup = [...features];
+      setFeatures(features.filter(f => f.id !== id));
+      addToast({ title: "Feature removed", color: "danger" });
+      
+      try {
+        await fetch('/api/admin/features', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ action: 'delete', id })
+        });
+      } catch(e) {
+        setFeatures(backup);
+      }
+    }
   };
 
   const handleAddFeature = async (onClose: () => void) => {
     if (!newFeatureName.trim()) return;
     
+    setIsAdding(true);
     const newFeature = {
       name: newFeatureName,
       description: newFeatureDesc,
@@ -124,182 +167,199 @@ export default function FeaturesPage() {
         })
       });
       const json = await res.json();
-      
       if (json.success) {
-        setFeatures(json.data);
+        setFeatures([json.data, ...features]);
+        addToast({ title: "Feature added successfully", color: "success" });
         setNewFeatureName('');
         setNewFeatureDesc('');
-        addToast({ title: "Feature added successfully", color: "success" });
         onClose();
       } else {
         addToast({ title: "Failed to add feature", color: "danger" });
       }
     } catch (e) {
       addToast({ title: "Network error", color: "danger" });
+    } finally {
+      setIsAdding(false);
     }
   };
 
+  if (isLoading) {
+    return (
+      <div className="flex justify-center items-center h-[50vh]">
+        <Spinner size="lg" color="danger" />
+      </div>
+    );
+  }
+
   return (
-    <div className="mx-auto max-w-7xl">
-      {/* Header */}
-      <header className="mb-8 flex flex-wrap items-center justify-between gap-4">
+    <div className="mx-auto max-w-7xl flex flex-col gap-6 pb-10">
+      <header className="flex flex-wrap items-center justify-between gap-4">
         <div>
-          <h1 className="m-0 mb-1 text-3xl font-extrabold tracking-tight text-foreground">Feature Toggles</h1>
-          <p className="m-0 text-sm font-medium text-muted-foreground">
-            Instantly enable or disable features and configure tier restrictions
-          </p>
+          <h1 className="text-3xl font-bold tracking-tight text-foreground">Feature Management</h1>
+          <p className="text-default-500 mt-1">Configure plan permissions and global feature toggles</p>
         </div>
         
         <Button
           color="danger"
-          className="bg-gradient-to-r from-red-600 to-orange-500 font-bold text-white shadow-md"
           startContent={<Plus size={18} />}
           onPress={onOpen}
+          className="font-bold shadow-lg shadow-danger-500/30"
         >
           Add New Feature
         </Button>
       </header>
 
-      {/* Controls */}
-      <div className="mb-6 flex flex-wrap items-center gap-4">
+      <div className="flex flex-wrap items-center gap-4">
         <Input
           placeholder="Search features..."
           value={searchQuery}
           onValueChange={setSearchQuery}
-          startContent={<Search size={16} className="text-muted-foreground" />}
+          startContent={<Search size={18} className="text-default-400" />}
           className="max-w-md"
-          classNames={{
-            inputWrapper: "bg-white/5 border border-white/5 hover:bg-white/10 group-data-[focus=true]:bg-background group-data-[focus=true]:border-red-500/50"
-          }}
+          variant="faded"
         />
-        <div className="ml-auto flex items-center gap-2 rounded-xl border border-white/5 bg-white/5 px-4 py-2">
-          <Settings2 size={16} className="text-muted-foreground" />
-          <span className="text-[13px] font-bold text-muted-foreground">Configuration Mode</span>
-        </div>
       </div>
 
-      {/* Features Table */}
-      <div className="overflow-hidden rounded-2xl border border-white/5 bg-background/50 shadow-sm backdrop-blur-xl">
-        <div className="overflow-x-auto">
-          <div className="min-w-[900px]">
-            {/* Table Header */}
-            <div className="grid grid-cols-[2fr_1fr_1fr_1fr_0.5fr] items-center gap-4 border-b border-white/5 bg-white/5 px-6 py-4 text-[12px] font-bold uppercase tracking-wider text-muted-foreground">
-              <div>Feature</div>
-              <div className="text-center">Global Status</div>
-              <div className="text-center">Free Tier</div>
-              <div className="text-center text-orange-500">Pro Tier</div>
-              <div className="text-right">Actions</div>
-            </div>
-
-            {/* Table Body */}
-            {isLoading ? (
-              <div className="flex justify-center py-12"><Spinner color="danger" /></div>
-            ) : filteredFeatures.length === 0 ? (
-              <div className="flex flex-col items-center justify-center py-16 text-center">
-                <AlertCircle className="mb-3 size-10 text-muted-foreground/50" />
-                <p className="text-sm font-medium text-muted-foreground">No features found matching "{searchQuery}"</p>
+      <Card className="border-none shadow-sm bg-background/60 dark:bg-default-100/50">
+        <Table 
+          aria-label="Features Management Table" 
+          removeWrapper 
+          classNames={{
+            th: "bg-transparent text-default-500 font-semibold text-xs tracking-wider",
+            td: "py-4",
+          }}
+          bottomContent={
+            pages > 1 ? (
+              <div className="flex w-full justify-center p-4 border-t border-divider/50">
+                <Pagination
+                  isCompact
+                  showControls
+                  showShadow
+                  color="danger"
+                  page={page}
+                  total={pages}
+                  onChange={(page) => setPage(page)}
+                />
               </div>
-            ) : (
-              filteredFeatures.map((feature, idx) => (
-                <div 
-                  key={feature.id} 
-                  className={`grid grid-cols-[2fr_1fr_1fr_1fr_0.5fr] items-center gap-4 px-6 py-5 transition-colors hover:bg-white/5 ${idx !== filteredFeatures.length - 1 ? 'border-b border-white/5' : ''}`}
-                >
-                  {/* Feature Info */}
-                  <div>
-                    <h3 className="flex items-center gap-2 text-[15px] font-bold text-foreground">
-                      <Zap size={14} className={feature.enabled ? "text-orange-500" : "text-muted-foreground"} />
+            ) : null
+          }
+        >
+          <TableHeader>
+            <TableColumn>FEATURE</TableColumn>
+            <TableColumn align="center">GLOBAL STATUS</TableColumn>
+            <TableColumn align="center">FREE TIER</TableColumn>
+            <TableColumn align="center">PRO TIER</TableColumn>
+            <TableColumn align="end">ACTIONS</TableColumn>
+          </TableHeader>
+          <TableBody 
+            emptyContent={
+              <div className="flex flex-col items-center justify-center py-10 text-default-500">
+                <AlertCircle size={32} className="mb-2 opacity-50" />
+                <p>No features found matching "{searchQuery}"</p>
+              </div>
+            }
+          >
+            {paginatedFeatures.map((feature) => (
+              <TableRow key={feature.id}>
+                <TableCell>
+                  <div className="flex flex-col">
+                    <h3 className="flex items-center gap-2 text-sm font-bold text-foreground">
+                      <Zap size={14} className={feature.enabled ? "text-primary" : "text-default-400"} />
                       {feature.name}
                     </h3>
-                    <p className="mt-1 text-[13px] text-muted-foreground leading-relaxed pr-4">
+                    <p className="mt-1 text-xs text-default-500 max-w-[400px]">
                       {feature.description}
                     </p>
                   </div>
-
-                  {/* Global Status */}
+                </TableCell>
+                <TableCell>
                   <div className="flex flex-col items-center justify-center gap-2">
                     <Switch 
                       isSelected={feature.enabled} 
                       onValueChange={() => toggleStatus(feature.id, 'enabled')}
-                      color="danger"
+                      color="success"
                       size="sm"
                     />
-                    <span className={`text-[11px] font-bold uppercase tracking-widest ${feature.enabled ? 'text-green-500' : 'text-muted-foreground'}`}>
+                    <span className={`text-[10px] font-bold uppercase tracking-widest ${feature.enabled ? 'text-success' : 'text-default-400'}`}>
                       {feature.enabled ? 'Active' : 'Disabled'}
                     </span>
                   </div>
-
-                  {/* Free Tier */}
+                </TableCell>
+                <TableCell>
                   <div className="flex justify-center">
-                    <button 
-                      onClick={() => toggleStatus(feature.id, 'free_tier')}
-                      disabled={!feature.enabled}
-                      className={`flex size-8 items-center justify-center rounded-full transition-all hover:scale-110 disabled:opacity-50 disabled:hover:scale-100 ${feature.free_tier ? 'bg-green-500/10 text-green-500' : 'bg-white/5 text-white/20 hover:bg-white/10 hover:text-white/50'}`}
+                    <Button 
+                      isIconOnly
+                      size="sm"
+                      variant="light"
+                      onPress={() => toggleStatus(feature.id, 'free_tier')}
+                      isDisabled={!feature.enabled}
+                      className={feature.free_tier ? 'text-success' : 'text-default-300'}
                     >
                       {feature.free_tier ? <CheckCircle2 size={18} /> : <XCircle size={18} />}
-                    </button>
+                    </Button>
                   </div>
-
-                  {/* Pro Tier */}
+                </TableCell>
+                <TableCell>
                   <div className="flex justify-center">
-                    <button 
-                      onClick={() => toggleStatus(feature.id, 'pro_tier')}
-                      disabled={!feature.enabled}
-                      className={`flex size-8 items-center justify-center rounded-full transition-all hover:scale-110 disabled:opacity-50 disabled:hover:scale-100 ${feature.pro_tier ? 'bg-orange-500/10 text-orange-500' : 'bg-white/5 text-white/20 hover:bg-white/10 hover:text-white/50'}`}
+                    <Button 
+                      isIconOnly
+                      size="sm"
+                      variant="light"
+                      onPress={() => toggleStatus(feature.id, 'pro_tier')}
+                      isDisabled={!feature.enabled}
+                      className={feature.pro_tier ? 'text-primary' : 'text-default-300'}
                     >
                       {feature.pro_tier ? <CheckCircle2 size={18} /> : <XCircle size={18} />}
-                    </button>
+                    </Button>
                   </div>
-
-                  {/* Actions */}
+                </TableCell>
+                <TableCell>
                   <div className="flex justify-end">
-                    <button
-                      onClick={() => deleteFeature(feature.id)}
-                      className="flex size-8 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-red-500/10 hover:text-red-500"
+                    <Button
+                      isIconOnly
+                      size="sm"
+                      variant="light"
+                      color="danger"
+                      onPress={() => deleteFeature(feature.id)}
                     >
                       <Trash2 size={16} />
-                    </button>
+                    </Button>
                   </div>
-                </div>
-              ))
-            )}
-          </div>
-        </div>
-      </div>
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </Card>
 
       {/* Add Feature Modal */}
       <Modal 
         isOpen={isOpen} 
         onOpenChange={onOpenChange}
-        classNames={{
-          base: "bg-background border border-white/10",
-          header: "border-b border-white/5",
-          footer: "border-t border-white/5",
-        }}
+        backdrop="blur"
       >
         <ModalContent>
           {(onClose) => (
             <>
-              <ModalHeader className="flex flex-col gap-1 text-foreground">Add New Feature</ModalHeader>
-              <ModalBody className="py-6 flex flex-col gap-4">
+              <ModalHeader className="flex flex-col gap-1">Add New Feature</ModalHeader>
+              <ModalBody>
                 <Input
                   label="Feature Name"
+                  labelPlacement="outside"
                   placeholder="e.g. 8K Streaming"
                   value={newFeatureName}
                   onValueChange={setNewFeatureName}
-                  classNames={{
-                    inputWrapper: "bg-white/5 border border-white/10 hover:bg-white/10 focus-within:border-red-500/50"
-                  }}
+                  variant="faded"
                 />
                 
                 <Input
                   label="Description"
+                  labelPlacement="outside"
                   placeholder="Brief explanation of the feature"
                   value={newFeatureDesc}
                   onValueChange={setNewFeatureDesc}
-                  classNames={{
-                    inputWrapper: "bg-white/5 border border-white/10 hover:bg-white/10 focus-within:border-red-500/50"
-                  }}
+                  variant="faded"
+                  className="mt-4"
                 />
               </ModalBody>
               <ModalFooter>
@@ -309,8 +369,9 @@ export default function FeaturesPage() {
                 <Button 
                   color="danger" 
                   onPress={() => handleAddFeature(onClose)}
-                  className="bg-gradient-to-r from-red-600 to-orange-500 font-bold text-white shadow-md"
                   isDisabled={!newFeatureName.trim()}
+                  isLoading={isAdding}
+                  className="font-bold shadow-lg shadow-danger-500/30"
                 >
                   Create Feature
                 </Button>
