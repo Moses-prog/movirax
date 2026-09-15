@@ -34,8 +34,7 @@ import {
   addToast,
   Spinner
 } from '@heroui/react';
-import { getAllSubscriptions, cancelUserSubscription } from '@/actions/billing';
-import { UserSubscription } from '@/types/billing';
+import { getAllSubscriptions, cancelUserSubscription, UserSubscription } from '@/lib/subscriptions';
 
 export default function SubscriptionsPage() {
   const [subscriptions, setSubscriptions] = useState<UserSubscription[]>([]);
