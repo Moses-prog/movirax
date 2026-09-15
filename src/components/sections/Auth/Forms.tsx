@@ -30,6 +30,7 @@ const AuthForms: React.FC = () => {
   const reset = pathname === "/auth/reset-password";
 
   const [error, setError] = useQueryState("error", parseAsBoolean.withDefault(false));
+  const [suspended, setSuspended] = useQueryState("suspended", parseAsBoolean.withDefault(false));
   const [form, setForm] = useQueryState(
     "form",
     parseAsStringLiteral(ValidForms).withDefault("login"),
@@ -57,14 +58,15 @@ const AuthForms: React.FC = () => {
   }, [movies?.results, tvShows?.results]);
 
   useEffect(() => {
-    if (error) {
+    if (error || suspended) {
       addToast({
-        title: "An error occurred. Please try again.",
+        title: suspended ? "Your account is currently suspended. Please contact support." : "An error occurred. Please try again.",
         color: "danger",
       });
-      setError(false);
+      if (error) setError(false);
+      if (suspended) setSuspended(false);
     }
-  }, [error, setError]);
+  }, [error, suspended, setError, setSuspended]);
 
   if (isPendingMovies || isPendingTv) {
     return <Spinner size="lg" className="absolute-center" variant="simple" />;
