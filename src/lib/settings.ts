@@ -1,3 +1,5 @@
+'use server';
+
 import { getFeatures, updateFeature, addFeature, FeatureFlag } from './jsonDb';
 
 export interface ServerSettings {
