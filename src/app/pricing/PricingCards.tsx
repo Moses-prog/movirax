@@ -51,6 +51,7 @@ export default function PricingCards({ plans, user, paymentSettings }: { plans: 
       if (res.ok) {
         addToast({ title: 'Subscription Activated!', color: 'success' });
         closePaymentModal();
+        router.refresh(); // Clear the client cache so the profile updates!
         router.push('/profile');
       } else {
         addToast({ title: data.error || 'Payment verification failed', color: 'danger' });
