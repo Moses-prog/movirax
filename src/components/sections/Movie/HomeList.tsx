@@ -44,7 +44,13 @@ const MovieHomeList: React.FC<QueryList<Movie>> = ({ query, name, param }) => {
             </Link>
           </div>
           <Carousel>
-            {data?.results.map((movie, index) => {
+            {[...(data?.results || [])]
+              .sort((a, b) => {
+                const dateA = new Date(a.release_date || 0).getTime();
+                const dateB = new Date(b.release_date || 0).getTime();
+                return dateB - dateA;
+              })
+              .map((movie, index) => {
               return (
                 <div
                   key={movie.id}
