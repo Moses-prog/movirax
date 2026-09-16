@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useEffect, useMemo, useState } from 'react';
+import Link from 'next/link';
 import {
   AlertCircle,
   Ban,
@@ -246,12 +247,14 @@ export default function AdminUsersPage() {
           {paginatedUsers.map((user) => (
             <TableRow key={user.id}>
               <TableCell>
-                <HeroUser
-                  avatarProps={{ radius: "md", src: user.avatar_url || `https://api.dicebear.com/9.x/notionists/svg?seed=${user.email}` }}
-                  description={user.email}
-                  name={user.display_name?.trim() || 'Unnamed user'}
-                  classNames={{ name: "font-semibold text-sm", description: "text-xs" }}
-                />
+                <Link href={`/admin/users/${user.id}`} className="block w-full">
+                  <HeroUser
+                    avatarProps={{ radius: "md", src: user.avatar_url || `https://api.dicebear.com/9.x/notionists/svg?seed=${user.email}` }}
+                    description={user.email}
+                    name={user.display_name?.trim() || 'Unnamed user'}
+                    classNames={{ name: "font-semibold text-sm hover:text-danger transition-colors cursor-pointer", description: "text-xs" }}
+                  />
+                </Link>
               </TableCell>
               <TableCell>
                 <Chip size="sm" variant="flat" color={getSubscriptionColor(user.subscription_tier)} className="capitalize font-medium">
@@ -274,6 +277,9 @@ export default function AdminUsersPage() {
                     </Button>
                   </DropdownTrigger>
                   <DropdownMenu aria-label="User actions">
+                    <DropdownItem key="view" as={Link} href={`/admin/users/${user.id}`} className="font-bold">
+                      View User Configuration
+                    </DropdownItem>
                     <DropdownItem key="active" onPress={() => updateUserStatus(user.id, 'active')} startContent={<CheckCircle size={16} />}>
                       Mark Active
                     </DropdownItem>
