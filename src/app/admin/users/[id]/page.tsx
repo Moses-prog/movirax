@@ -13,7 +13,8 @@ import {
   CheckCircle2,
   AlertCircle
 } from 'lucide-react';
-import { Button, Modal, ModalContent, ModalHeader, ModalBody, ModalFooter, useDisclosure, Select, SelectItem, Textarea, addToast } from '@heroui/react';
+import { Button, Modal, ModalContent, ModalHeader, ModalBody, ModalFooter, useDisclosure, Select, SelectItem, Textarea, addToast, Input } from '@heroui/react';
+import { getPricingPlans } from '@/lib/subscriptions';
 
 interface BillingHistory {
   id: string;
@@ -29,6 +30,7 @@ interface UserProfile {
   display_name: string | null;
   avatar_url: string | null;
   status: string;
+  role: string;
   subscription_tier: string;
   created_at: string;
   billing: {
@@ -65,8 +67,12 @@ export default function UserProfilePage({ params }: { params: { id: string } }) 
       }
     };
     const fetchPlans = async () => {
-      const { getPricingPlans } = await import('@/lib/subscriptions');
-      setPlans(await getPricingPlans());
+      try {
+        const data = await getPricingPlans();
+        setPlans(data);
+      } catch (err) {
+        console.error('Failed to load plans:', err);
+      }
     };
     fetchUser();
     fetchPlans();
@@ -109,6 +115,34 @@ export default function UserProfilePage({ params }: { params: { id: string } }) 
       });
       addToast({ title: "Subscription Cancelled", color: "success" });
       router.refresh();
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const handleRoleChange = async (role: string) => {
+    setIsSubmitting(true);
+    try {
+      await fetch(`/api/admin/users/${params.id}`, {
+        method: 'PATCH',
+        body: JSON.stringify({ action: 'update_role', role })
+      });
+      setUser(prev => prev ? { ...prev, role } : null);
+      addToast({ title: "Role updated", color: "success" });
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const handleProfileUpdate = async (display_name: string) => {
+    setIsSubmitting(true);
+    try {
+      await fetch(`/api/admin/users/${params.id}`, {
+        method: 'PATCH',
+        body: JSON.stringify({ action: 'update_profile', display_name })
+      });
+      setUser(prev => prev ? { ...prev, display_name } : null);
+      addToast({ title: "Profile updated", color: "success" });
     } finally {
       setIsSubmitting(false);
     }
@@ -329,7 +363,31 @@ export default function UserProfilePage({ params }: { params: { id: string } }) 
           <AlertCircle size={16} />
           Administrative Actions
         </h3>
-        <div className="flex flex-wrap gap-4">
+        <div className="flex flex-wrap items-center gap-4">
+          <Button 
+            color="primary" 
+            variant="flat" 
+            onPress={() => {
+              const name = window.prompt("Enter new display name:", user.display_name || '');
+              if (name !== null) handleProfileUpdate(name);
+            }}
+          >
+            Edit Name
+          </Button>
+
+          <Select
+            label="User Role"
+            selectedKeys={[user.role || 'user']}
+            size="sm"
+            className="max-w-[150px]"
+            onChange={(e) => {
+              if (e.target.value) handleRoleChange(e.target.value);
+            }}
+          >
+            <SelectItem key="user" value="user">User</SelectItem>
+            <SelectItem key="super_admin" value="super_admin">Super Admin</SelectItem>
+          </Select>
+
           {user.subscription_tier === 'free' ? (
             <Select
               label="Manual Upgrade"

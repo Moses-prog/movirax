@@ -37,6 +37,13 @@ export async function GET(request: Request, { params }: { params: { id: string }
       .limit(1)
       .single();
 
+    // Fetch admin role
+    const { data: adminData } = await supabaseAdmin
+      .from('admin_users')
+      .select('role')
+      .eq('id', userId)
+      .single();
+
     const isPro = !!subscription;
     const status = authUser.user_metadata?.status || 'active';
 
@@ -45,6 +52,7 @@ export async function GET(request: Request, { params }: { params: { id: string }
       email: authUser.email || '',
       display_name: mainProfile?.username || authUser.user_metadata?.display_name || null,
       avatar_url: authUser.user_metadata?.avatar_url || null,
+      role: adminData?.role || 'user',
       status: status,
       subscription_tier: isPro ? 'premium' : 'free',
       created_at: authUser.created_at,
@@ -72,7 +80,7 @@ export async function GET(request: Request, { params }: { params: { id: string }
 export async function PATCH(request: Request, { params }: { params: { id: string } }) {
   try {
     const userId = params.id;
-    const { action, status, planId, days } = await request.json();
+    const { action, status, planId, days, role, display_name } = await request.json();
     const supabaseAdmin = getAdminClient();
 
     if (action === 'update_status') {
@@ -89,6 +97,24 @@ export async function PATCH(request: Request, { params }: { params: { id: string
 
     if (action === 'cancel' && planId) {
       await cancelUserSubscription(planId);
+      return NextResponse.json({ success: true });
+    }
+
+    if (action === 'update_role' && role !== undefined) {
+      if (role === 'user') {
+        // Remove from admin_users
+        await supabaseAdmin.from('admin_users').delete().eq('id', userId);
+      } else {
+        // Upsert into admin_users
+        await supabaseAdmin.from('admin_users').upsert({ id: userId, role, is_active: true });
+      }
+      return NextResponse.json({ success: true });
+    }
+
+    if (action === 'update_profile' && display_name) {
+      // Update metadata and profiles table
+      await supabaseAdmin.auth.admin.updateUserById(userId, { user_metadata: { display_name } });
+      await supabaseAdmin.from('profiles').update({ username: display_name }).eq('id', userId);
       return NextResponse.json({ success: true });
     }
 
