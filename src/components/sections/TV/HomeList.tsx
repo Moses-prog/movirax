@@ -46,9 +46,10 @@ const TvShowHomeList: React.FC<QueryList<TV>> = ({ query, name, param }) => {
           <Carousel>
             {[...(data?.results || [])]
               .sort((a, b) => {
-                const dateA = new Date(a.first_air_date || 0).getTime();
-                const dateB = new Date(b.first_air_date || 0).getTime();
-                return dateB - dateA;
+                // Sort by Rating (vote_average) descending
+                const ratingA = a.vote_average || 0;
+                const ratingB = b.vote_average || 0;
+                return ratingB - ratingA;
               })
               .map((tv, index) => (
               <div
