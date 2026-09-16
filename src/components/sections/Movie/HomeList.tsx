@@ -14,7 +14,7 @@ const MovieHomeList: React.FC<QueryList<Movie>> = ({ query, name, param }) => {
   const key = kebabCase(name) + "-list";
   const { ref, inViewport } = useInViewport();
   const { data, isPending } = useQuery({
-    queryFn: query,
+    queryFn: () => query(1),
     queryKey: [key],
     enabled: inViewport,
   });
