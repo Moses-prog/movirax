@@ -88,7 +88,7 @@ export default function AdminDashboard() {
     },
     {
       label: 'Total Revenue',
-      value: stats ? `$${stats.mrr}/mo` : '...',
+      value: stats ? `₦${stats.mrr.toLocaleString()}/mo` : '...',
       Icon: TrendingUp,
       colorClass: "bg-success/10 text-success",
     },

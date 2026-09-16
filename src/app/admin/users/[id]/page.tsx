@@ -357,7 +357,7 @@ export default function UserProfilePage({ params }: { params: { id: string } }) 
                     <tr key={invoice.id} className={index !== user.billing.history.length - 1 ? "border-b border-white/5" : ""}>
                       <td className="py-3 pl-2 font-medium text-foreground">{new Date(invoice.date).toLocaleDateString()}</td>
                       <td className="py-3 text-muted-foreground">{invoice.description}</td>
-                      <td className="py-3 font-bold text-foreground">${invoice.amount.toFixed(2)}</td>
+                      <td className="py-3 font-bold text-foreground">₦{invoice.amount.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</td>
                       <td className="py-3 pr-2 text-right">
                         <span className={`inline-flex rounded bg-green-500/10 px-2 py-0.5 text-[11px] font-bold uppercase tracking-wider ${invoice.status === 'paid' ? 'text-green-500' : 'text-muted-foreground'}`}>
                           {invoice.status}
