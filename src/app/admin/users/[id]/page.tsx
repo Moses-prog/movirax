@@ -48,6 +48,9 @@ export default function UserProfilePage({ params }: { params: { id: string } }) 
   const [user, setUser] = useState<UserProfile | null>(null);
   const [loading, setLoading] = useState(true);
   
+  // Support Modal State
+  const {isOpen, onOpen, onOpenChange} = useDisclosure();
+  
   const [supportType, setSupportType] = useState(new Set(["upgrade"]));
   const [plans, setPlans] = useState<any[]>([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -146,6 +149,21 @@ export default function UserProfilePage({ params }: { params: { id: string } }) 
     } finally {
       setIsSubmitting(false);
     }
+  };
+
+  const handleSupportSubmit = async (onClose: () => void) => {
+    setIsSubmitting(true);
+    // Simulate API call
+    await new Promise(resolve => setTimeout(resolve, 800));
+    setIsSubmitting(false);
+    
+    addToast({
+      title: "Support ticket created successfully",
+      color: "success"
+    });
+    
+    setSupportMessage("");
+    onClose();
   };
 
   const handleDelete = async () => {
