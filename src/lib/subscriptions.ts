@@ -75,7 +75,7 @@ export async function activateSubscription(
   paymentMethod: string,
   daysValid: number,
   paystackSubscriptionCode?: string
-): Promise<boolean> {
+): Promise<{ success: boolean, error?: string }> {
   const supabase = await createClient(true);
   
   const endDate = new Date();
@@ -93,7 +93,12 @@ export async function activateSubscription(
     paystack_subscription_code: paystackSubscriptionCode
   });
   
-  return !error;
+  if (error) {
+    console.error('Supabase Insert Error:', error);
+    return { success: false, error: error.message };
+  }
+  
+  return { success: true };
 }
 
 export async function updateSubscriptionStatus(

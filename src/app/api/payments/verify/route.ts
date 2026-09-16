@@ -83,7 +83,7 @@ export async function POST(request: Request) {
 
       const userName = user.user_metadata?.full_name || 'User';
 
-      const success = await activateSubscription(
+      const { success, error: insertError } = await activateSubscription(
         user.id,
         user.email!,
         userName,
@@ -97,7 +97,7 @@ export async function POST(request: Request) {
       if (success) {
         return NextResponse.json({ success: true });
       } else {
-        return NextResponse.json({ error: 'Failed to save subscription' }, { status: 500 });
+        return NextResponse.json({ error: `Failed to save subscription: ${insertError}` }, { status: 500 });
       }
     } else {
       return NextResponse.json({ error: 'Payment verification failed' }, { status: 400 });
