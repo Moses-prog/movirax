@@ -11,32 +11,64 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const { transaction_id, tx_ref, plan_id } = await request.json();
+    const { transaction_id, tx_ref, plan_id, gateway } = await request.json();
 
     if (!transaction_id || !tx_ref || !plan_id) {
       return NextResponse.json({ error: 'Missing parameters' }, { status: 400 });
     }
 
-    // Verify payment with Flutterwave
-    const flutterwaveSecretKey = process.env.FLUTTERWAVE_SECRET_KEY;
-    
-    if (!flutterwaveSecretKey) {
-      console.error('Missing FLUTTERWAVE_SECRET_KEY');
-      return NextResponse.json({ error: 'Server configuration error' }, { status: 500 });
+    let isSuccess = false;
+    let paymentMethod = 'Unknown';
+    let paystack_subscription_code = undefined;
+
+    if (gateway === 'paystack') {
+      const { getPaymentSettings } = await import('@/lib/settings');
+      const settings = await getPaymentSettings();
+      if (!settings.paystackSecretKey) {
+        return NextResponse.json({ error: 'Paystack configuration error' }, { status: 500 });
+      }
+
+      // Paystack uses transaction reference for verification, which we passed as transaction_id
+      const response = await fetch(`https://api.paystack.co/transaction/verify/${transaction_id}`, {
+        method: 'GET',
+        headers: {
+          Authorization: `Bearer ${settings.paystackSecretKey}`,
+        },
+      });
+
+      const psData = await response.json();
+      if (psData.status === true && psData.data.status === 'success') {
+        isSuccess = true;
+        if (psData.data.authorization) {
+          paymentMethod = `${psData.data.authorization.card_type || 'Card'} ending in ${psData.data.authorization.last4}`;
+        }
+        // Subscriptions usually have metadata.custom_fields or directly return plan info, but the webhook handles the official attach.
+      }
+    } else {
+      // Default to flutterwave
+      const flutterwaveSecretKey = process.env.FLUTTERWAVE_SECRET_KEY;
+      if (!flutterwaveSecretKey) {
+        return NextResponse.json({ error: 'Missing FLUTTERWAVE_SECRET_KEY' }, { status: 500 });
+      }
+
+      const response = await fetch(`https://api.flutterwave.com/v3/transactions/${transaction_id}/verify`, {
+        method: 'GET',
+        headers: {
+          Authorization: `Bearer ${flutterwaveSecretKey}`,
+          'Content-Type': 'application/json',
+        },
+      });
+
+      const fwData = await response.json();
+      if (fwData.status === 'success' && fwData.data.status === 'successful') {
+        isSuccess = true;
+        if (fwData.data.card && fwData.data.card.last_4digits) {
+          paymentMethod = `${fwData.data.card.type || 'Card'} ending in ${fwData.data.card.last_4digits}`;
+        }
+      }
     }
 
-    const response = await fetch(`https://api.flutterwave.com/v3/transactions/${transaction_id}/verify`, {
-      method: 'GET',
-      headers: {
-        Authorization: `Bearer ${flutterwaveSecretKey}`,
-        'Content-Type': 'application/json',
-      },
-    });
-
-    const fwData = await response.json();
-
-    if (fwData.status === 'success' && fwData.data.status === 'successful') {
-      // Payment was successful. Verify amount and currency if needed
+    if (isSuccess) {
       // Find the plan to determine days valid
       const plans = await getPricingPlans();
       const plan = plans.find(p => p.id === plan_id);
@@ -51,11 +83,6 @@ export async function POST(request: Request) {
 
       const userName = user.user_metadata?.full_name || 'User';
 
-      let paymentMethod = 'Flutterwave';
-      if (fwData.data.card && fwData.data.card.last_4digits) {
-        paymentMethod = `${fwData.data.card.type || 'Card'} ending in ${fwData.data.card.last_4digits}`;
-      }
-
       const success = await activateSubscription(
         user.id,
         user.email!,
@@ -63,7 +90,8 @@ export async function POST(request: Request) {
         plan.id,
         tx_ref,
         paymentMethod,
-        daysValid
+        daysValid,
+        paystack_subscription_code
       );
 
       if (success) {

@@ -32,7 +32,7 @@ const FilmStripPattern = ({ colorClass, bgClass }: { colorClass: string, bgClass
 export default function PricingCards({ plans, user, paymentSettings }: { plans: any[], user: any, paymentSettings?: any }) {
   const router = useRouter();
 
-  const handlePaymentSuccess = async (response: any, plan: any) => {
+  const handlePaymentSuccess = async (response: any, plan: any, gateway: 'flutterwave' | 'paystack') => {
     addToast({ title: 'Payment Processing...', color: 'primary' });
     
     try {
@@ -43,6 +43,7 @@ export default function PricingCards({ plans, user, paymentSettings }: { plans: 
           transaction_id: response.transaction_id,
           tx_ref: response.tx_ref,
           plan_id: plan.id,
+          gateway, // Let the backend know which API to verify with
         })
       });
       
@@ -268,7 +269,7 @@ function PlanCard({ plan, user, onSuccess, router, paymentSettings }: { plan: an
                       tx_ref: response.reference,
                       status: response.status
                     };
-                    onSuccess(unifiedResponse, plan);
+                    onSuccess(unifiedResponse, plan, 'paystack');
                   },
                   onClose: () => {
                     addToast({ title: 'Payment cancelled', color: 'default' });
@@ -290,7 +291,7 @@ function PlanCard({ plan, user, onSuccess, router, paymentSettings }: { plan: an
                   return;
                 }
                 handleFlutterPayment({
-                  callback: (response) => onSuccess(response, plan),
+                  callback: (response) => onSuccess(response, plan, 'flutterwave'),
                   onClose: () => {
                     addToast({ title: 'Payment cancelled', color: 'default' });
                   },
