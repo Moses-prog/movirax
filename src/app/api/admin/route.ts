@@ -28,16 +28,6 @@ export async function GET() {
 
     console.log(`Found ${authData?.users?.length || 0} auth users`);
 
-    // Fetch admin user profiles (contains status, etc.)
-    console.log('Fetching user_profiles...');
-    const { data: userProfilesData, error: userProfilesError } = await supabaseAdmin
-      .from('user_profiles')
-      .select('*');
-
-    if (userProfilesError && userProfilesError.code !== '42P01') {
-      console.error('user_profiles error:', userProfilesError);
-    }
-
     // Fetch main app profiles (contains username)
     console.log('Fetching profiles...');
     const { data: mainProfilesData, error: mainProfilesError } = await supabaseAdmin
@@ -48,24 +38,32 @@ export async function GET() {
       console.error('profiles error:', mainProfilesError);
     }
 
+    // Fetch active user subscriptions
+    console.log('Fetching subscriptions...');
+    const { data: subscriptionsData } = await supabaseAdmin
+      .from('user_subscriptions')
+      .select('*')
+      .eq('status', 'active');
+
     // Create maps for quick lookup
-    const userProfilesMap = new Map((userProfilesData || []).map((p: any) => [p.id, p]));
     const mainProfilesMap = new Map((mainProfilesData || []).map((p: any) => [p.id, p]));
+    const subscriptionsMap = new Map((subscriptionsData || []).map((s: any) => [s.user_id, s]));
 
     // Combine auth users with their profiles
     const combinedUsers = (authData?.users || []).map((authUser: any) => {
-      const userProfile = userProfilesMap.get(authUser.id);
       const mainProfile = mainProfilesMap.get(authUser.id);
+      const activeSubscription = subscriptionsMap.get(authUser.id);
 
-      const displayName = mainProfile?.username || userProfile?.display_name || authUser.user_metadata?.display_name || null;
+      const displayName = mainProfile?.username || authUser.user_metadata?.display_name || null;
+      const isPro = !!activeSubscription;
 
       return {
         id: authUser.id,
         email: authUser.email || '',
         display_name: displayName,
-        avatar_url: userProfile?.avatar_url || authUser.user_metadata?.avatar_url || null,
-        status: (userProfile?.status || authUser.user_metadata?.status || 'active') as 'active' | 'suspended' | 'banned',
-        subscription_tier: (userProfile?.subscription_tier || authUser.user_metadata?.subscription_tier || 'free') as 'free' | 'premium' | 'enterprise',
+        avatar_url: authUser.user_metadata?.avatar_url || null,
+        status: (authUser.user_metadata?.status || 'active') as 'active' | 'suspended' | 'banned',
+        subscription_tier: isPro ? 'premium' : 'free',
         created_at: authUser.created_at,
         last_sign_in_at: authUser.last_sign_in_at || null,
         email_confirmed: authUser.email_confirmed_at !== null,
@@ -102,22 +100,17 @@ export async function PATCH(request: Request) {
       }
     );
 
-    // 1. Try to update user_profiles table if the column exists
-    const { error: profileError } = await supabaseAdmin
-      .from('user_profiles')
-      .update({ status })
-      .eq('id', userId);
-
-    // 2. Update auth metadata (this is what the GET route relies on)
-    const attributes: any = { user_metadata: { status } };
-    
-    // We no longer use native ban_duration because we want them to stay logged in
-    // to see the in-app Ban Popup and be able to contact support.
-    attributes.ban_duration = 'none';
-
-    const { error: authError } = await supabaseAdmin.auth.admin.updateUserById(userId, attributes);
+    // Update user_metadata in auth
+    const { error: authError } = await supabaseAdmin.auth.admin.updateUserById(
+      userId,
+      { 
+        user_metadata: { status },
+        ban_duration: 'none' // Keep them logged in so they see the in-app popup
+      }
+    );
 
     if (authError) {
+      console.error('Failed to update auth metadata:', authError);
       throw new Error(authError.message);
     }
 
