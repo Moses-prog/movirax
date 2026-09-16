@@ -12,24 +12,12 @@ export type ActionResponse<T = null> = Promise<{
   data?: T;
 }>;
 
-export type MovieParam =
-  | "todayTrending"
-  | "thisWeekTrending"
-  | "popular"
-  | "nowPlaying"
-  | "upcoming"
-  | "topRated";
-
-export type TvShowParam =
-  | "todayTrending"
-  | "thisWeekTrending"
-  | "popular"
-  | "onTheAir"
-  | "topRated";
+export type MovieParam = string;
+export type TvShowParam = string;
 
 export type QueryList<T extends Movie | TV> = {
   name: string;
-  query: () => Promise<{
+  query: (page?: number) => Promise<{
     page: number;
     results: T[];
     total_results: number;

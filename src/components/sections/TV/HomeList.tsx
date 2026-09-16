@@ -35,7 +35,7 @@ const TvShowHomeList: React.FC<QueryList<TV>> = ({ query, name, param }) => {
             <SectionTitle color="warning">{name}</SectionTitle>
             <Link
               size="sm"
-              href={`/discover?type=${param}&content=tv`}
+              href={`/list/tv/${param}`}
               isBlock
               color="foreground"
               className="rounded-full"
