@@ -16,8 +16,9 @@ export interface AnalyticsStats {
 export async function getAnalyticsStats(): Promise<AnalyticsStats> {
   const supabase = await createClient(true);
   
-  // Get all users count (from profiles)
-  const { count: totalUsers } = await supabase.from('profiles').select('*', { count: 'exact', head: true });
+  // Get all users count from auth
+  const { data: { users: authUsers }, error: authError } = await supabase.auth.admin.listUsers();
+  const totalUsers = authUsers ? authUsers.length : 0;
   
   // Get all subscriptions with pricing info
   const { data: subs } = await supabase.from('user_subscriptions').select('*, pricing_plans(*)');

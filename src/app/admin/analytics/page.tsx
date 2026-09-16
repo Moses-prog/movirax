@@ -70,14 +70,13 @@ export default function AnalyticsPage() {
   };
 
   // Plans Doughnut Chart Data based on DB stats
-  const planNames = stats ? Object.keys(stats.plansDistribution) : ['Free'];
-  const planValues = stats && Object.keys(stats.plansDistribution).length > 0 
-    ? Object.values(stats.plansDistribution) 
-    : [totalUsers > 0 ? totalUsers : 1];
+  const planNames = stats ? Object.keys(stats.plansDistribution) : [];
+  const planValues = stats ? Object.values(stats.plansDistribution) : [];
   
-  if (planNames.length === 0) {
-    planNames.push('Free Users');
-    planValues.push(totalUsers || 1);
+  const freeUsers = Math.max(0, totalUsers - activeSubscribers);
+  if (freeUsers > 0) {
+    planNames.push('Free');
+    planValues.push(freeUsers);
   }
 
   const plansData = {

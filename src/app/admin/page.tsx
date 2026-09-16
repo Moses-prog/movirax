@@ -8,6 +8,7 @@ import { getAllTickets, SupportTicket } from '@/actions/support';
 import { Chip, Spinner, Card, CardBody, CardHeader, Table, TableHeader, TableColumn, TableBody, TableRow, TableCell, User, Button } from '@heroui/react';
 import Link from 'next/link';
 import { createClient } from '@/utils/supabase/client';
+import { getAnalyticsStats, AnalyticsStats } from '@/lib/analytics';
 
 export default function AdminDashboard() {
   const router = useRouter();
@@ -15,6 +16,7 @@ export default function AdminDashboard() {
   
   const [users, setUsers] = useState<any[]>([]);
   const [tickets, setTickets] = useState<SupportTicket[]>([]);
+  const [stats, setStats] = useState<AnalyticsStats | null>(null);
 
   useEffect(() => {
     const checkAuthAndFetchData = async () => {
@@ -28,15 +30,17 @@ export default function AdminDashboard() {
           return;
         }
 
-        const [usersRes, ticketsRes] = await Promise.all([
+        const [usersRes, ticketsRes, statsRes] = await Promise.all([
           fetch('/api/admin').then(res => res.ok ? res.json() : []),
-          getAllTickets()
+          getAllTickets(),
+          getAnalyticsStats()
         ]);
 
         setUsers(Array.isArray(usersRes) ? usersRes : []);
         if (ticketsRes.success && ticketsRes.data) {
           setTickets(ticketsRes.data);
         }
+        setStats(statsRes);
 
       } catch (error) {
         console.error('Data fetch failed:', error);
@@ -74,25 +78,25 @@ export default function AdminDashboard() {
       label: 'Total Users',
       value: users.length.toString(),
       Icon: Users,
-      color: "danger",
+      colorClass: "bg-danger/10 text-danger",
     },
     {
       label: 'Active Tickets',
       value: activeTicketsCount.toString(),
       Icon: Ticket,
-      color: "warning",
+      colorClass: "bg-warning/10 text-warning",
     },
     {
       label: 'Total Revenue',
-      value: 'TBD',
+      value: stats ? `$${stats.mrr}/mo` : '...',
       Icon: TrendingUp,
-      color: "success",
+      colorClass: "bg-success/10 text-success",
     },
     {
       label: 'Active Subs',
-      value: 'TBD',
+      value: stats ? stats.activeSubscribers.toString() : '...',
       Icon: CreditCard,
-      color: "primary",
+      colorClass: "bg-primary/10 text-primary",
     },
   ];
 
@@ -131,7 +135,7 @@ export default function AdminDashboard() {
                 <span className="text-default-500 text-sm font-medium uppercase tracking-wider">{stat.label}</span>
                 <span className="text-3xl font-bold text-foreground">{stat.value}</span>
               </div>
-              <div className={`p-4 rounded-full bg-${stat.color}/10 text-${stat.color}`}>
+              <div className={`p-4 rounded-full ${stat.colorClass}`}>
                 <stat.Icon size={28} className="opacity-80" />
               </div>
             </CardBody>
