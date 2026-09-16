@@ -244,8 +244,12 @@ function TicketChatView({ ticket, onReplySent, onBack }: { ticket: SupportTicket
   );
 }
 
-export default function UserSupportPage() {
+import { useSearchParams } from 'next/navigation';
+import { Suspense } from 'react';
+
+function UserSupportPageContent() {
   const queryClient = useQueryClient();
+  const searchParams = useSearchParams();
   
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -254,6 +258,17 @@ export default function UserSupportPage() {
   const [newType, setNewType] = useState<TicketRequestType>('other');
 
   const [selectedTicketId, setSelectedTicketId] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (searchParams.get('new') === 'true') {
+      const type = searchParams.get('type');
+      if (type === 'billing' || type === 'technical' || type === 'account' || type === 'feature') {
+        setNewType(type as TicketRequestType);
+      }
+      // slight delay to allow UI to mount before opening modal
+      setTimeout(() => onOpen(), 100);
+    }
+  }, [searchParams, onOpen]);
 
   const { data: ticketsResponse, isLoading, refetch } = useQuery({
     queryKey: ['support_tickets'],
@@ -460,5 +475,17 @@ export default function UserSupportPage() {
         </Modal>
       </div>
     </div>
+  );
+}
+
+export default function UserSupportPage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen bg-background pt-24 pb-12 flex justify-center items-center">
+        <Spinner size="lg" color="danger" />
+      </div>
+    }>
+      <UserSupportPageContent />
+    </Suspense>
   );
 }

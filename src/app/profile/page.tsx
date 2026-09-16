@@ -95,7 +95,7 @@ export default function UserProfilePage() {
             color="danger" 
             variant="flat" 
             startContent={<LifeBuoy size={18} />}
-            onPress={() => router.push('/support')}
+            onPress={() => router.push('/support?new=true&type=billing')}
             className="w-full md:w-auto font-semibold shadow-sm"
           >
             Contact Support
