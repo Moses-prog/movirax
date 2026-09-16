@@ -105,7 +105,7 @@ export default function UserProfilePage() {
 
       <div className="mb-6 flex items-center justify-between">
         <div className="flex items-center gap-3">
-          <div className="flex size-8 items-center justify-center rounded-lg bg-gradient-to-br from-red-500/20 to-orange-500/20 text-red-500">
+          <div className="flex size-8 items-center justify-center rounded-lg bg-danger/10 text-danger">
             <CreditCard size={16} />
           </div>
           <h2 className="text-lg font-bold text-foreground">Subscription & Billing</h2>
@@ -122,15 +122,12 @@ export default function UserProfilePage() {
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4 mb-8">
         <Card className="border-none bg-background/60 dark:bg-default-100/50 shadow-sm backdrop-blur-md overflow-hidden">
           <CardBody className="p-5">
-            {isPro && (
-              <div className="absolute top-0 right-0 h-16 w-16 bg-gradient-to-bl from-red-500/20 to-transparent pointer-events-none" />
-            )}
             <p className="text-[13px] font-bold text-muted-foreground mb-1 uppercase tracking-wider">Current Plan</p>
             <div className="flex items-center gap-2">
-              <span className={`text-2xl font-black ${isPro ? 'text-transparent bg-clip-text bg-gradient-to-r from-red-500 to-orange-500' : 'text-foreground'}`}>
+              <span className={`text-2xl font-black ${isPro ? 'text-danger' : 'text-foreground'}`}>
                 {planName}
               </span>
-              {isPro && <CheckCircle2 size={20} className="text-orange-500" />}
+              {isPro && <CheckCircle2 size={20} className="text-danger" />}
             </div>
           </CardBody>
         </Card>
