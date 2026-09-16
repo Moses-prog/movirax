@@ -349,11 +349,12 @@ function UserSupportPageContent() {
         </div>
 
         {/* Main Interface */}
-        <div className="flex-1 bg-white/5 border border-white/5 rounded-2xl overflow-hidden flex shadow-xl backdrop-blur-xl">
+        <Card className="flex-1 border-none bg-background/60 dark:bg-default-100/50 shadow-sm backdrop-blur-md overflow-hidden rounded-2xl">
+          <div className="flex h-full w-full">
           
           {/* List Sidebar */}
-          <div className={`w-full md:w-80 lg:w-96 flex-col border-r border-white/5 ${selectedTicketId ? 'hidden md:flex' : 'flex'}`}>
-            <div className="p-4 border-b border-white/5 font-bold text-sm tracking-widest uppercase text-muted-foreground bg-black/20">
+          <div className={`w-full md:w-80 lg:w-96 flex-col border-r border-divider ${selectedTicketId ? 'hidden md:flex' : 'flex'}`}>
+            <div className="p-4 border-b border-divider font-bold text-sm tracking-widest uppercase text-muted-foreground bg-default-100/20">
               Your Tickets
             </div>
             <div className="flex-1 overflow-y-auto custom-scrollbar">
@@ -363,8 +364,9 @@ function UserSupportPageContent() {
                 </div>
               ) : tickets.length === 0 ? (
                 <div className="p-8 text-center text-muted-foreground flex flex-col items-center gap-3">
-                  <LifeBuoy size={32} className="opacity-30" />
-                  <p className="text-sm">No tickets found. Need help? Open a new ticket.</p>
+                  <FileText size={32} className="opacity-50" />
+                  <p>You haven't opened any support tickets yet.</p>
+                  <Button color="danger" variant="flat" onPress={onOpen} className="mt-2">Create Ticket</Button>
                 </div>
               ) : (
                 <div className="flex flex-col">
@@ -373,10 +375,10 @@ function UserSupportPageContent() {
                     const unreadUserCount = messages.filter(m => m.sender === 'admin' && !m.read).length;
                     
                     return (
-                      <button
+                      <div
                         key={ticket.id}
                         onClick={() => setSelectedTicketId(ticket.id)}
-                        className={`text-left p-4 border-b border-white/5 hover:bg-white/5 transition-colors relative ${selectedTicketId === ticket.id ? 'bg-white/10' : ''}`}
+                        className={`p-4 border-b border-divider cursor-pointer transition-colors relative ${selectedTicketId === ticket.id ? 'bg-default-200/20' : 'hover:bg-default-100/10'}`}
                       >
                         {selectedTicketId === ticket.id && (
                           <div className="absolute left-0 top-0 bottom-0 w-1 bg-red-500 rounded-r-md" />
@@ -397,7 +399,7 @@ function UserSupportPageContent() {
                             {new Date(ticket.created_at).toLocaleDateString(undefined, {month: 'short', day: 'numeric'})}
                           </span>
                         </div>
-                      </button>
+                      </div>
                     );
                   })}
                 </div>
@@ -424,7 +426,8 @@ function UserSupportPageContent() {
             )}
           </div>
 
-        </div>
+          </div>
+        </Card>
 
         {/* Modal for New Ticket */}
         <Modal isOpen={isOpen} onOpenChange={onOpenChange} classNames={{ base: "bg-background border border-white/10" }}>

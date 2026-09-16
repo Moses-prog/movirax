@@ -149,9 +149,6 @@ export default function ProfilesPage() {
 
   return (
     <div className="min-h-screen flex flex-col items-center justify-center bg-background p-4 relative overflow-hidden">
-      {/* Background glow */}
-      <div className="absolute inset-0 bg-gradient-to-b from-red-500/10 to-transparent pointer-events-none" />
-
       <h1 className="text-4xl md:text-5xl font-black mb-12 text-foreground tracking-tight text-center relative z-10">
         Who's watching?
       </h1>
@@ -164,7 +161,7 @@ export default function ProfilesPage() {
                 {profile.avatar ? (
                   <img src={profile.avatar} alt={profile.name} className="w-full h-full object-cover" />
                 ) : (
-                  <div className="w-full h-full bg-gradient-to-br from-red-600/50 to-orange-500/50 flex items-center justify-center text-4xl font-bold uppercase">
+                  <div className="w-full h-full bg-danger/20 flex items-center justify-center text-4xl font-bold uppercase text-danger">
                     {profile.name.substring(0,2)}
                   </div>
                 )}
