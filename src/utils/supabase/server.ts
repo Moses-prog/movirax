@@ -11,11 +11,11 @@ export async function createClient(admin?: boolean) {
 
   // If admin is true, return a pure admin client WITHOUT cookies to properly bypass RLS
   if (admin) {
-    const serviceKey = env.SUPABASE_SERVICE_ROLE_KEY;
+    const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
     if (!serviceKey) {
-      throw new Error("Missing SUPABASE_SERVICE_ROLE_KEY environment variable.");
+      throw new Error("Missing SUPABASE_SERVICE_ROLE_KEY environment variable. Did you add it to Vercel?");
     }
-    return createSupabaseClient<Database>(env.NEXT_PUBLIC_SUPABASE_URL, serviceKey, {
+    return createSupabaseClient<Database>(process.env.NEXT_PUBLIC_SUPABASE_URL || env.NEXT_PUBLIC_SUPABASE_URL, serviceKey, {
       auth: {
         autoRefreshToken: false,
         persistSession: false
