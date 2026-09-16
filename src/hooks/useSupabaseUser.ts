@@ -45,18 +45,24 @@ const fetchUser = async (): Promise<AuthUserData | null> => {
         .eq("id", user.id)
         .single();
         
-      const { data: profileData } = await supabase
-        .from("user_profiles")
-        .select("subscription_tier, subscription_status")
-        .eq("id", user.id)
+      // Fetch the actual subscription status from user_subscriptions table
+      const { data: subData } = await supabase
+        .from("user_subscriptions")
+        .select("status")
+        .eq("user_id", user.id)
+        .eq("status", "active")
+        .order("created_at", { ascending: false })
+        .limit(1)
         .single();
+
+      const isPro = !!subData;
 
       if (usernameData) {
         AuthUser = {
           ...user,
           username: usernameData.username,
-          subscription_tier: profileData?.subscription_tier || 'free',
-          subscription_status: profileData?.subscription_status || 'active',
+          subscription_tier: isPro ? 'pro' : 'free',
+          subscription_status: isPro ? 'active' : 'inactive',
         };
       }
     }
