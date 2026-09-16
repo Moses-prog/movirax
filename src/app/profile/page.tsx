@@ -13,7 +13,7 @@ import {
   AlertCircle,
   Zap
 } from 'lucide-react';
-import { Button } from '@heroui/react';
+import { Button, Card, CardBody, User as HeroUser } from '@heroui/react';
 import useSupabaseUser from '@/hooks/useSupabaseUser';
 import { env } from '@/utils/env';
 import { getUserSubscription, UserSubscription } from '@/lib/subscriptions';
@@ -82,27 +82,26 @@ export default function UserProfilePage() {
 
   return (
     <div className="mx-auto max-w-5xl px-4 py-8 md:px-8 md:py-12">
-      <div className="mb-8 flex flex-col gap-6 rounded-2xl border border-white/5 bg-background/50 p-6 shadow-sm backdrop-blur-xl md:flex-row md:items-center md:justify-between">
-        <div className="flex items-center gap-4">
-          <img src={avatar} alt="" className="size-16 rounded-full border border-white/10 object-cover" />
-          <div>
-            <h1 className="text-2xl font-extrabold tracking-tight text-foreground">
-              {user.username || 'Unnamed User'}
-            </h1>
-            <p className="text-sm font-medium text-muted-foreground">{user.email}</p>
-          </div>
-        </div>
-        
-        <Button 
-          color="danger" 
-          variant="flat" 
-          startContent={<LifeBuoy size={18} />}
-          onPress={() => router.push('/support')}
-          className="w-full md:w-auto font-semibold shadow-sm"
-        >
-          Contact Support
-        </Button>
-      </div>
+      <Card className="mb-8 border-none bg-background/60 dark:bg-default-100/50 shadow-sm backdrop-blur-md">
+        <CardBody className="p-6 flex flex-col gap-6 md:flex-row md:items-center md:justify-between">
+          <HeroUser
+            avatarProps={{ radius: "lg", size: "lg", src: avatar }}
+            description={user.email}
+            name={user.username || 'Unnamed user'}
+            classNames={{ name: "text-2xl font-extrabold tracking-tight text-foreground", description: "text-sm font-medium text-muted-foreground mt-1" }}
+          />
+          
+          <Button 
+            color="danger" 
+            variant="flat" 
+            startContent={<LifeBuoy size={18} />}
+            onPress={() => router.push('/support')}
+            className="w-full md:w-auto font-semibold shadow-sm"
+          >
+            Contact Support
+          </Button>
+        </CardBody>
+      </Card>
 
       <div className="mb-6 flex items-center justify-between">
         <div className="flex items-center gap-3">
@@ -121,90 +120,101 @@ export default function UserProfilePage() {
       </div>
 
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4 mb-8">
-        <div className="rounded-2xl border border-white/5 bg-white/5 p-5 relative overflow-hidden group">
-          {isPro && (
-            <div className="absolute top-0 right-0 h-16 w-16 bg-gradient-to-bl from-red-500/20 to-transparent pointer-events-none" />
-          )}
-          <p className="text-[13px] font-bold text-muted-foreground mb-1 uppercase tracking-wider">Current Plan</p>
-          <div className="flex items-center gap-2">
-            <span className={`text-2xl font-black ${isPro ? 'text-transparent bg-clip-text bg-gradient-to-r from-red-500 to-orange-500' : 'text-foreground'}`}>
-              {planName}
-            </span>
-            {isPro && <CheckCircle2 size={20} className="text-orange-500" />}
-          </div>
-        </div>
-
-        <div className="rounded-2xl border border-white/5 bg-white/5 p-5">
-          <div className="flex items-center gap-2 text-muted-foreground mb-1">
-            <Clock size={14} />
-            <p className="text-[13px] font-bold uppercase tracking-wider">Time Remaining</p>
-          </div>
-          <p className="text-2xl font-black text-foreground">
-            {daysRemaining}
-          </p>
-        </div>
-
-        <div className="rounded-2xl border border-white/5 bg-white/5 p-5">
-          <div className="flex items-center gap-2 text-muted-foreground mb-1">
-            <Calendar size={14} />
-            <p className="text-[13px] font-bold uppercase tracking-wider">Next Billing</p>
-          </div>
-          <p className="text-2xl font-black text-foreground">
-            {nextBillingDate ? new Date(nextBillingDate).toLocaleDateString() : 'N/A'}
-          </p>
-        </div>
-
-        <div className="rounded-2xl border border-white/5 bg-white/5 p-5">
-          <div className="flex items-center gap-2 text-muted-foreground mb-1">
-            <RefreshCcw size={14} />
-            <p className="text-[13px] font-bold uppercase tracking-wider">Auto-Renewal</p>
-          </div>
-          <div className="flex items-center gap-2 mt-1">
-            <div className={`w-10 h-5 rounded-full relative transition-colors ${isPro ? 'bg-red-500' : 'bg-white/10'}`}>
-              <div className={`absolute top-0.5 w-4 h-4 rounded-full bg-white transition-all ${isPro ? 'left-[22px]' : 'left-0.5'}`} />
+        <Card className="border-none bg-background/60 dark:bg-default-100/50 shadow-sm backdrop-blur-md overflow-hidden">
+          <CardBody className="p-5">
+            {isPro && (
+              <div className="absolute top-0 right-0 h-16 w-16 bg-gradient-to-bl from-red-500/20 to-transparent pointer-events-none" />
+            )}
+            <p className="text-[13px] font-bold text-muted-foreground mb-1 uppercase tracking-wider">Current Plan</p>
+            <div className="flex items-center gap-2">
+              <span className={`text-2xl font-black ${isPro ? 'text-transparent bg-clip-text bg-gradient-to-r from-red-500 to-orange-500' : 'text-foreground'}`}>
+                {planName}
+              </span>
+              {isPro && <CheckCircle2 size={20} className="text-orange-500" />}
             </div>
-            <span className="text-[14px] font-bold text-foreground">
-              {isPro ? 'On' : 'Off'}
-            </span>
-          </div>
-        </div>
+          </CardBody>
+        </Card>
+
+        <Card className="border-none bg-background/60 dark:bg-default-100/50 shadow-sm backdrop-blur-md">
+          <CardBody className="p-5">
+            <div className="flex items-center gap-2 text-muted-foreground mb-1">
+              <Clock size={14} />
+              <p className="text-[13px] font-bold uppercase tracking-wider">Time Remaining</p>
+            </div>
+            <p className="text-2xl font-black text-foreground">
+              {daysRemaining}
+            </p>
+          </CardBody>
+        </Card>
+
+        <Card className="border-none bg-background/60 dark:bg-default-100/50 shadow-sm backdrop-blur-md">
+          <CardBody className="p-5">
+            <div className="flex items-center gap-2 text-muted-foreground mb-1">
+              <Calendar size={14} />
+              <p className="text-[13px] font-bold uppercase tracking-wider">Next Billing</p>
+            </div>
+            <p className="text-2xl font-black text-foreground">
+              {nextBillingDate ? new Date(nextBillingDate).toLocaleDateString() : 'N/A'}
+            </p>
+          </CardBody>
+        </Card>
+
+        <Card className="border-none bg-background/60 dark:bg-default-100/50 shadow-sm backdrop-blur-md">
+          <CardBody className="p-5">
+            <div className="flex items-center gap-2 text-muted-foreground mb-1">
+              <RefreshCcw size={14} />
+              <p className="text-[13px] font-bold uppercase tracking-wider">Auto-Renewal</p>
+            </div>
+            <div className="flex items-center gap-2 mt-1">
+              <div className={`w-10 h-5 rounded-full relative transition-colors ${isPro ? 'bg-red-500' : 'bg-white/10'}`}>
+                <div className={`absolute top-0.5 w-4 h-4 rounded-full bg-white transition-all ${isPro ? 'left-[22px]' : 'left-0.5'}`} />
+              </div>
+              <span className="text-[14px] font-bold text-foreground">
+                {isPro ? 'On' : 'Off'}
+              </span>
+            </div>
+          </CardBody>
+        </Card>
       </div>
 
       <div className="grid gap-6 lg:grid-cols-3">
-        <div className="col-span-1 rounded-2xl border border-white/5 bg-background/50 p-6 backdrop-blur-xl">
-          <div className="mb-4 flex items-center justify-between">
-            <h3 className="text-[15px] font-bold text-foreground">Payment Method</h3>
-            <Button as={Link} href="/pricing" size="sm" variant="light" className="text-[12px] font-bold h-8">
-              {paymentMethodStr ? 'Update' : 'Add'}
-            </Button>
-          </div>
-          {paymentMethodStr ? (
-            <div className="flex items-center gap-4 rounded-xl border border-white/5 bg-white/5 p-4">
-              <div className="flex h-10 w-auto px-4 items-center justify-center rounded bg-white/10 text-xl font-bold italic text-foreground uppercase tracking-widest">
-                {paymentMethodStr}
-              </div>
-              <div>
-                <p className="text-[14px] font-bold text-foreground">Active</p>
-                <p className="text-[12px] font-medium text-muted-foreground">Default Payment Method</p>
-              </div>
-            </div>
-          ) : (
-            <div className="flex flex-col gap-3 items-center justify-center rounded-xl border border-dashed border-white/10 bg-white/5 p-6 text-center text-sm font-medium text-muted-foreground">
-              No payment method on file
-              <Button as={Link} href="/pricing" size="sm" color="default" variant="flat" className="font-bold shadow-sm">
-                Add Card
+        <Card className="col-span-1 border-none bg-background/60 dark:bg-default-100/50 shadow-sm backdrop-blur-md">
+          <CardBody className="p-6">
+            <div className="mb-4 flex items-center justify-between">
+              <h3 className="text-[15px] font-bold text-foreground">Payment Method</h3>
+              <Button as={Link} href="/pricing" size="sm" variant="light" className="text-[12px] font-bold h-8">
+                {paymentMethodStr ? 'Update' : 'Add'}
               </Button>
             </div>
-          )}
-        </div>
+            {paymentMethodStr ? (
+              <div className="flex items-center gap-4 rounded-xl border border-white/5 bg-white/5 p-4">
+                <div className="flex h-10 w-auto px-4 items-center justify-center rounded bg-white/10 text-xl font-bold italic text-foreground uppercase tracking-widest">
+                  {paymentMethodStr}
+                </div>
+                <div>
+                  <p className="text-[14px] font-bold text-foreground">Active</p>
+                  <p className="text-[12px] font-medium text-muted-foreground">Default Payment Method</p>
+                </div>
+              </div>
+            ) : (
+              <div className="flex flex-col gap-3 items-center justify-center rounded-xl border border-dashed border-white/10 bg-white/5 p-6 text-center text-sm font-medium text-muted-foreground">
+                No payment method on file
+                <Button as={Link} href="/pricing" size="sm" color="default" variant="flat" className="font-bold shadow-sm">
+                  Add Card
+                </Button>
+              </div>
+            )}
+          </CardBody>
+        </Card>
 
-        <div className="col-span-1 lg:col-span-2 rounded-2xl border border-white/5 bg-background/50 p-6 backdrop-blur-xl">
-          <div className="mb-4 flex items-center justify-between">
-            <h3 className="text-[15px] font-bold text-foreground flex items-center gap-2">
-              <History size={16} className="text-muted-foreground" />
-              Recent Subscription
-            </h3>
-          </div>
+        <Card className="col-span-1 lg:col-span-2 border-none bg-background/60 dark:bg-default-100/50 shadow-sm backdrop-blur-md">
+          <CardBody className="p-6">
+            <div className="mb-4 flex items-center justify-between">
+              <h3 className="text-[15px] font-bold text-foreground flex items-center gap-2">
+                <History size={16} className="text-muted-foreground" />
+                Recent Subscription
+              </h3>
+            </div>
           
           {subscription ? (
             <div className="overflow-x-auto">
@@ -238,7 +248,8 @@ export default function UserProfilePage() {
               No billing history available
             </div>
           )}
-        </div>
+          </CardBody>
+        </Card>
       </div>
     </div>
   );
