@@ -46,11 +46,10 @@ export default function UserProfilePage({ params }: { params: { id: string } }) 
   const [user, setUser] = useState<UserProfile | null>(null);
   const [loading, setLoading] = useState(true);
   
-  // Support Modal State
-  const {isOpen, onOpen, onOpenChange} = useDisclosure();
   const [supportType, setSupportType] = useState(new Set(["upgrade"]));
-  const [supportMessage, setSupportMessage] = useState("");
+  const [plans, setPlans] = useState<any[]>([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [supportMessage, setSupportMessage] = useState("");
 
   useEffect(() => {
     const fetchUser = async () => {
@@ -65,23 +64,66 @@ export default function UserProfilePage({ params }: { params: { id: string } }) 
         setLoading(false);
       }
     };
-
+    const fetchPlans = async () => {
+      const { getPricingPlans } = await import('@/lib/subscriptions');
+      setPlans(await getPricingPlans());
+    };
     fetchUser();
+    fetchPlans();
   }, [params.id]);
 
-  const handleSupportSubmit = async (onClose: () => void) => {
+  const handleStatusChange = async (status: string) => {
     setIsSubmitting(true);
-    // Simulate API call
-    await new Promise(resolve => setTimeout(resolve, 800));
-    setIsSubmitting(false);
-    
-    addToast({
-      title: "Support ticket created successfully",
-      color: "success"
-    });
-    
-    setSupportMessage("");
-    onClose();
+    try {
+      await fetch(`/api/admin/users/${params.id}`, {
+        method: 'PATCH',
+        body: JSON.stringify({ action: 'update_status', status })
+      });
+      setUser(prev => prev ? { ...prev, status } : null);
+      addToast({ title: "Status updated", color: "success" });
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const handleManualUpgrade = async (planId: string) => {
+    setIsSubmitting(true);
+    try {
+      await fetch(`/api/admin/users/${params.id}`, {
+        method: 'PATCH',
+        body: JSON.stringify({ action: 'upgrade', planId, days: 30 })
+      });
+      addToast({ title: "User Upgraded", color: "success" });
+      router.refresh();
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const handleCancelSub = async (planId: string) => {
+    setIsSubmitting(true);
+    try {
+      await fetch(`/api/admin/users/${params.id}`, {
+        method: 'PATCH',
+        body: JSON.stringify({ action: 'cancel', planId })
+      });
+      addToast({ title: "Subscription Cancelled", color: "success" });
+      router.refresh();
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const handleDelete = async () => {
+    if (!confirm('Are you sure you want to permanently delete this user?')) return;
+    setIsSubmitting(true);
+    try {
+      await fetch(`/api/admin/users/${params.id}`, { method: 'DELETE' });
+      addToast({ title: "User deleted", color: "success" });
+      router.push('/admin/users');
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   if (loading) {
@@ -278,6 +320,47 @@ export default function UserProfilePage({ params }: { params: { id: string } }) 
               No billing history available
             </div>
           )}
+        </div>
+      </div>
+
+      {/* Administrative Actions */}
+      <div className="mt-8 rounded-2xl border border-danger/20 bg-danger/5 p-6 backdrop-blur-xl">
+        <h3 className="mb-4 text-[15px] font-bold text-danger flex items-center gap-2">
+          <AlertCircle size={16} />
+          Administrative Actions
+        </h3>
+        <div className="flex flex-wrap gap-4">
+          {user.subscription_tier === 'free' ? (
+            <Select
+              label="Manual Upgrade"
+              placeholder="Select a plan"
+              size="sm"
+              className="max-w-[200px]"
+              onChange={(e) => {
+                if (e.target.value) handleManualUpgrade(e.target.value);
+              }}
+            >
+              {plans.map(p => (
+                <SelectItem key={p.id} value={p.id}>{p.name}</SelectItem>
+              ))}
+            </Select>
+          ) : (
+            <Button color="warning" variant="flat" onPress={() => handleCancelSub(user.billing.subscriptionId)}>
+              Cancel Subscription
+            </Button>
+          )}
+
+          {user.status === 'active' ? (
+            <Button color="warning" variant="flat" onPress={() => handleStatusChange('suspended')}>Suspend User</Button>
+          ) : (
+            <Button color="success" variant="flat" onPress={() => handleStatusChange('active')}>Unsuspend User</Button>
+          )}
+
+          {user.status !== 'banned' && (
+            <Button color="danger" variant="flat" onPress={() => handleStatusChange('banned')}>Ban User</Button>
+          )}
+
+          <Button color="danger" variant="solid" onPress={handleDelete}>Delete User</Button>
         </div>
       </div>
 
