@@ -330,7 +330,7 @@ function UserSupportPageContent() {
     <div className="h-[100dvh] bg-background pt-24 pb-4 md:pb-8 px-4 md:px-8 flex flex-col">
       <div className="max-w-6xl mx-auto w-full flex-1 flex flex-col min-h-0">
         {/* Header */}
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6 shrink-0">
+        <div className={`flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6 shrink-0 ${selectedTicketId ? 'hidden lg:flex' : 'flex'}`}>
           <div>
             <h1 className="text-3xl font-black flex items-center gap-2">
               <LifeBuoy className="text-red-500" />

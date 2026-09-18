@@ -243,7 +243,7 @@ export default function SupportTicketsPage() {
 
   return (
     <div className="mx-auto max-w-7xl h-[calc(100dvh-120px)] md:h-[calc(100vh-120px)] flex flex-col gap-4 md:gap-6 pb-4 md:pb-10 w-full">
-      <header className="flex flex-wrap items-center justify-between gap-4 flex-shrink-0">
+      <header className={`flex flex-wrap items-center justify-between gap-4 flex-shrink-0 ${(isFullScreenChat || (isMobile && mobileView === 'detail')) ? 'hidden' : ''}`}>
         <div>
           <h1 className="text-3xl font-bold tracking-tight text-foreground">Support Tickets</h1>
           <p className="text-default-500 mt-1">Manage user inquiries, upgrades, and cancellations</p>
