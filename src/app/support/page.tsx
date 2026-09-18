@@ -134,7 +134,7 @@ function TicketChatView({ ticket, onReplySent, onBack }: { ticket: SupportTicket
         {/* Header */}
         <div className="p-4 border-b border-divider flex flex-col md:flex-row gap-4 justify-between md:items-center bg-default-100/20">
           <div className="flex items-center gap-3">
-            <Button isIconOnly variant="light" size="sm" className="md:hidden" onPress={onBack}>
+            <Button isIconOnly variant="light" size="sm" className="lg:hidden" onPress={onBack}>
               <ChevronLeft size={20} />
             </Button>
             <div>
@@ -353,7 +353,7 @@ function UserSupportPageContent() {
           <div className="flex h-full w-full">
           
           {/* List Sidebar */}
-          <div className={`w-full md:w-80 lg:w-96 flex-col border-r border-divider ${selectedTicketId ? 'hidden md:flex' : 'flex'}`}>
+          <div className={`w-full lg:w-96 flex-col border-r border-divider ${selectedTicketId ? 'hidden lg:flex' : 'flex'}`}>
             <div className="p-4 border-b border-divider font-bold text-sm tracking-widest uppercase text-muted-foreground bg-default-100/20">
               Your Tickets
             </div>
@@ -408,7 +408,7 @@ function UserSupportPageContent() {
           </div>
 
           {/* Chat Detail Area */}
-          <div className={`flex-1 flex-col bg-background/50 ${!selectedTicketId ? 'hidden md:flex' : 'flex'}`}>
+          <div className={`flex-1 flex-col bg-transparent ${!selectedTicketId ? 'hidden lg:flex' : 'flex'}`}>
             {selectedTicket ? (
               <TicketChatView 
                 ticket={selectedTicket} 
