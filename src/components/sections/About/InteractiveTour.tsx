@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Button, Input, Chip, Avatar, Tooltip } from "@heroui/react";
+import { Button, Input, Chip, Avatar, Tooltip, Divider } from "@heroui/react";
 import { ChevronRight, ChevronLeft, Search, Bookmark, Play, Plus, Check, LifeBuoy, Clock, UserCircle, Send, FileText } from "lucide-react";
 
 // Real image placeholders to simulate the actual app UI
