@@ -302,7 +302,7 @@ export default function InteractiveTour() {
         </div>
       </div>
 
-      <div className="max-w-6xl mx-auto w-full flex-1 flex flex-col md:flex-row gap-8 p-4 md:p-6 py-8 md:py-12">
+      <div className="max-w-6xl mx-auto w-full flex-1 flex flex-col md:flex-row gap-8 p-4 md:p-6 pt-8 pb-24 md:pt-12 md:pb-40">
         {/* Left Side: Navigation & Text */}
         <div className="w-full md:w-5/12 flex flex-col gap-6">
           <div className="flex gap-1 mb-4">
