@@ -2,36 +2,32 @@
 
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Button, Input } from "@heroui/react";
-import { ChevronRight, ChevronLeft, Search, Bookmark, Play, Plus, Check } from "lucide-react";
+import { Button, Input, Card, CardBody, Divider } from "@heroui/react";
+import { ChevronRight, ChevronLeft, Search, Bookmark, Play, Plus, Check, Info } from "lucide-react";
 
-// Step 1: Welcome
+// Flat, zero-gradient sandboxes
 const WelcomeSandbox = () => (
-  <div className="flex flex-col items-center justify-center text-center h-full gap-6">
-    <motion.div 
-      animate={{ scale: [1, 1.05, 1], rotate: [0, 2, -2, 0] }} 
-      transition={{ repeat: Infinity, duration: 4, ease: "easeInOut" }}
-      className="w-32 h-32 bg-gradient-to-br from-danger to-orange-500 rounded-3xl flex items-center justify-center shadow-[0_0_50px_rgba(239,68,68,0.3)]"
-    >
-      <Play size={64} className="text-white ml-2" fill="currentColor" />
-    </motion.div>
-    <h3 className="text-3xl font-black">Welcome to Movira X</h3>
-    <p className="text-muted-foreground max-w-sm">Click the Next button to begin your interactive platform mastery tour.</p>
+  <div className="flex flex-col items-center justify-center text-center h-full gap-4">
+    <div className="w-24 h-24 bg-danger rounded-2xl flex items-center justify-center">
+      <Play size={40} className="text-white ml-2" fill="currentColor" />
+    </div>
+    <h3 className="text-2xl font-bold mt-4">Platform Guide</h3>
+    <p className="text-default-500 text-sm max-w-xs">Use the controls below to navigate through the platform documentation.</p>
   </div>
 );
 
-// Step 2: Genres
 const GenreSandbox = () => {
   const [active, setActive] = useState(0);
   return (
     <div className="w-full max-w-md flex flex-col gap-4">
-      <div className="flex gap-2 mb-4 overflow-hidden">
+      <div className="flex gap-2 mb-2 overflow-hidden">
         {["Action", "Comedy", "Sci-Fi", "Horror"].map((g, i) => (
           <Button 
             key={g} 
             size="sm" 
             color={active === i ? "danger" : "default"} 
             variant={active === i ? "solid" : "flat"}
+            className="rounded-md"
             onPress={() => setActive(i)}
           >
             {g}
@@ -42,15 +38,11 @@ const GenreSandbox = () => {
         {[1, 2, 3, 4].map(i => (
           <motion.div 
             key={i + active * 10}
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: i * 0.1 }}
-            className="aspect-[2/3] bg-default-200/50 rounded-xl border border-divider flex items-center justify-center relative overflow-hidden"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            className="aspect-[2/3] bg-default-100 rounded-lg flex flex-col justify-end p-3"
           >
-            <Play size={32} className="text-white/20" />
-            <div className="absolute bottom-0 left-0 right-0 p-3 bg-gradient-to-t from-black/80 to-transparent">
-              <div className="h-2 w-1/2 bg-white/20 rounded-full"></div>
-            </div>
+            <div className="h-2 w-1/2 bg-default-300 rounded-full"></div>
           </motion.div>
         ))}
       </div>
@@ -58,32 +50,31 @@ const GenreSandbox = () => {
   );
 };
 
-// Step 3: Search
 const SearchSandbox = () => {
   const [query, setQuery] = useState("");
   return (
-    <div className="w-full max-w-md flex flex-col gap-6 h-full pt-10">
+    <div className="w-full max-w-md flex flex-col gap-4 h-full pt-10">
       <Input 
-        startContent={<Search size={18} className="text-muted-foreground" />}
-        placeholder="Type to search movies..."
+        startContent={<Search size={16} className="text-default-400" />}
+        placeholder="Search for titles..."
         value={query}
         onValueChange={setQuery}
-        size="lg"
-        classNames={{ inputWrapper: "bg-default-200/50 border border-divider" }}
+        variant="flat"
+        radius="sm"
       />
-      <div className="flex flex-col gap-3 flex-1 overflow-hidden">
+      <div className="flex flex-col gap-2 flex-1">
         <AnimatePresence>
           {query.length > 0 ? (
-            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex items-center gap-4 p-3 rounded-xl bg-default-100/50 border border-divider">
-              <div className="w-12 h-16 bg-danger/20 rounded-lg flex shrink-0"></div>
-              <div>
-                <div className="font-bold">Result for "{query}"</div>
-                <div className="text-xs text-muted-foreground">Movie • 2024</div>
+            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex items-center gap-3 p-2 rounded-lg bg-default-50">
+              <div className="w-10 h-14 bg-default-200 rounded-md shrink-0"></div>
+              <div className="flex flex-col gap-1">
+                <span className="text-sm font-semibold">"{query}"</span>
+                <span className="text-xs text-default-400">Movie • 2024</span>
               </div>
             </motion.div>
           ) : (
-            <div className="flex items-center justify-center h-full text-muted-foreground">
-              Try typing something!
+            <div className="text-sm text-default-400 mt-4 text-center">
+              Type to see results
             </div>
           )}
         </AnimatePresence>
@@ -92,59 +83,51 @@ const SearchSandbox = () => {
   );
 };
 
-// Step 4: Library
 const LibrarySandbox = () => {
   const [saved, setSaved] = useState(false);
   return (
-    <div className="flex flex-col items-center gap-8">
-      <motion.div 
-        animate={saved ? { scale: [1, 1.1, 1], rotate: [0, -5, 5, 0] } : {}}
-        className="w-48 aspect-[2/3] bg-default-200/50 rounded-2xl border border-divider relative group overflow-hidden"
-      >
-        <div className="w-full h-full bg-danger/10"></div>
+    <div className="flex flex-col items-center gap-6">
+      <div className="w-40 aspect-[2/3] bg-default-100 rounded-lg relative overflow-hidden flex flex-col justify-end p-3">
         <Button 
           isIconOnly 
           color={saved ? "danger" : "default"}
-          variant="flat"
-          className="absolute top-3 right-3 z-10 backdrop-blur-md bg-black/50"
+          variant="solid"
+          size="sm"
+          className="absolute top-2 right-2 rounded-md"
           onPress={() => setSaved(!saved)}
         >
-          <Bookmark size={20} fill={saved ? "currentColor" : "none"} />
+          <Bookmark size={16} fill={saved ? "currentColor" : "none"} />
         </Button>
-      </motion.div>
-      <div className="text-center">
-        <h4 className="font-bold mb-1">Interactive Movie Card</h4>
-        <p className="text-sm text-muted-foreground">Click the bookmark icon to save to your library.</p>
+        <div className="h-2 w-3/4 bg-default-300 rounded-full"></div>
+      </div>
+      <div className="text-center text-sm text-default-500">
+        Click the bookmark to toggle watchlist status.
       </div>
     </div>
   );
 };
 
-// Step 5: Profiles
 const ProfilesSandbox = () => {
   const [active, setActive] = useState(0);
   const profiles = [
-    { name: "Dad", color: "bg-blue-500" },
-    { name: "Mom", color: "bg-danger-500" },
-    { name: "Kids", color: "bg-success-500" },
+    { name: "User 1", color: "bg-blue-600" },
+    { name: "User 2", color: "bg-danger" },
+    { name: "Kids", color: "bg-green-600" },
   ];
   return (
-    <div className="flex flex-col items-center gap-10">
-      <h3 className="text-2xl font-bold">Who is watching?</h3>
+    <div className="flex flex-col items-center gap-8">
+      <h3 className="text-lg font-semibold">Select Profile</h3>
       <div className="flex gap-6">
         {profiles.map((p, i) => (
-          <div key={p.name} className="flex flex-col items-center gap-3 cursor-pointer" onClick={() => setActive(i)}>
-            <motion.div 
-              animate={{ scale: active === i ? 1.1 : 1 }}
-              className={`w-24 h-24 rounded-2xl ${p.color} border-4 ${active === i ? "border-white" : "border-transparent opacity-50"} transition-all relative flex items-center justify-center`}
-            >
+          <div key={p.name} className="flex flex-col items-center gap-2 cursor-pointer" onClick={() => setActive(i)}>
+            <div className={`w-20 h-20 rounded-lg ${p.color} border-2 ${active === i ? "border-foreground" : "border-transparent opacity-50"} flex items-center justify-center`}>
               {active === i && (
-                <div className="absolute -top-2 -right-2 w-6 h-6 bg-white rounded-full flex items-center justify-center">
-                  <Check size={14} className="text-black" />
+                <div className="w-5 h-5 bg-foreground rounded-full flex items-center justify-center">
+                  <Check size={12} className="text-background" />
                 </div>
               )}
-            </motion.div>
-            <span className={`font-bold ${active === i ? "text-white" : "text-muted-foreground"}`}>{p.name}</span>
+            </div>
+            <span className={`text-sm ${active === i ? "font-semibold text-foreground" : "text-default-500"}`}>{p.name}</span>
           </div>
         ))}
       </div>
@@ -152,10 +135,9 @@ const ProfilesSandbox = () => {
   );
 };
 
-// Step 6: Support
 const SupportSandbox = () => {
   const [messages, setMessages] = useState([
-    { sender: "admin", text: "Hi! How can we help you today?" }
+    { sender: "admin", text: "How can we assist you today?" }
   ]);
   const [val, setVal] = useState("");
 
@@ -164,35 +146,38 @@ const SupportSandbox = () => {
     setMessages(prev => [...prev, { sender: "user", text: val }]);
     setVal("");
     setTimeout(() => {
-      setMessages(prev => [...prev, { sender: "admin", text: "Our support team usually replies instantly right here in the app!" }]);
-    }, 1000);
+      setMessages(prev => [...prev, { sender: "admin", text: "A support agent will review your request shortly." }]);
+    }, 800);
   };
 
   return (
-    <div className="w-full max-w-sm h-[400px] bg-background/50 backdrop-blur-md rounded-2xl border border-divider flex flex-col overflow-hidden">
-      <div className="p-4 border-b border-divider font-bold flex items-center gap-2">
-        Live Ticket Support
+    <div className="w-full max-w-sm h-[350px] bg-content1 rounded-lg border border-default-200 flex flex-col overflow-hidden">
+      <div className="p-3 border-b border-default-200 text-sm font-semibold flex items-center gap-2">
+        <Info size={16} className="text-default-500" /> Support Ticket
       </div>
-      <div className="flex-1 p-4 overflow-y-auto flex flex-col gap-3">
+      <div className="flex-1 p-3 overflow-y-auto flex flex-col gap-2">
         {messages.map((m, i) => (
-          <motion.div 
+          <div 
             key={i} 
-            initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}
-            className={`px-3 py-2 rounded-xl max-w-[85%] ${m.sender === "user" ? "bg-danger text-white self-end rounded-br-sm" : "bg-default-200 self-start rounded-bl-sm"}`}
+            className={`px-3 py-2 rounded-md text-sm max-w-[85%] ${m.sender === "user" ? "bg-danger text-white self-end" : "bg-default-100 text-foreground self-start"}`}
           >
             {m.text}
-          </motion.div>
+          </div>
         ))}
       </div>
-      <div className="p-3 border-t border-divider flex gap-2">
+      <div className="p-2 border-t border-default-200 flex gap-2">
         <Input 
           size="sm" 
-          placeholder="Type a message..." 
+          placeholder="Type a message" 
           value={val} 
           onValueChange={setVal}
+          variant="flat"
+          radius="sm"
           onKeyDown={(e) => e.key === "Enter" && send()}
         />
-        <Button size="sm" isIconOnly color="danger" onPress={send}><Plus className="rotate-45" size={16}/></Button>
+        <Button size="sm" isIconOnly color="default" variant="flat" radius="sm" onPress={send}>
+          <Plus className="rotate-45" size={16}/>
+        </Button>
       </div>
     </div>
   );
@@ -200,67 +185,62 @@ const SupportSandbox = () => {
 
 const TOUR_STEPS = [
   {
-    title: "Master the Platform",
+    title: "Getting Started",
     desc: (
-      <div className="space-y-4">
-        <p>Welcome to the ultimate guide to Movira X.</p>
-        <p>This isn't a boring wall of text. We've built an interactive simulator to physically show you how to use every powerful feature on this platform.</p>
-        <p><strong>Click "Next" to begin the interactive tour.</strong></p>
+      <div className="space-y-4 text-default-600">
+        <p>Movira X is a streaming platform designed for simplicity. This guide explains how to navigate the interface, manage your account, and find content.</p>
+        <p>Use the navigation buttons below to view how each feature works.</p>
       </div>
     ),
     component: <WelcomeSandbox />
   },
   {
-    title: "Infinite Discovery",
+    title: "Browsing Content",
     desc: (
-      <div className="space-y-4">
-        <p>The homepage is broken down into dozens of hyper-specific genre rows.</p>
-        <p>We automatically sort these rows by <strong>popularity and release date</strong>, ensuring you always see the hottest new releases first.</p>
-        <p className="text-danger">👉 Try clicking the category tabs on the right to see how instantly the content adapts.</p>
+      <div className="space-y-4 text-default-600">
+        <p>The homepage provides curated rows organized by genre and popularity.</p>
+        <p>To view a complete list for any category, click "See All" next to the row title.</p>
+        <p>You can use the tabs in the demonstration to see how content is filtered.</p>
       </div>
     ),
     component: <GenreSandbox />
   },
   {
-    title: "Lightning Fast Search",
+    title: "Search",
     desc: (
-      <div className="space-y-4">
-        <p>Don't want to browse? Use our global search engine to instantly find exactly what you're looking for.</p>
-        <p>Search by movie title, TV show, actor, or director, and the results update in real-time as you type.</p>
-        <p className="text-danger">👉 Type a letter in the search box to watch it react instantly.</p>
+      <div className="space-y-4 text-default-600">
+        <p>Use the search bar to find specific movies, TV shows, actors, or directors.</p>
+        <p>The results update automatically as you type, so you don't need to press enter to search.</p>
       </div>
     ),
     component: <SearchSandbox />
   },
   {
-    title: "Your Personal Vault",
+    title: "Watchlist and History",
     desc: (
-      <div className="space-y-4">
-        <p>Never lose track of a recommendation. Build your ultimate personal library using the Watchlist feature.</p>
-        <p>We also automatically track your "Continue Watching" progress down to the exact second, so you can resume on any device.</p>
-        <p className="text-danger">👉 Click the Bookmark icon on the poster to see how easily you can save content.</p>
+      <div className="space-y-4 text-default-600">
+        <p>Click the bookmark icon on any title to add it to your personal watchlist.</p>
+        <p>Your progress is saved automatically across devices, allowing you to resume watching from exactly where you left off.</p>
       </div>
     ),
     component: <LibrarySandbox />
   },
   {
-    title: "Multi-User Profiles",
+    title: "Account Profiles",
     desc: (
-      <div className="space-y-4">
-        <p>Share your account with family without ruining your personalized algorithm.</p>
-        <p>Create up to 5 completely isolated profiles. Kids get their own safe space, and your viewing history remains perfectly tailored to you.</p>
-        <p className="text-danger">👉 Click an avatar on the right to simulate switching profiles.</p>
+      <div className="space-y-4 text-default-600">
+        <p>You can create multiple profiles under a single account to share with family members.</p>
+        <p>Each profile maintains its own separate viewing history, watchlist, and personalized recommendations.</p>
       </div>
     ),
     component: <ProfilesSandbox />
   },
   {
-    title: "1-Click Live Support",
+    title: "Help and Support",
     desc: (
-      <div className="space-y-4">
-        <p>We hate waiting on hold just as much as you do.</p>
-        <p>If you ever have an issue with billing, streaming, or your account, you can open a live support ticket directly inside the app.</p>
-        <p className="text-danger">👉 Type a message in the fake chat window to test our instant support system.</p>
+      <div className="space-y-4 text-default-600">
+        <p>If you need assistance, you can open a support ticket directly from your account settings.</p>
+        <p>Support representatives will reply to your ticket within the app, keeping all your inquiries in one place.</p>
       </div>
     ),
     component: <SupportSandbox />
@@ -271,91 +251,90 @@ export default function InteractiveTour() {
   const [step, setStep] = useState(0);
 
   return (
-    <div className="flex flex-col min-h-[85vh] bg-background pt-8 pb-12 overflow-hidden">
-      <div className="max-w-7xl mx-auto w-full flex-1 flex flex-col lg:flex-row gap-12">
-        
-        {/* Left Side: Text Content */}
-        <div className="w-full lg:w-5/12 flex flex-col justify-center gap-8 z-10">
-          {/* Step Indicator */}
-          <div className="flex gap-2 items-center">
+    <div className="flex flex-col min-h-screen bg-background">
+      {/* Simple, flat header instead of massive animations */}
+      <div className="w-full border-b border-divider bg-content1 px-6 py-8">
+        <div className="max-w-6xl mx-auto">
+          <h1 className="text-3xl font-bold">About Movira X</h1>
+          <p className="text-default-500 mt-2">Platform documentation and user guide.</p>
+        </div>
+      </div>
+
+      <div className="max-w-6xl mx-auto w-full flex-1 flex flex-col md:flex-row gap-8 p-6 py-12">
+        {/* Left Side: Navigation & Text */}
+        <div className="w-full md:w-5/12 flex flex-col gap-6">
+          <div className="flex gap-1 mb-4">
             {TOUR_STEPS.map((_, i) => (
               <div 
                 key={i} 
-                className={`h-2 rounded-full transition-all duration-500 ${step === i ? "w-12 bg-danger" : "w-4 bg-white/10"}`} 
+                className={`h-1.5 rounded-sm transition-all ${step === i ? "w-8 bg-danger" : "w-2 bg-default-200"}`} 
               />
             ))}
           </div>
 
-          <div className="min-h-[250px] relative">
-            <AnimatePresence mode="wait">
-              <motion.div 
-                key={step}
-                initial={{ opacity: 0, x: -20 }}
-                animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, x: 20 }}
-                transition={{ duration: 0.3 }}
-                className="absolute inset-0"
-              >
-                <h1 className="text-4xl md:text-5xl font-black mb-6 leading-tight">{TOUR_STEPS[step].title}</h1>
-                <div className="text-lg text-muted-foreground">
-                  {TOUR_STEPS[step].desc}
-                </div>
-              </motion.div>
-            </AnimatePresence>
-          </div>
+          <AnimatePresence mode="wait">
+            <motion.div 
+              key={step}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.2 }}
+              className="flex flex-col gap-4"
+            >
+              <h2 className="text-2xl font-bold">{TOUR_STEPS[step].title}</h2>
+              {TOUR_STEPS[step].desc}
+            </motion.div>
+          </AnimatePresence>
 
-          <div className="flex items-center gap-4 mt-8 pt-6 border-t border-divider">
+          <Divider className="my-4" />
+
+          <div className="flex items-center gap-3">
             <Button 
-              size="lg"
-              variant="flat" 
-              startContent={<ChevronLeft size={18} />}
+              variant="flat"
+              radius="sm"
               onPress={() => setStep(s => Math.max(0, s - 1))}
               isDisabled={step === 0}
             >
-              Back
+              Previous
             </Button>
             {step === TOUR_STEPS.length - 1 ? (
               <Button 
-                size="lg"
                 color="danger" 
-                className="font-bold flex-1"
+                radius="sm"
+                className="flex-1"
                 as="a"
                 href="/discover"
               >
-                Start Watching Now
+                Go to App
               </Button>
             ) : (
               <Button 
-                size="lg"
-                color="danger" 
-                endContent={<ChevronRight size={18} />}
+                color="danger"
+                radius="sm"
                 onPress={() => setStep(s => Math.min(TOUR_STEPS.length - 1, s + 1))}
-                className="font-bold flex-1"
+                className="flex-1"
               >
-                Next Feature
+                Next
               </Button>
             )}
           </div>
         </div>
 
-        {/* Right Side: Interactive Sandbox */}
-        <div className="w-full lg:w-7/12 min-h-[500px] bg-default-100/30 backdrop-blur-xl rounded-3xl border border-divider flex items-center justify-center p-6 relative overflow-hidden shadow-2xl">
-          <div className="absolute inset-0 bg-gradient-to-br from-danger/5 to-transparent pointer-events-none"></div>
-          
+        {/* Right Side: Flat Sandbox */}
+        <div className="w-full md:w-7/12 min-h-[450px] bg-content1 border border-default-200 rounded-xl flex items-center justify-center p-8">
           <AnimatePresence mode="wait">
             <motion.div 
               key={step}
-              initial={{ opacity: 0, scale: 0.95, y: 10 }}
-              animate={{ opacity: 1, scale: 1, y: 0 }}
-              exit={{ opacity: 0, scale: 1.05, y: -10 }}
-              transition={{ duration: 0.4, type: "spring" }}
-              className="w-full h-full flex items-center justify-center relative z-10"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.2 }}
+              className="w-full h-full flex items-center justify-center"
             >
               {TOUR_STEPS[step].component}
             </motion.div>
           </AnimatePresence>
         </div>
-
       </div>
     </div>
   );
