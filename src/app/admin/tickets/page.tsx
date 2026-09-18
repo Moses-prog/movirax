@@ -13,7 +13,8 @@ import {
   MoreVertical,
   Paperclip,
   MessageSquare,
-  CheckCheck
+  CheckCheck,
+  ChevronLeft
 } from 'lucide-react';
 import { Button, Input, Textarea, Avatar, addToast, Dropdown, DropdownTrigger, DropdownMenu, DropdownItem, Spinner } from '@heroui/react';
 import { Switch } from '@heroui/switch';
