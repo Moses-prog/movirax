@@ -242,7 +242,7 @@ export default function SupportTicketsPage() {
   }, [parsedMessages, isTyping]);
 
   return (
-    <div className="mx-auto max-w-7xl h-[calc(100vh-120px)] flex flex-col gap-6 pb-10">
+    <div className="mx-auto max-w-7xl h-[calc(100dvh-120px)] md:h-[calc(100vh-120px)] flex flex-col gap-4 md:gap-6 pb-4 md:pb-10 w-full">
       <header className="flex flex-wrap items-center justify-between gap-4 flex-shrink-0">
         <div>
           <h1 className="text-3xl font-bold tracking-tight text-foreground">Support Tickets</h1>
@@ -257,10 +257,10 @@ export default function SupportTicketsPage() {
         </Button>
       </header>
 
-      <div className="flex flex-1 min-h-0 overflow-hidden shadow-sm">
-        <Group orientation="horizontal" className="w-full h-full">
+      <div className="flex flex-1 min-h-0 overflow-hidden shadow-sm w-full">
+        <Group key={isMobile ? 'mobile' : (isFullScreenChat ? 'full' : 'split')} orientation="horizontal" className="w-full h-full">
           {/* Left Column: Ticket List */}
-          {((!isMobile && !isFullScreenChat) || (isMobile && mobileView === 'list')) && (<Panel defaultSize={35} minSize={5} className="flex flex-col rounded-2xl border-none bg-background/60 dark:bg-default-100/50 p-4 min-w-0">
+          {((!isMobile && !isFullScreenChat) || (isMobile && mobileView === 'list')) && (<Panel defaultSize={35} minSize={5} className="flex flex-col rounded-2xl border-none bg-background/60 dark:bg-default-100/50 p-4 min-w-0 w-full">
             <Group orientation="vertical" className="w-full h-full">
               {/* Filters */}
               <Panel defaultSize={20} minSize={15} maxSize={40} className="flex flex-col gap-3">
@@ -339,12 +339,12 @@ export default function SupportTicketsPage() {
           )}
 
           {/* Right Column: Detail View */}
-          {(!isMobile || mobileView === 'detail') && (<Panel defaultSize={65} minSize={5} className="flex flex-col rounded-2xl border-none bg-background/60 dark:bg-default-100/50 overflow-hidden min-w-0">
+          {(!isMobile || mobileView === 'detail') && (<Panel defaultSize={65} minSize={5} className="flex flex-col rounded-2xl border-none bg-background/60 dark:bg-default-100/50 overflow-hidden min-w-0 w-full">
           {selectedTicket ? (
               <div className="flex flex-col w-full h-full bg-transparent">
               {/* Detail Header */}
                 <div className="shrink-0 flex flex-col">
-                <div className="flex-1 flex flex-col md:flex-row items-start md:items-center justify-between gap-4 p-6 border-b border-divider bg-transparent overflow-y-auto custom-scrollbar">
+                <div className="flex-1 flex flex-col md:flex-row items-start md:items-center justify-between gap-4 p-4 md:p-6 border-b border-divider bg-transparent overflow-x-hidden">
                   <div>
                     {(isMobile || isFullScreenChat) && (
                         <Button 
