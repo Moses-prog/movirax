@@ -8,19 +8,19 @@ import { ChevronRight, ChevronLeft, Search, Bookmark, Play, Plus, Check, LifeBuo
 // Real image placeholders to simulate the actual app UI
 const MOVIES = {
   action: [
-    { id: 1, title: "Deadpool & Wolverine", img: "https://image.tmdb.org/t/p/w500/8cdWjvZQUExUUTzyp4t6EDMubfO.jpg" },
-    { id: 2, title: "Dune: Part Two", img: "https://image.tmdb.org/t/p/w500/1pdfLvkbY9ohJlCjQH2TDpiO9JC.jpg" },
+    { id: 1, title: "Deadpool & Wolverine", img: "https://images.unsplash.com/photo-1536440136628-849c177e76a1?q=80&w=500&auto=format&fit=crop" },
+    { id: 2, title: "Dune: Part Two", img: "https://images.unsplash.com/photo-1626814026160-2237a95fc5a0?q=80&w=500&auto=format&fit=crop" },
   ],
   scifi: [
-    { id: 3, title: "Interstellar", img: "https://image.tmdb.org/t/p/w500/gEU2QniE6E77NI6lCU6MvlId7St.jpg" },
-    { id: 4, title: "The Matrix", img: "https://image.tmdb.org/t/p/w500/f89U3ADr1oiB1s9GvwJwBZZ4Zcz.jpg" },
+    { id: 3, title: "Interstellar", img: "https://images.unsplash.com/photo-1446776811953-b23d062836c2?q=80&w=500&auto=format&fit=crop" },
+    { id: 4, title: "The Matrix", img: "https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=500&auto=format&fit=crop" },
   ]
 };
 
 const WelcomeSandbox = () => (
   <div className="flex flex-col items-center justify-center text-center h-full gap-4 w-full">
     <div className="w-full max-w-sm aspect-video bg-default-100 rounded-xl overflow-hidden relative border border-default-200">
-      <img src="https://image.tmdb.org/t/p/w1280/8pjWz2lt29KyVGoq1mEBtEPvq10.jpg" className="w-full h-full object-cover opacity-60" alt="Hero" />
+      <img src="https://images.unsplash.com/photo-1478720568477-152d9b164e26?q=80&w=1280&auto=format&fit=crop" className="w-full h-full object-cover opacity-60" alt="Hero" />
       <div className="absolute inset-0 bg-gradient-to-t from-background to-transparent flex flex-col justify-end p-6 items-start text-left">
         <h2 className="text-2xl font-black text-white">DUNE</h2>
         <div className="flex gap-2 mt-2">
@@ -84,7 +84,7 @@ const SearchSandbox = () => {
         <AnimatePresence>
           {query.length > 0 ? (
             <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex items-center gap-4 p-2 rounded-xl hover:bg-default-100 cursor-pointer transition-colors border border-transparent hover:border-default-200">
-              <img src="https://image.tmdb.org/t/p/w500/8Gxv8gSFCU0XGDykEGv7zR1n2ua.jpg" className="w-12 h-16 rounded-lg object-cover shadow-sm" alt="Oppenheimer" />
+              <img src="https://images.unsplash.com/photo-1616530940355-351fabd9524b?q=80&w=500&auto=format&fit=crop" className="w-12 h-16 rounded-lg object-cover shadow-sm" alt="Oppenheimer" />
               <div className="flex flex-col gap-1">
                 <span className="text-sm font-bold">Oppenheimer</span>
                 <span className="text-xs text-default-400 font-medium">Movie • 2023 • 8.1/10</span>
@@ -107,7 +107,7 @@ const LibrarySandbox = () => {
   return (
     <div className="flex flex-col items-center gap-6 w-full max-w-xs">
       <div className="w-full aspect-[2/3] bg-default-100 rounded-xl relative overflow-hidden group border border-default-200 shadow-md">
-        <img src="https://image.tmdb.org/t/p/w500/gEU2QniE6E77NI6lCU6MvlId7St.jpg" className="w-full h-full object-cover transition-transform group-hover:scale-105" alt="Interstellar" />
+        <img src="https://images.unsplash.com/photo-1446776811953-b23d062836c2?q=80&w=500&auto=format&fit=crop" className="w-full h-full object-cover transition-transform group-hover:scale-105" alt="Interstellar" />
         
         <Tooltip content={saved ? "Remove from Library" : "Add to Library"} placement="left" color="danger">
           <Button 
@@ -144,10 +144,10 @@ const ProfilesSandbox = () => {
   return (
     <div className="flex flex-col items-center justify-center gap-10 w-full h-full bg-content1 rounded-2xl border border-default-200 shadow-sm p-8">
       <h3 className="text-3xl font-black text-foreground">Who's watching?</h3>
-      <div className="flex gap-8">
+      <div className="flex flex-wrap justify-center gap-4 md:gap-8">
         {profiles.map((p, i) => (
           <div key={p.name} className="flex flex-col items-center gap-3 cursor-pointer group" onClick={() => setActive(i)}>
-            <div className={`w-24 h-24 rounded-xl overflow-hidden border-3 transition-all ${active === i ? "border-foreground scale-110" : "border-transparent opacity-70 group-hover:opacity-100 group-hover:border-default-300"}`}>
+            <div className={`w-16 h-16 md:w-24 md:h-24 rounded-xl overflow-hidden border-3 transition-all ${active === i ? "border-foreground scale-110" : "border-transparent opacity-70 group-hover:opacity-100 group-hover:border-default-300"}`}>
               <img src={p.avatar} alt={p.name} className="w-full h-full object-cover" />
             </div>
             <span className={`text-sm ${active === i ? "font-bold text-foreground" : "text-default-500"}`}>{p.name}</span>
@@ -302,7 +302,7 @@ export default function InteractiveTour() {
         </div>
       </div>
 
-      <div className="max-w-6xl mx-auto w-full flex-1 flex flex-col md:flex-row gap-12 p-6 py-12">
+      <div className="max-w-6xl mx-auto w-full flex-1 flex flex-col md:flex-row gap-8 p-4 md:p-6 py-8 md:py-12">
         {/* Left Side: Navigation & Text */}
         <div className="w-full md:w-5/12 flex flex-col gap-6">
           <div className="flex gap-1 mb-4">
@@ -352,7 +352,7 @@ export default function InteractiveTour() {
         </div>
 
         {/* Right Side: Highly Realistic Flat Sandbox */}
-        <div className="w-full md:w-7/12 min-h-[500px] bg-default-50 border border-default-200 rounded-2xl flex items-center justify-center p-8 relative overflow-hidden">
+        <div className="w-full md:w-7/12 min-h-[400px] md:min-h-[500px] bg-default-50 border border-default-200 rounded-2xl flex items-center justify-center p-4 md:p-8 relative overflow-hidden">
           {/* Subtle grid pattern for technical documentation vibe */}
           <div className="absolute inset-0 opacity-[0.03] pointer-events-none" style={{ backgroundImage: "radial-gradient(circle at 2px 2px, black 1px, transparent 0)", backgroundSize: "24px 24px" }}></div>
           
