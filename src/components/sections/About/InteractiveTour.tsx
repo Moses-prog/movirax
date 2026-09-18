@@ -8,19 +8,19 @@ import { ChevronRight, ChevronLeft, Search, Bookmark, Play, Plus, Check, LifeBuo
 // Real image placeholders to simulate the actual app UI
 const MOVIES = {
   action: [
-    { id: 1, title: "Deadpool & Wolverine", img: "https://images.unsplash.com/photo-1536440136628-849c177e76a1?q=80&w=500&auto=format&fit=crop" },
-    { id: 2, title: "Dune: Part Two", img: "https://images.unsplash.com/photo-1626814026160-2237a95fc5a0?q=80&w=500&auto=format&fit=crop" },
+    { id: 1, title: "Deadpool & Wolverine", img: "https://image.tmdb.org/t/p/w500/i7UyjfPio0VFHB9rBUZSFyhOoM8.jpg" },
+    { id: 2, title: "Dune: Part Two", img: "https://image.tmdb.org/t/p/w500/6rpvddXbaQPOi0fB2HKWbZ3uUSg.jpg" },
   ],
   scifi: [
-    { id: 3, title: "Interstellar", img: "https://images.unsplash.com/photo-1446776811953-b23d062836c2?q=80&w=500&auto=format&fit=crop" },
-    { id: 4, title: "The Matrix", img: "https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=500&auto=format&fit=crop" },
+    { id: 3, title: "Interstellar", img: "https://image.tmdb.org/t/p/w500/uxCaBoYXsDC4A0SqTm3SISj0OwK.jpg" },
+    { id: 4, title: "The Matrix", img: "https://image.tmdb.org/t/p/w500/sfQtVlIHljToOwYjhe21KPGzZWK.jpg" },
   ]
 };
 
 const WelcomeSandbox = () => (
   <div className="flex flex-col items-center justify-center text-center h-full gap-4 w-full">
     <div className="w-full max-w-sm aspect-video bg-default-100 rounded-xl overflow-hidden relative border border-default-200">
-      <img src="https://images.unsplash.com/photo-1478720568477-152d9b164e26?q=80&w=1280&auto=format&fit=crop" className="w-full h-full object-cover opacity-60" alt="Hero" />
+      <img src="https://image.tmdb.org/t/p/w1280/1CIaRYKf3zg2Xyce1CSfCMg2Vfw.jpg" className="w-full h-full object-cover opacity-60" alt="Hero" />
       <div className="absolute inset-0 bg-gradient-to-t from-background to-transparent flex flex-col justify-end p-6 items-start text-left">
         <h2 className="text-2xl font-black text-white">DUNE</h2>
         <div className="flex gap-2 mt-2">
@@ -84,7 +84,7 @@ const SearchSandbox = () => {
         <AnimatePresence>
           {query.length > 0 ? (
             <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex items-center gap-4 p-2 rounded-xl hover:bg-default-100 cursor-pointer transition-colors border border-transparent hover:border-default-200">
-              <img src="https://images.unsplash.com/photo-1616530940355-351fabd9524b?q=80&w=500&auto=format&fit=crop" className="w-12 h-16 rounded-lg object-cover shadow-sm" alt="Oppenheimer" />
+              <img src="https://image.tmdb.org/t/p/w500/cRrf3UIw1HmiFEkKo0Vi85fFjqF.jpg" className="w-12 h-16 rounded-lg object-cover shadow-sm" alt="Oppenheimer" />
               <div className="flex flex-col gap-1">
                 <span className="text-sm font-bold">Oppenheimer</span>
                 <span className="text-xs text-default-400 font-medium">Movie • 2023 • 8.1/10</span>
@@ -107,7 +107,7 @@ const LibrarySandbox = () => {
   return (
     <div className="flex flex-col items-center gap-6 w-full max-w-xs">
       <div className="w-full aspect-[2/3] bg-default-100 rounded-xl relative overflow-hidden group border border-default-200 shadow-md">
-        <img src="https://images.unsplash.com/photo-1446776811953-b23d062836c2?q=80&w=500&auto=format&fit=crop" className="w-full h-full object-cover transition-transform group-hover:scale-105" alt="Interstellar" />
+        <img src="https://image.tmdb.org/t/p/w500/uxCaBoYXsDC4A0SqTm3SISj0OwK.jpg" className="w-full h-full object-cover transition-transform group-hover:scale-105" alt="Interstellar" />
         
         <Tooltip content={saved ? "Remove from Library" : "Add to Library"} placement="left" color="danger">
           <Button 
