@@ -285,11 +285,7 @@ export default function SupportTicketsPage() {
                     <SelectItem key="closed">Closed</SelectItem>
                   ]}
                 />
-              </Panel>
-
-              <Separator className="h-4 flex items-center justify-center group cursor-row-resize relative z-10">
-                <div className="w-12 h-1 rounded-full bg-divider group-hover:bg-danger transition-colors flex items-center justify-center" />
-              </Separator>
+              </div>
 
               {/* List */}
               <Panel defaultSize={80} minSize={30} className="flex flex-col">
@@ -341,9 +337,9 @@ export default function SupportTicketsPage() {
           {/* Right Column: Detail View */}
           {(!isMobile || mobileView === 'detail') && (<Panel defaultSize={65} minSize={5} className="flex flex-col rounded-2xl border-none bg-background/60 dark:bg-default-100/50 overflow-hidden min-w-0">
           {selectedTicket ? (
-            <Group orientation="vertical" className="w-full h-full">
+              <div className="flex flex-col w-full h-full bg-transparent">
               {/* Detail Header */}
-              <Panel defaultSize={20} minSize={15} className="flex flex-col">
+                <div className="shrink-0 flex flex-col">
                 <div className="flex-1 flex flex-col md:flex-row items-start md:items-center justify-between gap-4 p-6 border-b border-divider bg-transparent overflow-y-auto custom-scrollbar">
                   <div>
                     {(isMobile || isFullScreenChat) && (
@@ -400,14 +396,10 @@ export default function SupportTicketsPage() {
                     />
                   </div>
                 </div>
-              </Panel>
-
-              <Separator className="h-4 flex items-center justify-center group cursor-row-resize relative z-10">
-                <div className="w-12 h-1 rounded-full bg-divider group-hover:bg-danger transition-colors flex items-center justify-center" />
-              </Separator>
+              </div>
 
               {/* Ticket Description */}
-              <Panel defaultSize={50} minSize={20} className="flex flex-col">
+                <div className="flex-1 min-h-0 flex flex-col border-b border-divider">
                 <div className="flex-1 overflow-y-auto p-4 space-y-4 flex flex-col custom-scrollbar bg-transparent">
                   <div className="flex justify-start w-full">
                     <div className="bg-default-100 text-foreground border border-divider rounded-2xl rounded-tl-sm p-3 max-w-[90%] sm:max-w-[80%] shadow-sm text-sm">
@@ -467,14 +459,10 @@ export default function SupportTicketsPage() {
                   )}
                   <div ref={messagesEndRef} />
                 </div>
-              </Panel>
-
-              <Separator className="h-4 flex items-center justify-center group cursor-row-resize relative z-10">
-                <div className="w-12 h-1 rounded-full bg-divider group-hover:bg-danger transition-colors flex items-center justify-center" />
-              </Separator>
+              </div>
 
               {/* Resolution Area */}
-              <Panel defaultSize={30} minSize={20} className="flex flex-col">
+                <div className="shrink-0 flex flex-col bg-background/50">
                 <div className="flex-1 overflow-y-auto p-4 border-t border-divider bg-transparent flex flex-col gap-3 custom-scrollbar">
                   <Textarea 
                     placeholder="Provide a resolution to the user's issue..."
@@ -512,9 +500,9 @@ export default function SupportTicketsPage() {
                     </div>
                   </div>
                 </div>
-              </Panel>
-            </Group>
-          ) : (
+                </div>
+              </div>
+            ) : (
             <div className="flex flex-1 flex-col items-center justify-center text-center p-8">
               <MessageSquare className="mb-4 size-16 text-default-300" />
               <h2 className="text-xl font-bold text-foreground">Select a ticket</h2>
