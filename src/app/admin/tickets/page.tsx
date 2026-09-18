@@ -285,7 +285,11 @@ export default function SupportTicketsPage() {
                     <SelectItem key="closed">Closed</SelectItem>
                   ]}
                 />
-              </div>
+              </Panel>
+
+              <Separator className="h-4 flex items-center justify-center group cursor-row-resize relative z-10">
+                <div className="w-12 h-1 rounded-full bg-divider group-hover:bg-danger transition-colors flex items-center justify-center" />
+              </Separator>
 
               {/* List */}
               <Panel defaultSize={80} minSize={30} className="flex flex-col">
@@ -398,7 +402,7 @@ export default function SupportTicketsPage() {
                 </div>
               </div>
 
-              {/* Ticket Description */}
+                {/* Ticket Description */}
                 <div className="flex-1 min-h-0 flex flex-col border-b border-divider">
                 <div className="flex-1 overflow-y-auto p-4 space-y-4 flex flex-col custom-scrollbar bg-transparent">
                   <div className="flex justify-start w-full">
@@ -461,7 +465,7 @@ export default function SupportTicketsPage() {
                 </div>
               </div>
 
-              {/* Resolution Area */}
+                {/* Resolution Area */}
                 <div className="shrink-0 flex flex-col bg-background/50">
                 <div className="flex-1 overflow-y-auto p-4 border-t border-divider bg-transparent flex flex-col gap-3 custom-scrollbar">
                   <Textarea 
