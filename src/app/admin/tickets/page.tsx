@@ -371,12 +371,13 @@ export default function SupportTicketsPage() {
                   <div className="flex items-center gap-3">
                         {!isMobile && (
                           <Button
-                            isIconOnly
-                            variant="light"
-                            className="text-default-500 hover:text-foreground"
+                            variant="flat"
+                            color={isFullScreenChat ? "danger" : "default"}
+                            className="font-bold shadow-sm"
                             onPress={() => setIsFullScreenChat(!isFullScreenChat)}
+                            startContent={isFullScreenChat ? <Minimize size={18} /> : <Maximize size={18} />}
                           >
-                            {isFullScreenChat ? <Minimize size={18} /> : <Maximize size={18} />}
+                            {isFullScreenChat ? "Exit Focus" : "Focus Mode"}
                           </Button>
                         )}
                     <Select 
