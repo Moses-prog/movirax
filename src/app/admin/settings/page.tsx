@@ -134,7 +134,7 @@ export default function SettingsPage() {
             color="danger" 
             variant="underlined"
             classNames={{
-              tabList: "gap-6 w-full relative rounded-none p-0 border-b border-divider px-6 pt-4",
+              tabList: "gap-4 md:gap-6 w-full relative rounded-none p-0 border-b border-divider px-4 md:px-6 pt-4 overflow-x-auto custom-scrollbar",
               cursor: "w-full bg-danger",
               tab: "max-w-fit px-0 h-12",
               tabContent: "group-data-[selected=true]:text-danger font-semibold"
@@ -173,7 +173,7 @@ export default function SettingsPage() {
                 <div className="flex flex-col gap-4">
                   <h3 className="text-sm font-bold uppercase tracking-wider text-default-500 border-b border-divider pb-2">Access & Security</h3>
                   
-                  <div className="flex items-center justify-between bg-default-100/50 p-4 rounded-xl border border-divider">
+                  <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 bg-default-100/50 p-4 rounded-xl border border-divider">
                     <div>
                       <h4 className="text-sm font-bold text-foreground flex items-center gap-2">
                         <Shield size={16} className="text-danger" /> 
@@ -188,7 +188,7 @@ export default function SettingsPage() {
                     />
                   </div>
 
-                  <div className="flex items-center justify-between bg-default-100/50 p-4 rounded-xl border border-divider">
+                  <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 bg-default-100/50 p-4 rounded-xl border border-divider">
                     <div>
                       <h4 className="text-sm font-bold text-foreground flex items-center gap-2">
                         <Bell size={16} className="text-primary" /> 
