@@ -223,8 +223,8 @@ export default function FeaturesPage() {
       <Card className="border-none shadow-sm bg-background/60 dark:bg-default-100/50">
         <Table 
           aria-label="Features Management Table" 
-          removeWrapper 
           classNames={{
+              wrapper: "shadow-none border-none p-0 overflow-x-auto bg-transparent w-full max-w-[calc(100vw-32px)] md:max-w-full block",
             th: "bg-transparent text-default-500 font-semibold text-xs tracking-wider",
             td: "py-4",
           }}

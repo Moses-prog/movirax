@@ -159,7 +159,8 @@ export default function AdminDashboard() {
           </CardHeader>
           <CardBody className="px-6 pb-6 pt-0">
             {tickets.length > 0 ? (
-              <Table aria-label="Recent Tickets" removeWrapper classNames={{ th: "bg-transparent text-default-500", td: "py-3" }}>
+              <Table aria-label="Recent Tickets" classNames={{
+              wrapper: "shadow-none border-none p-0 overflow-x-auto bg-transparent w-full max-w-[calc(100vw-32px)] md:max-w-full block", th: "bg-transparent text-default-500", td: "py-3" }}>
                 <TableHeader>
                   <TableColumn>SUBJECT</TableColumn>
                   <TableColumn>STATUS</TableColumn>
@@ -204,7 +205,8 @@ export default function AdminDashboard() {
           </CardHeader>
           <CardBody className="px-6 pb-6 pt-0">
             {users.length > 0 ? (
-              <Table aria-label="Recent Users" removeWrapper classNames={{ th: "bg-transparent text-default-500", td: "py-3" }}>
+              <Table aria-label="Recent Users" classNames={{
+              wrapper: "shadow-none border-none p-0 overflow-x-auto bg-transparent w-full max-w-[calc(100vw-32px)] md:max-w-full block", th: "bg-transparent text-default-500", td: "py-3" }}>
                   <TableHeader>
                     <TableColumn>USER</TableColumn>
                     <TableColumn>TIER</TableColumn>

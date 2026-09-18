@@ -166,7 +166,7 @@ export default function PromotionsPage() {
       <Card className="border-none shadow-sm bg-background/60 dark:bg-default-100/50">
         <Table 
           aria-label="Promotions table"
-          removeWrapper
+          classNames={{ wrapper: "shadow-none border-none bg-transparent p-0 overflow-x-auto max-w-[100vw] sm:max-w-full block" }}
           classNames={{
             th: "bg-transparent text-default-500 uppercase text-xs font-bold",
             td: "py-4",

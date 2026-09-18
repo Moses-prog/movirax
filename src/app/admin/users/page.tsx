@@ -212,7 +212,7 @@ export default function AdminUsersPage() {
       <Table 
         aria-label="Users table"
         classNames={{
-          wrapper: "bg-background/60 dark:bg-default-100/50 shadow-sm border-none p-0",
+          wrapper: "bg-background/60 dark:bg-default-100/50 shadow-sm border-none p-0 overflow-x-auto w-full max-w-[calc(100vw-32px)] md:max-w-full block",
           th: "bg-transparent text-default-500",
           td: "py-3 border-b border-divider/50",
         }}
