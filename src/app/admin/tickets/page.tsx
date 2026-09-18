@@ -96,6 +96,7 @@ export default function SupportTicketsPage() {
   };
 
   const selectedTicket = tickets.find(t => t.id === selectedTicketId);
+  useEffect(() => { if (!selectedTicketId) setIsFullScreenChat(false); }, [selectedTicketId]);
 
   // When selected ticket changes, clear the resolution box
   useEffect(() => {
@@ -305,7 +306,7 @@ export default function SupportTicketsPage() {
                     filteredTickets.map(ticket => (
                       <button
                         key={ticket.id}
-                        onClick={() => { setSelectedTicketId(ticket.id); if (window.innerWidth < 1024) setMobileView('detail'); }}
+                        onClick={() => { setSelectedTicketId(ticket.id); if (window.innerWidth < 1024) setMobileView('detail'); else setIsFullScreenChat(true); }}
                         className={`w-full text-left p-4 rounded-xl border transition-all ${
                           selectedTicketId === ticket.id 
                             ? 'border-danger/50 bg-danger/5' 
@@ -345,11 +346,14 @@ export default function SupportTicketsPage() {
               <Panel defaultSize={20} minSize={15} className="flex flex-col">
                 <div className="flex-1 flex flex-col md:flex-row items-start md:items-center justify-between gap-4 p-6 border-b border-divider bg-transparent overflow-y-auto custom-scrollbar">
                   <div>
-                    {isMobile && (
+                    {(isMobile || isFullScreenChat) && (
                         <Button 
                           isIconOnly 
                           variant="light" 
-                          onPress={() => setMobileView('list')} 
+                          onPress={() => {
+                            if (isMobile) setMobileView('list');
+                            else setIsFullScreenChat(false);
+                          }} 
                           className="-ml-2 text-default-500 shrink-0"
                         >
                           <ChevronLeft size={24} />
