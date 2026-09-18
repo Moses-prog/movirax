@@ -14,7 +14,9 @@ import {
   Paperclip,
   MessageSquare,
   CheckCheck,
-  ChevronLeft
+  ChevronLeft,
+  Maximize,
+  Minimize
 } from 'lucide-react';
 import { Button, Input, Textarea, Avatar, addToast, Dropdown, DropdownTrigger, DropdownMenu, DropdownItem, Spinner } from '@heroui/react';
 import { Switch } from '@heroui/switch';
@@ -40,6 +42,7 @@ export default function SupportTicketsPage() {
   const [selectedTicketId, setSelectedTicketId] = useState<string | null>(null);
   const [isMobile, setIsMobile] = useState(false);
   const [mobileView, setMobileView] = useState<'list' | 'detail'>('list');
+  const [isFullScreenChat, setIsFullScreenChat] = useState(false);
 
   useEffect(() => {
     const checkMobile = () => {
@@ -256,7 +259,7 @@ export default function SupportTicketsPage() {
       <div className="flex flex-1 min-h-0 overflow-hidden shadow-sm">
         <Group orientation="horizontal" className="w-full h-full">
           {/* Left Column: Ticket List */}
-          {(!isMobile || mobileView === 'list') && (<Panel defaultSize={35} minSize={5} className="flex flex-col rounded-2xl border-none bg-background/60 dark:bg-default-100/50 p-4 min-w-0">
+          {((!isMobile && !isFullScreenChat) || (isMobile && mobileView === 'list')) && (<Panel defaultSize={35} minSize={5} className="flex flex-col rounded-2xl border-none bg-background/60 dark:bg-default-100/50 p-4 min-w-0">
             <Group orientation="vertical" className="w-full h-full">
               {/* Filters */}
               <Panel defaultSize={20} minSize={15} maxSize={40} className="flex flex-col gap-3">
@@ -328,7 +331,7 @@ export default function SupportTicketsPage() {
             </Group>
           </Panel>)}
 
-          {!isMobile && (
+          {!isMobile && !isFullScreenChat && (
             <Separator className="w-4 flex items-center justify-center group cursor-col-resize relative z-10">
             <div className="h-12 w-1 rounded-full bg-divider group-hover:bg-danger transition-colors flex items-center justify-center" />
           </Separator>
@@ -366,6 +369,16 @@ export default function SupportTicketsPage() {
                   </div>
 
                   <div className="flex items-center gap-3">
+                        {!isMobile && (
+                          <Button
+                            isIconOnly
+                            variant="light"
+                            className="text-default-500 hover:text-foreground"
+                            onPress={() => setIsFullScreenChat(!isFullScreenChat)}
+                          >
+                            {isFullScreenChat ? <Minimize size={18} /> : <Maximize size={18} />}
+                          </Button>
+                        )}
                     <Select 
                       selectedKeys={new Set([selectedTicket.status])}
                       onSelectionChange={(keys) => handleUpdateStatus(selectedTicket.id, Array.from(keys)[0] as TicketStatus)}
