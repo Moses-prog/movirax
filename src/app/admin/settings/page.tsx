@@ -279,10 +279,10 @@ export default function SettingsPage() {
             >
               <div className="p-6 flex flex-col gap-8">
                 {/* Paystack Section */}
-                <div className="flex flex-col gap-4 bg-default-50 p-6 rounded-2xl border border-default-200">
-                  <div className="flex justify-between items-center mb-2">
-                    <div>
-                      <h3 className="text-lg font-semibold flex items-center gap-2">Paystack Integration <span className="text-xs bg-primary/20 text-primary px-2 py-1 rounded">Card Payments</span></h3>
+                <div className="flex flex-col gap-4 bg-default-100/50 shadow-none p-6 rounded-2xl border border-divider">
+                  <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-2">
+                      <div>
+                        <h3 className="text-lg font-semibold flex flex-wrap items-center gap-2">Paystack Integration <span className="text-xs bg-primary/20 text-primary px-2 py-1 rounded">Card Payments</span></h3>
                       <p className="text-sm text-default-500">Configure Paystack API keys for primary subscription billing.</p>
                     </div>
                     <Switch 
@@ -313,10 +313,10 @@ export default function SettingsPage() {
                 </div>
 
                 {/* Flutterwave Section */}
-                <div className="flex flex-col gap-4 bg-default-50 p-6 rounded-2xl border border-default-200">
-                  <div className="flex justify-between items-center mb-2">
-                    <div>
-                      <h3 className="text-lg font-semibold flex items-center gap-2">Flutterwave Integration <span className="text-xs bg-secondary/20 text-secondary px-2 py-1 rounded">Checkout Options</span></h3>
+                <div className="flex flex-col gap-4 bg-default-100/50 shadow-none p-6 rounded-2xl border border-divider">
+                  <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-2">
+                      <div>
+                        <h3 className="text-lg font-semibold flex flex-wrap items-center gap-2">Flutterwave Integration <span className="text-xs bg-secondary/20 text-secondary px-2 py-1 rounded">Checkout Options</span></h3>
                       <p className="text-sm text-default-500">Configure Flutterwave API keys for alternative checkout methods.</p>
                     </div>
                     <Switch 

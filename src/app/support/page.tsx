@@ -129,10 +129,10 @@ function TicketChatView({ ticket, onReplySent, onBack }: { ticket: SupportTicket
   const messages = getParsedMessages(ticket);
 
   return (
-    <Card className="bg-white/5 border border-white/5 shadow-none h-full flex flex-col">
+    <Card className="bg-transparent shadow-none h-full flex flex-col border-none">
       <CardBody className="p-0 flex flex-col h-full overflow-hidden">
         {/* Header */}
-        <div className="p-4 border-b border-white/5 flex flex-col md:flex-row gap-4 justify-between md:items-center bg-white/5">
+        <div className="p-4 border-b border-divider flex flex-col md:flex-row gap-4 justify-between md:items-center bg-default-100/20">
           <div className="flex items-center gap-3">
             <Button isIconOnly variant="light" size="sm" className="md:hidden" onPress={onBack}>
               <ChevronLeft size={20} />
@@ -156,7 +156,7 @@ function TicketChatView({ ticket, onReplySent, onBack }: { ticket: SupportTicket
         <div className="flex-1 overflow-y-auto p-4 custom-scrollbar flex flex-col space-y-4">
           {/* Initial Request */}
           <div className="flex justify-end w-full">
-            <div className="bg-primary text-primary-foreground p-3 rounded-2xl rounded-tr-sm max-w-[90%] sm:max-w-[80%] shadow-md text-sm">
+            <div className="bg-primary text-primary-foreground p-3 rounded-2xl rounded-tr-sm max-w-[90%] sm:max-w-[80%] shadow-sm text-sm">
               <div className="flex justify-between items-center gap-4 mb-1">
                 <span className="text-[11px] font-bold text-blue-100">You (Original Request)</span>
                 <span className="text-[10px] opacity-70">{new Date(ticket.created_at).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</span>
@@ -170,7 +170,7 @@ function TicketChatView({ ticket, onReplySent, onBack }: { ticket: SupportTicket
             <div key={idx} className={`flex w-full ${msg.sender === 'user' ? 'justify-end' : 'justify-start'}`}>
               <div className={`p-3 text-sm max-w-[90%] sm:max-w-[80%] shadow-md ${
                 msg.sender === 'admin' 
-                  ? 'bg-content2 text-foreground rounded-2xl rounded-tl-sm border border-white/5' 
+                  ? 'bg-default-200 text-foreground rounded-2xl rounded-tl-sm border-none' 
                   : 'bg-primary text-primary-foreground rounded-2xl rounded-tr-sm'
               }`}>
                 <div className="flex justify-between items-center gap-4 mb-1">
@@ -193,7 +193,7 @@ function TicketChatView({ ticket, onReplySent, onBack }: { ticket: SupportTicket
           {/* Typing Indicator */}
           {isTyping && (
             <div className="flex justify-start w-full">
-              <div className="bg-content2 text-foreground p-3 rounded-2xl rounded-tl-sm shadow-md text-sm italic opacity-70 flex items-center gap-2">
+              <div className="bg-default-100 text-foreground p-3 rounded-2xl rounded-tl-sm shadow-none text-sm italic opacity-70 flex items-center gap-2">
                 <div className="flex gap-1">
                   <span className="w-1.5 h-1.5 bg-foreground/50 rounded-full animate-bounce"></span>
                   <span className="w-1.5 h-1.5 bg-foreground/50 rounded-full animate-bounce" style={{animationDelay: '150ms'}}></span>
@@ -207,14 +207,14 @@ function TicketChatView({ ticket, onReplySent, onBack }: { ticket: SupportTicket
         </div>
 
         {/* Reply Box */}
-        <div className="p-4 border-t border-white/5 bg-background/50">
+        <div className="p-4 border-t border-divider bg-transparent">
           {ticket.status !== 'closed' ? (
             <div className="flex gap-2">
               <Input 
                 placeholder="Type a reply..." 
                 value={replyContent}
                 onValueChange={handleTyping}
-                classNames={{ inputWrapper: "bg-white/5 border border-white/10" }}
+                variant="faded"
                 onKeyDown={(e) => {
                   if (e.key === 'Enter') {
                     handleSendReply();
@@ -232,7 +232,7 @@ function TicketChatView({ ticket, onReplySent, onBack }: { ticket: SupportTicket
               </Button>
             </div>
           ) : (
-            <div className="p-4 rounded-xl bg-white/5 border border-white/10 flex flex-col items-center justify-center text-center gap-2">
+            <div className="p-4 rounded-xl bg-default-100/50 border border-divider flex flex-col items-center justify-center text-center gap-2">
               <CheckCircle2 size={24} className="text-green-500/70" />
               <p className="text-sm font-medium text-foreground">This ticket is closed</p>
               <p className="text-xs text-muted-foreground">Please open a new ticket if you need further assistance.</p>
@@ -430,7 +430,7 @@ function UserSupportPageContent() {
         </Card>
 
         {/* Modal for New Ticket */}
-        <Modal isOpen={isOpen} onOpenChange={onOpenChange} classNames={{ base: "bg-background border border-white/10" }}>
+        <Modal isOpen={isOpen} onOpenChange={onOpenChange} classNames={{ base: "bg-background border border-divider" }}>
           <ModalContent>
             {(onClose) => (
               <>
@@ -440,7 +440,7 @@ function UserSupportPageContent() {
                     label="What do you need help with?"
                     selectedKeys={new Set([newType])}
                     onSelectionChange={(keys) => setNewType(Array.from(keys)[0] as TicketRequestType)}
-                    classNames={{ trigger: "bg-white/5 border border-white/10" }}
+                    variant="faded"
                   >
                     <SelectItem key="billing">Billing Issue</SelectItem>
                     <SelectItem key="upgrade">Upgrade Request</SelectItem>
@@ -454,7 +454,7 @@ function UserSupportPageContent() {
                     placeholder="Brief summary of the issue"
                     value={newSubject}
                     onValueChange={setNewSubject}
-                    classNames={{ inputWrapper: "bg-white/5 border border-white/10" }}
+                    variant="faded"
                   />
 
                   <Textarea 
@@ -463,7 +463,7 @@ function UserSupportPageContent() {
                     value={newDescription}
                     onValueChange={setNewDescription}
                     minRows={4}
-                    classNames={{ inputWrapper: "bg-white/5 border border-white/10" }}
+                    variant="faded"
                   />
                 </ModalBody>
                 <ModalFooter>
