@@ -306,7 +306,7 @@ export default function SupportTicketsPage() {
                     filteredTickets.map(ticket => (
                       <button
                         key={ticket.id}
-                        onClick={() => { setSelectedTicketId(ticket.id); if (window.innerWidth < 1024) setMobileView('detail'); else setIsFullScreenChat(true); }}
+                        onClick={() => { setSelectedTicketId(ticket.id); if (window.innerWidth < 1024) setMobileView('detail'); }}
                         className={`w-full text-left p-4 rounded-xl border transition-all ${
                           selectedTicketId === ticket.id 
                             ? 'border-danger/50 bg-danger/5' 
