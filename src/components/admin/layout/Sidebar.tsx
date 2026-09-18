@@ -43,7 +43,7 @@ export function Sidebar({ isOpen, onToggle, unreadSupportCount = 0 }: SidebarPro
 
   return (
     <nav
-      className={`sticky top-0 z-30 flex h-[100dvh] flex-none flex-col overflow-hidden bg-content1/80 py-6 shadow-sm backdrop-blur-xl border-r border-divider transition-[width] duration-300 ease-[cubic-bezier(0.4,0,0.2,1)] ${isOpen ? 'w-[260px]' : 'w-[88px]'}`}
+      className={`fixed inset-y-0 left-0 z-50 flex h-[100dvh] flex-none flex-col overflow-hidden bg-content1 py-6 shadow-2xl md:shadow-sm backdrop-blur-xl border-r border-divider transition-all duration-300 ease-[cubic-bezier(0.4,0,0.2,1)] md:sticky md:top-0 ${isOpen ? 'translate-x-0 w-[260px]' : '-translate-x-full md:translate-x-0 md:w-[88px]'}`}
     >
       {/* Background ambient red glow at the top */}
       <div className="pointer-events-none absolute inset-x-0 top-0 h-64 bg-gradient-to-b from-danger-500/5 to-transparent" />
@@ -66,10 +66,7 @@ export function Sidebar({ isOpen, onToggle, unreadSupportCount = 0 }: SidebarPro
           </div>
         )}
 
-        <Button
-          isIconOnly
-          variant="light"
-          onClick={onToggle}
+        <Button isIconOnly variant="light" onClick={onToggle} className="hidden md:flex"
           className={`text-default-500 hover:text-danger ${isOpen ? 'order-2' : 'order-1'}`}
           aria-label={isOpen ? 'Collapse sidebar' : 'Expand sidebar'}
         >

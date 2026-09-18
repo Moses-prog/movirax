@@ -127,6 +127,13 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
     checkAuth();
   }, [router, isLoginPage]);
 
+  // Close sidebar on mobile when navigating
+  useEffect(() => {
+    if (window.innerWidth < 768) {
+      setSidebarOpen(false);
+    }
+  }, [pathname]);
+
   const fetchTickets = async () => {
     const res = await getAllTickets();
     if (res.success && res.data) {
@@ -210,6 +217,13 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
 
   return (
     <div className="flex h-[100dvh] bg-background font-sans overflow-hidden text-foreground">
+      {/* Mobile Overlay */}
+      {sidebarOpen && (
+        <div 
+          className="fixed inset-0 z-40 bg-background/90 backdrop-blur-sm md:hidden"
+          onClick={() => setSidebarOpen(false)}
+        />
+      )}
       <Sidebar 
         isOpen={sidebarOpen} 
         onToggle={() => setSidebarOpen(!sidebarOpen)} 
@@ -223,7 +237,7 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
           setNotifications={setNotifications}
         />
 
-        <main className="flex-1 p-6 md:p-8 bg-background overflow-y-auto">
+        <main className="flex-1 p-4 md:p-8 bg-background overflow-y-auto overflow-x-hidden">
           {children}
         </main>
       </div>
