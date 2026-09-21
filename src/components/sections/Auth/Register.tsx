@@ -56,7 +56,7 @@ const AuthRegisterForm: React.FC<AuthFormProps> = ({ setForm }) => {
   // EMAIL / PASSWORD LOGIC (Untouched)
   // ==========================================
   const onSubmit = handleSubmit(async (data) => {
-    if (isEmpty(data.captchaToken)) {
+    if (env.NEXT_PUBLIC_CAPTCHA_SITE_KEY && isEmpty(data.captchaToken)) {
       setIsVerifying(true);
       return;
     }

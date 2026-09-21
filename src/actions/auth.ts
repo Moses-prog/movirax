@@ -44,9 +44,7 @@ const createAuthAction = <T extends { captchaToken?: string }>(
       return { success: false, message };
     }
 
-    if (!result.data.captchaToken) {
-      return { success: false, message: "Captcha is required." };
-    }
+
 
     try {
       const supabase = await createClient(admin);
