@@ -1,106 +1,46 @@
-"use client";
-import { NuqsAdapter } from "nuqs/adapters/next/app";
-import { Suspense } from "react";
-
-import { tmdb } from "@/api/tmdb";
+import { Metadata } from "next";
+import { siteConfig } from "@/config/site";
+import ClientPage from "./Client";
 import { Params } from "@/types";
-import { Spinner } from "@heroui/react";
-import { useQuery } from "@tanstack/react-query";
-import { notFound } from "next/navigation";
-import { use } from "react";
-import dynamic from "next/dynamic";
-import { NextPage } from "next";
-import { getTvShowLastPosition } from "@/actions/histories";
-import { fetchServerSettings } from "@/actions/settings";
-const TvShowPlayer = dynamic(() => import("@/components/sections/TV/Player/Player"));
+import { tmdb } from "@/api/tmdb";
 
-const TvShowPlayerPageContent: NextPage<Params<{ id: number; season: number; episode: number }>> = ({ params }) => {
-  const { id, season, episode } = use(params);
-
-  const {
-    data: tv,
-    isPending: isPendingTv,
-    error: errorTv,
-  } = useQuery({
-    queryFn: () => tmdb.tvShows.details(id),
-    queryKey: ["tv-show-player-details", id],
-  });
-
-  const {
-    data: seasonDetail,
-    isPending: isPendingSeason,
-    error: errorSeason,
-  } = useQuery({
-    queryFn: () => tmdb.tvShows.season(id, season),
-    queryKey: ["tv-show-season", id, season],
-  });
-
-  const { data: serverSettings, isPending: isPendingSettings } = useQuery({
-    queryFn: () => fetchServerSettings(),
-    queryKey: ["server-settings"],
-  });
-
-  const { data: startAt, isPending: isPendingStartAt } = useQuery({
-    queryFn: async () => {
-      const response = await getTvShowLastPosition(id, season, episode);
-      return response.data || 0;
-    },
-    queryKey: ["tv-show-player-start-at", id, season, episode],
-  });
-
-  if (isPendingTv || isPendingSeason || isPendingStartAt || isPendingSettings) {
-    return <Spinner size="lg" className="absolute-center" color="warning" variant="simple" />;
+export async function generateMetadata(
+  props: { params: Promise<{ id: number, season: number, episode: number }> }
+): Promise<Metadata> {
+  const params = await props.params;
+  const id = params.id;
+  const season = params.season;
+  const episode = params.episode;
+  
+  try {
+    const details = await (tmdb.tvShows.details(id));
+    const title = details.name || details.title || "";
+    const description = details.overview || "";
+    const image = details.backdrop_path ? `https://image.tmdb.org/t/p/w1280${details.backdrop_path}` : siteConfig.ogImage;
+    const fullTitle = `Watch ${title} S${season}E${episode}`;
+    
+    return {
+      title: `${fullTitle} | ${siteConfig.name}`,
+      description,
+      openGraph: {
+        title: fullTitle,
+        description,
+        images: [{ url: image }],
+      },
+      twitter: {
+        card: "summary_large_image",
+        title: fullTitle,
+        description,
+        images: [image],
+      },
+    };
+  } catch (error) {
+    return {
+      title: `Watch TV Show | ${siteConfig.name}`,
+    };
   }
+}
 
-  const EPISODE = seasonDetail?.episodes.find(
-    (e) => e.episode_number.toString() === episode.toString(),
-  );
-
-  if (!EPISODE || errorTv || errorSeason) notFound();
-
-  const isNotReleased = new Date(EPISODE.air_date) > new Date();
-
-  if (isNotReleased) notFound();
-
-  const currentEpisodeIndex = seasonDetail.episodes.findIndex(
-    (e) => e.episode_number === EPISODE.episode_number,
-  );
-
-  const nextEpisodeNumber =
-    currentEpisodeIndex < seasonDetail.episodes.length - 1
-      ? new Date(seasonDetail.episodes[currentEpisodeIndex + 1].air_date) > new Date()
-        ? null
-        : seasonDetail.episodes[currentEpisodeIndex + 1].episode_number
-      : null;
-
-  const prevEpisodeNumber =
-    currentEpisodeIndex > 0 ? seasonDetail.episodes[currentEpisodeIndex - 1].episode_number : null;
-
-  return (
-    <TvShowPlayer
-      tv={tv}
-      id={id}
-      seriesName={tv.name}
-      seasonName={seasonDetail.name}
-      episode={EPISODE}
-      episodes={seasonDetail.episodes}
-      nextEpisodeNumber={nextEpisodeNumber}
-      prevEpisodeNumber={prevEpisodeNumber}
-      startAt={startAt}
-      defaultServer={serverSettings?.defaultTv}
-    />
-  );
-};
-
-const TvShowPlayerPage: NextPage<Params<{ id: number; season: number; episode: number }>> = ({ params }) => {
-  return (
-    <Suspense fallback={<div className="w-full h-screen flex items-center justify-center"><Spinner size="lg" color="warning" variant="simple" /></div>}>
-      <NuqsAdapter>
-      <TvShowPlayerPageContent params={params} />
-          </NuqsAdapter>
-    </Suspense>
-  );
-};
-
-export default TvShowPlayerPage;
-
+export default function Page({ params }: { params: Promise<{ id: number, season: number, episode: number }> }) {
+  return <ClientPage params={params} />;
+}
