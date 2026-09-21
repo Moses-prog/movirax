@@ -89,9 +89,30 @@ export default function LandingPage() {
           if (validMovies.length > 0) {
             const sortedByRating = [...validMovies].sort((a, b) => b.vote_average - a.vote_average);
             
+            // Try to find a movie with a trailer from the top 5
             const top5 = sortedByRating.slice(0, 5);
-            const randomIndex = Math.floor(Math.random() * top5.length);
-            const heroMovie = top5[randomIndex];
+            
+            // Shuffle top 5 to randomize which one we try first
+            const shuffledTop5 = [...top5].sort(() => 0.5 - Math.random());
+            
+            let heroMovie = shuffledTop5[0];
+            let trailerKey = null;
+            
+            for (const movie of shuffledTop5) {
+              try {
+                const videoData = await getLandingMovieVideos(movie.id);
+                if (videoData?.results) {
+                  const trailer = videoData.results.find((v: any) => v.site === "YouTube" && v.type === "Trailer");
+                  if (trailer) {
+                    heroMovie = movie;
+                    trailerKey = trailer.key;
+                    break;
+                  }
+                }
+              } catch (e) {
+                console.error("Failed to fetch trailer for movie " + movie.id, e);
+              }
+            }
             
             const remainingMovies = validMovies.filter((m: any) => m.id !== heroMovie.id);
             const finalMoviesList = [heroMovie, ...remainingMovies.slice(0, 7)];
@@ -104,16 +125,8 @@ export default function LandingPage() {
               vote_average: movie.vote_average,
             }));
             
-            try {
-              const videoData = await getLandingMovieVideos(moviesData[0].id);
-              if (videoData?.results) {
-                const trailer = videoData.results.find((v: any) => v.site === "YouTube" && v.type === "Trailer");
-                if (trailer) {
-                  moviesData[0].trailerKey = trailer.key;
-                }
-              }
-            } catch (e) {
-              console.error("Failed to fetch trailer:", e);
+            if (trailerKey) {
+              moviesData[0].trailerKey = trailerKey;
             }
             
             setMovies(moviesData);
