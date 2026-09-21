@@ -28,13 +28,6 @@ export const getMoviePlayers = (id: string | number, startAt?: number): PlayersP
       resumable: true,
     },
     {
-      title: "Movirax Server 3",
-      source: `https://www.vidking.net/embed/movie/${id}?color=e50914&autoplay=false`,
-      recommended: true,
-      fast: true,
-      resumable: true,
-    },
-    {
       title: "Movirax Server 15",
       source: `https://vidsrc.cc/v3/embed/movie/${id}?autoPlay=false`,
       recommended: true,
@@ -116,13 +109,6 @@ export const getTvShowPlayers = (
       recommended: true,
       fast: true,
       ads: true,
-      resumable: true,
-    },
-    {
-      title: "Movirax Server 3",
-      source: `https://www.vidking.net/embed/tv/${id}/${season}/${episode}?color=e50914&autoplay=false`,
-      recommended: true,
-      fast: true,
       resumable: true,
     },
     {
