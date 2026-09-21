@@ -14,7 +14,7 @@ export default function NetworkStatus() {
     // Initial check (only run on client)
     if (typeof window !== "undefined" && !navigator.onLine) {
       setIsOffline(true);
-      setShowOfflineText(true);
+      setShowOfflineText(false);
     }
 
     const handleOnline = () => {
@@ -30,7 +30,7 @@ export default function NetworkStatus() {
 
     const handleOffline = () => {
       setIsOffline(true);
-      setShowOfflineText(true);
+      setShowOfflineText(false);
       setIsRestored(false);
       addToast({
         title: "You are offline",
@@ -50,7 +50,7 @@ export default function NetworkStatus() {
 
   useEffect(() => {
     if (isOffline) {
-      const t = setTimeout(() => setShowOfflineText(false), 1500);
+      const t = setTimeout(() => setShowOfflineText(true), 800);
       return () => clearTimeout(t);
     }
   }, [isOffline]);
@@ -67,13 +67,13 @@ export default function NetworkStatus() {
   }, [isRestored]);
 
   return (
-    <AnimatePresence>
+    <AnimatePresence mode="wait">
       {isOffline && !isRestored && (
         <motion.div 
           key="offline"
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
-          exit={{ opacity: 0, scale: 0 }}
+          exit={{ opacity: 0, scale: 0.9 }}
           transition={{ duration: 0.5 }}
           className="fixed bottom-24 md:bottom-6 left-1/2 -translate-x-1/2 z-[100] pointer-events-none flex items-center justify-center"
         >
@@ -81,14 +81,6 @@ export default function NetworkStatus() {
             {/* Dot Card (Red) */}
             <motion.div 
               layout 
-              animate={{ 
-                rotate: showOfflineText ? 0 : 360,
-                scale: showOfflineText ? 1 : [1, 1.3, 1]
-              }}
-              transition={{
-                rotate: { duration: 0.8, ease: "easeInOut" },
-                scale: { duration: 1.5, repeat: Infinity, ease: "easeInOut", delay: showOfflineText ? 0 : 0.5 }
-              }}
               className="bg-red-600/90 backdrop-blur-md shadow-lg flex items-center justify-center rounded-full shrink-0 h-9 w-9 origin-center"
             >
               <span className="relative flex h-2.5 w-2.5">
@@ -102,7 +94,8 @@ export default function NetworkStatus() {
               {showOfflineText && (
                 <motion.div 
                   layout
-                  initial={{ opacity: 1, width: "auto" }}
+                  initial={{ opacity: 0, width: 0, overflow: "hidden" }}
+                  animate={{ opacity: 1, width: "auto" }}
                   exit={{ opacity: 0, width: 0, overflow: "hidden" }}
                   transition={{ duration: 0.6, ease: "easeInOut" }}
                   className="shrink-0"
