@@ -41,6 +41,7 @@ export const metadata: Metadata = {
       template: siteConfig.name,
     },
     description: siteConfig.description,
+    images: [siteConfig.ogImage],
   },
   openGraph: {
     type: "website",
@@ -50,6 +51,7 @@ export const metadata: Metadata = {
       template: siteConfig.name,
     },
     description: siteConfig.description,
+    images: [siteConfig.ogImage],
   },
   formatDetection: {
     telephone: false,
@@ -71,7 +73,7 @@ export const viewport: Viewport = {
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html suppressHydrationWarning lang="en">
-      <body className={cn("bg-background min-h-dvh antialiased select-none overflow-x-clip", Poppins.className)}>
+      <body className={cn("bg-background min-h-dvh antialiased overflow-x-clip", Poppins.className)}>
         <Suspense>
           <NuqsAdapter>
             <Providers>
