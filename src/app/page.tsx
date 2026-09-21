@@ -14,8 +14,12 @@ const HomePageList = dynamic(() => import("@/components/sections/Home/List"));
 const HomePage = () => {
   return (
     <div className="flex flex-col gap-3 md:gap-8">
-      <ContinueWatching />
-      <HomePageList />
+      <Suspense fallback={<div className="w-full py-20 flex justify-center"><Spinner size="lg" /></div>}>
+        <NuqsAdapter>
+          <ContinueWatching />
+          <HomePageList />
+        </NuqsAdapter>
+      </Suspense>
     </div>
   );
 };
