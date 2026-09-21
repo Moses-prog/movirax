@@ -73,26 +73,9 @@ export default function LandingPage() {
   useEffect(() => {
     const fetchMovies = async () => {
       try {
-        const accessToken = process.env.TMDB_ACCESS_TOKEN;
-        if (!accessToken) {
-          setMoviesLoading(false);
-          return;
-        }
-
-        // Fetch page 1 and 2 to get a good pool of trending movies for the constellation
-        const response = await fetch(`https://api.themoviedb.org/3/discover/movie?sort_by=popularity.desc&page=1`, {
-          method: "GET",
-          headers: {
-            accept: "application/json",
-            Authorization: `Bearer ${accessToken}`,
-          },
-        });
-
-        if (!response.ok) throw new Error(`API Error: ${response.status}`);
-        const data = await response.json();
+        const data = await getLandingMovies();
 
         if (data?.results && Array.isArray(data.results)) {
-          // Store titles and posters for the Cinematic Universe mind map
           const titles = data.results
             .filter((m: any) => m.title)
             .map((m: any) => ({ 
@@ -101,19 +84,15 @@ export default function LandingPage() {
             }));
           setTrendingTitles(titles);
 
-          // Filter to movies with backdrops and posters for the UI cards
           const validMovies = data.results.filter((movie: any) => movie.poster_path && movie.backdrop_path);
           
           if (validMovies.length > 0) {
-            // Sort valid movies by vote average to get the highest rated popular movies
             const sortedByRating = [...validMovies].sort((a, b) => b.vote_average - a.vote_average);
             
-            // Pick a random movie from the top 5 highest rated to be the hero
             const top5 = sortedByRating.slice(0, 5);
             const randomIndex = Math.floor(Math.random() * top5.length);
             const heroMovie = top5[randomIndex];
             
-            // Reconstruct the array with heroMovie first, then 7 others
             const remainingMovies = validMovies.filter((m: any) => m.id !== heroMovie.id);
             const finalMoviesList = [heroMovie, ...remainingMovies.slice(0, 7)];
 
@@ -126,15 +105,9 @@ export default function LandingPage() {
             }));
             
             try {
-              const videoRes = await fetch(`https://api.themoviedb.org/3/movie/${moviesData[0].id}/videos`, {
-                headers: {
-                  accept: "application/json",
-                  Authorization: `Bearer ${accessToken}`,
-                },
-              });
-              if (videoRes.ok) {
-                const videoData = await videoRes.json();
-                const trailer = videoData.results?.find((v: any) => v.site === "YouTube" && v.type === "Trailer");
+              const videoData = await getLandingMovieVideos(moviesData[0].id);
+              if (videoData?.results) {
+                const trailer = videoData.results.find((v: any) => v.site === "YouTube" && v.type === "Trailer");
                 if (trailer) {
                   moviesData[0].trailerKey = trailer.key;
                 }
@@ -147,14 +120,14 @@ export default function LandingPage() {
           }
         }
       } catch (error) {
-        console.error("Failed to fetch movies:", error);
+        console.error("Failed to fetch landing movies:", error);
       } finally {
         setMoviesLoading(false);
       }
     };
 
     fetchMovies();
-  }, []);
+  }, []);;
 
   useEffect(() => {
     const timer = setTimeout(() => setPageReady(true), 600);
