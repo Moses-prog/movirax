@@ -126,18 +126,21 @@ const MoviePlayer: React.FC<{ movie: MovieDetails; startAt?: number; defaultServ
   usePlayerEvents({ saveHistory: true });
   useDocumentTitle(`Play ${title} | ${siteConfig.name}`);
 
+  const isInitialMobile = useRef(typeof window !== "undefined" ? window.innerWidth < 768 : false).current;
+
   const PLAYER = useMemo(() => {
     const basePlayer = players[selectedSource] || players[0];
     const sep = basePlayer.source.includes("?") ? "&" : "?";
     
     // Disable forced autoplay on mobile to prevent OS-level media blocks
-    const autoPlayParam = mobile ? "" : "autoplay=1&";
+    // We use isInitialMobile so it doesn't recalculate and reload the iframe when the user rotates the screen
+    const autoPlayParam = isInitialMobile ? "" : "autoplay=1&";
 
     return {
       ...basePlayer,
       source: `${basePlayer.source}${sep}${autoPlayParam}modestbranding=1`,
     };
-  }, [players, selectedSource, mobile]);
+  }, [players, selectedSource, isInitialMobile]);
 
   useEffect(() => {
     installAdBlocker();

@@ -7,7 +7,7 @@
   "start_url": "/",
   "id": "/",
   "display": "standalone",
-  "orientation": "portrait",
+  "orientation": "any",
   "lang": "en-US",
   "icons": [
     {
