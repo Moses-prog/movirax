@@ -1,4 +1,5 @@
 "use client";
+import { Suspense } from "react";
 
 import { useEffect, useState } from "react";
 import useSupabaseUser from "@/hooks/useSupabaseUser";
@@ -18,7 +19,7 @@ const HomePage = () => {
   );
 };
 
-export default function RootPage() {
+function RootPageContent() {
   const { data: user, isLoading } = useSupabaseUser();
   const [isMounted, setIsMounted] = useState(false);
 
@@ -45,4 +46,12 @@ export default function RootPage() {
 
   // Show landing page to unauthenticated visitors
   return <LandingPage />;
+}
+
+export default function RootPage() {
+  return (
+    <Suspense fallback={<div className="w-full h-screen flex items-center justify-center"><Spinner size="lg" /></div>}>
+      <RootPageContent />
+    </Suspense>
+  );
 }

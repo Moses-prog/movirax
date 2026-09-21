@@ -1,4 +1,5 @@
 "use client";
+import { Suspense } from "react";
 
 import { tmdb } from "@/api/tmdb";
 import { getMovieLastPosition } from "@/actions/histories";
@@ -12,7 +13,7 @@ import { NextPage } from "next";
 import { notFound } from "next/navigation";
 import { use } from "react";
 
-const MoviePlayerPage: NextPage<Params<{ id: number }>> = ({ params }) => {
+const MoviePlayerPageContent: NextPage<Params<{ id: number }>> = ({ params }) => {
   const { id } = use(params);
 
   const {
@@ -51,6 +52,14 @@ const MoviePlayerPage: NextPage<Params<{ id: number }>> = ({ params }) => {
     <div className="w-full h-screen bg-black flex items-center justify-center overflow-hidden">
       <MoviePlayer movie={movie} startAt={startAt} defaultServer={serverSettings?.defaultMovie} />
     </div>
+  );
+};
+
+const MoviePlayerPage: NextPage<Params<{ id: number }>> = ({ params }) => {
+  return (
+    <Suspense fallback={<div className="w-full h-screen flex items-center justify-center"><Spinner size="lg" variant="simple" /></div>}>
+      <MoviePlayerPageContent params={params} />
+    </Suspense>
   );
 };
 

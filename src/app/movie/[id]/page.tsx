@@ -1,62 +1,72 @@
-"use client";
-
-import { Suspense, use } from "react";
-import { Spinner } from "@heroui/spinner";
-import { useQuery } from "@tanstack/react-query";
-import { tmdb } from "@/api/tmdb";
-import { Cast } from "tmdb-ts/dist/types/credits";
-import { notFound } from "next/navigation";
-import { Image } from "tmdb-ts";
-import dynamic from "next/dynamic";
+import { Metadata } from "next";
+import { siteConfig } from "@/config/site";
+import ClientPage from "./Client";
 import { Params } from "@/types";
-import { NextPage } from "next";
-const PhotosSection = dynamic(() => import("@/components/ui/other/PhotosSection"));
-const BackdropSection = dynamic(() => import("@/components/sections/Movie/Detail/Backdrop"));
-const OverviewSection = dynamic(() => import("@/components/sections/Movie/Detail/Overview"));
-const CastsSection = dynamic(() => import("@/components/sections/Movie/Detail/Casts"));
-const RelatedSection = dynamic(() => import("@/components/sections/Movie/Detail/Related"));
+import { tmdb } from "@/api/tmdb";
 
-const MovieDetailPage: NextPage<Params<{ id: number }>> = ({ params }) => {
-  const { id } = use(params);
-
-  const {
-    data: movie,
-    isPending,
-    error,
-  } = useQuery({
-    queryFn: () =>
-      tmdb.movies.details(id, [
-        "images",
-        "videos",
-        "credits",
-        "keywords",
-        "recommendations",
-        "similar",
-        "reviews",
-        "watch/providers",
-      ]),
-    queryKey: ["movie-detail", id],
-  });
-
-  if (isPending) {
-    return <Spinner size="lg" className="absolute-center" variant="simple" />;
+export async function generateMetadata(
+  props: { params: Promise<{ id: number }> }
+): Promise<Metadata> {
+  const params = await props.params;
+  const id = params.id;
+  
+  try {
+    const details = await (tmdb.movies.details(id));
+    const title = details.name || details.title || "";
+    const description = details.overview || "";
+    const image = details.backdrop_path ? `https://image.tmdb.org/t/p/w1280${details.backdrop_path}` : siteConfig.ogImage;
+    
+    return {
+      title: `${title} | ${siteConfig.name}`,
+      description,
+      openGraph: {
+        title,
+        description,
+        images: [{ url: image }],
+      },
+      twitter: {
+        card: "summary_large_image",
+        title,
+        description,
+        images: [image],
+      }
+    };
+  } catch (e) {
+    return { title: siteConfig.name };
   }
+}
 
-  if (error) notFound();
+export default async function Page(props: { params: Promise<{ id: number }> }) {
+  const params = await props.params;
+  const id = params.id;
+  
+  let jsonLd = null;
+  try {
+    const details = await (tmdb.movies.details(id));
+    const title = details.name || details.title || "";
+    const image = details.backdrop_path ? `https://image.tmdb.org/t/p/w1280${details.backdrop_path}` : siteConfig.ogImage;
+    
+    
+    jsonLd = {
+      "@context": "https://schema.org",
+      "@type": "Movie",
+      "name": title,
+      "image": image,
+      "description": details.overview,
+      "dateCreated": details.release_date,
+    };
+    
+  } catch (e) {}
 
   return (
-    <div className="mx-auto max-w-5xl">
-      <Suspense fallback={<Spinner size="lg" className="absolute-center" variant="simple" />}>
-        <div className="flex flex-col gap-10">
-          <BackdropSection movie={movie} />
-          <OverviewSection movie={movie} />
-          <CastsSection casts={movie.credits.cast as Cast[]} />
-          <PhotosSection images={movie.images.backdrops as Image[]} />
-          <RelatedSection movie={movie} />
-        </div>
-      </Suspense>
-    </div>
+    <>
+      {jsonLd && (
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+        />
+      )}
+      <ClientPage params={props.params as any} />
+    </>
   );
-};
-
-export default MovieDetailPage;
+}

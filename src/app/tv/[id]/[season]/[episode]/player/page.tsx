@@ -1,4 +1,5 @@
 "use client";
+import { Suspense } from "react";
 
 import { tmdb } from "@/api/tmdb";
 import { Params } from "@/types";
@@ -12,9 +13,7 @@ import { getTvShowLastPosition } from "@/actions/histories";
 import { fetchServerSettings } from "@/actions/settings";
 const TvShowPlayer = dynamic(() => import("@/components/sections/TV/Player/Player"));
 
-const TvShowPlayerPage: NextPage<Params<{ id: number; season: number; episode: number }>> = ({
-  params,
-}) => {
+const TvShowPlayerPageContent: NextPage<Params<{ id: number; season: number; episode: number }>> = ({ params }) => {
   const { id, season, episode } = use(params);
 
   const {
@@ -89,6 +88,14 @@ const TvShowPlayerPage: NextPage<Params<{ id: number; season: number; episode: n
       startAt={startAt}
       defaultServer={serverSettings?.defaultTv}
     />
+  );
+};
+
+const TvShowPlayerPage: NextPage<Params<{ id: number; season: number; episode: number }>> = ({ params }) => {
+  return (
+    <Suspense fallback={<div className="w-full h-screen flex items-center justify-center"><Spinner size="lg" color="warning" variant="simple" /></div>}>
+      <TvShowPlayerPageContent params={params} />
+    </Suspense>
   );
 };
 
