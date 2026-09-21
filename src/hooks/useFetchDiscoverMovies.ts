@@ -1,8 +1,8 @@
 "use client";
 
-import { tmdb } from "@/api/tmdb";
 import { DiscoverMoviesFetchQueryType } from "@/types/movie";
 import { MovieDiscoverResult } from "tmdb-ts/dist/types/discover";
+import { discoverMovies, getTrending, popularMovies, nowPlayingMovies, upcomingMovies, topRatedMovies } from "@/actions/tmdb";
 
 interface FetchDiscoverMovies {
   page?: number;
@@ -15,13 +15,13 @@ const useFetchDiscoverMovies = ({
   type = "discover",
   genres,
 }: FetchDiscoverMovies): Promise<MovieDiscoverResult> => {
-  const discover = () => tmdb.discover.movie({ page: page, with_genres: genres });
-  const todayTrending = () => tmdb.trending.trending("movie", "day", { page: page });
-  const thisWeekTrending = () => tmdb.trending.trending("movie", "week", { page: page });
-  const popular = () => tmdb.movies.popular({ page: page });
-  const nowPlaying = () => tmdb.movies.nowPlaying({ page: page });
-  const upcoming = () => tmdb.movies.upcoming({ page: page });
-  const topRated = () => tmdb.movies.topRated({ page: page });
+  const discover = () => discoverMovies(page, genres);
+  const todayTrending = () => getTrending("movie", "day", page) as any;
+  const thisWeekTrending = () => getTrending("movie", "week", page) as any;
+  const popular = () => popularMovies(page);
+  const nowPlaying = () => nowPlayingMovies(page);
+  const upcoming = () => upcomingMovies(page);
+  const topRated = () => topRatedMovies(page);
 
   const queryData = {
     discover,

@@ -5,7 +5,7 @@ export const env = createEnv({
   server: {
     PROTECTED_PATHS: z.string().optional().default("/auth/reset-password,/profile"),
     SUPABASE_SERVICE_ROLE_KEY: z.string().optional().default(""),
-    TMDB_ACCESS_TOKEN: z.string().optional().default(""),
+    TMDB_ACCESS_TOKEN: z.string().optional().default(process.env.NEXT_PUBLIC_TMDB_ACCESS_TOKEN || ""),
   },
   client: {
     NEXT_PUBLIC_SUPABASE_URL: z.string().optional().default(""),

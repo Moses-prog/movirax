@@ -1,5 +1,6 @@
 "use server";
 import { tmdb } from "@/api/tmdb";
+import { env } from "@/utils/env";
 
 export async function getMovieDetails(id: number, append?: string[]) {
   return tmdb.movies.details(id, append as any);
@@ -29,20 +30,54 @@ export async function getTvGenres() {
   return tmdb.genres.tvShows();
 }
 
-export async function getTrending(mediaType: "movie" | "tv", timeWindow: "day" | "week") {
-  return tmdb.trending.trending(mediaType, timeWindow);
+export async function getTrending(mediaType: "movie" | "tv", timeWindow: "day" | "week", page?: number) {
+  return tmdb.trending.trending(mediaType, timeWindow, { page });
 }
 
 export async function getLandingMovies() {
+  const token = env.TMDB_ACCESS_TOKEN;
   const res = await fetch("https://api.themoviedb.org/3/discover/movie?sort_by=popularity.desc&page=1", {
-    headers: { Authorization: `Bearer ${process.env.TMDB_ACCESS_TOKEN}`, accept: "application/json" }
+    headers: { Authorization: `Bearer ${token}`, accept: "application/json" }
   });
   return res.json();
 }
 
 export async function getLandingMovieVideos(id: number) {
+  const token = env.TMDB_ACCESS_TOKEN;
   const res = await fetch(`https://api.themoviedb.org/3/movie/${id}/videos`, {
-    headers: { Authorization: `Bearer ${process.env.TMDB_ACCESS_TOKEN}`, accept: "application/json" }
+    headers: { Authorization: `Bearer ${token}`, accept: "application/json" }
   });
   return res.json();
+}
+
+export async function discoverMovies(page: number, genres?: string) {
+  return tmdb.discover.movie({ page, with_genres: genres });
+}
+export async function popularMovies(page: number) {
+  return tmdb.movies.popular({ page });
+}
+export async function nowPlayingMovies(page: number) {
+  return tmdb.movies.nowPlaying({ page });
+}
+export async function upcomingMovies(page: number) {
+  return tmdb.movies.upcoming({ page });
+}
+export async function topRatedMovies(page: number) {
+  return tmdb.movies.topRated({ page });
+}
+
+export async function discoverTvShows(page: number, genres?: string) {
+  return tmdb.discover.tvShow({ page, with_genres: genres });
+}
+export async function popularTvShows(page: number) {
+  return tmdb.tvShows.popular({ page });
+}
+export async function airingTodayTvShows(page: number) {
+  return tmdb.tvShows.airingToday({ page });
+}
+export async function onTheAirTvShows(page: number) {
+  return tmdb.tvShows.onTheAir({ page });
+}
+export async function topRatedTvShows(page: number) {
+  return tmdb.tvShows.topRated({ page });
 }
