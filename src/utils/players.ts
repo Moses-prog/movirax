@@ -29,7 +29,7 @@ export const getMoviePlayers = (id: string | number, startAt?: number): PlayersP
     },
     {
       title: "Movirax Server 15",
-      source: `https://vidsrc.cc/v3/embed/movie/${id}?autoPlay=false`,
+      source: `https://vidsrc.in/embed/movie/${id}`,
       recommended: true,
       fast: true,
       ads: true,
@@ -68,12 +68,12 @@ export const getMoviePlayers = (id: string | number, startAt?: number): PlayersP
     },
     {
       title: "Movirax Server 11",
-      source: `https://vidsrc.xyz/embed/movie/${id}`,
+      source: `https://vidsrc.sh/embed/movie/${id}`,
       ads: true,
     },
     {
       title: "Movirax Server 14",
-      source: `https://vidsrc.cc/v2/embed/movie/${id}?autoPlay=false`,
+      source: `https://vidsrc.me/embed/movie/${id}`,
       ads: true,
     },
     {
@@ -150,27 +150,27 @@ export const getTvShowPlayers = (
     },
     {
       title: "Movirax Server 11",
-      source: `https://vidsrc.xyz/embed/tv/${id}/${season}/${episode}`,
+      source: `https://vidsrc.sh/embed/tv/${id}/${season}/${episode}`,
       ads: true,
     },
     {
       title: "Movirax Server 12",
-      source: `https://vidsrc.to/embed/tv/${id}/${season}/${episode}`,
+      source: `https://vidsrc.me/embed/tv/${id}/${season}/${episode}`,
       ads: true,
     },
     {
       title: "Movirax Server 13",
-      source: `https://vidsrc.icu/embed/tv/${id}/${season}/${episode}`,
+      source: `https://vidsrc.in/embed/tv/${id}/${season}/${episode}`,
       ads: true,
     },
     {
       title: "Movirax Server 14",
-      source: `https://vidsrc.cc/v2/embed/tv/${id}/${season}/${episode}?autoPlay=false`,
+      source: `https://vidsrc.pm/embed/tv/${id}/${season}/${episode}`,
       ads: true,
     },
     {
       title: "Movirax Server 15",
-      source: `https://vidsrc.cc/v3/embed/tv/${id}/${season}/${episode}?autoPlay=false`,
+      source: `https://vidsrc.sh/embed/tv/${id}/${season}/${episode}`,
       recommended: true,
       fast: true,
       ads: true,
