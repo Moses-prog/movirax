@@ -35,7 +35,7 @@ export async function getTrending(mediaType: "movie" | "tv", timeWindow: "day" |
 }
 
 export async function getLandingMovies() {
-  const token = env.TMDB_ACCESS_TOKEN || process.env["NEXT_PUBLIC_TMDB_ACCESS_TOKEN"];
+  const token = env.TMDB_ACCESS_TOKEN || process.env.NEXT_PUBLIC_TMDB_ACCESS_TOKEN;
   const res = await fetch("https://api.themoviedb.org/3/discover/movie?sort_by=popularity.desc&page=1", {
     headers: { Authorization: `Bearer ${token}`, accept: "application/json" }
   });
@@ -43,7 +43,7 @@ export async function getLandingMovies() {
 }
 
 export async function getLandingMovieVideos(id: number) {
-  const token = env.TMDB_ACCESS_TOKEN || process.env["NEXT_PUBLIC_TMDB_ACCESS_TOKEN"];
+  const token = env.TMDB_ACCESS_TOKEN || process.env.NEXT_PUBLIC_TMDB_ACCESS_TOKEN;
   const res = await fetch(`https://api.themoviedb.org/3/movie/${id}/videos`, {
     headers: { Authorization: `Bearer ${token}`, accept: "application/json" }
   });

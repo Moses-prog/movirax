@@ -1,7 +1,7 @@
 import { env } from "@/utils/env";
 import { TMDB } from "tmdb-ts";
 
-const fallbackToken = process.env["NEXT_PUBLIC_TMDB_ACCESS_TOKEN"];
+const fallbackToken = process.env.NEXT_PUBLIC_TMDB_ACCESS_TOKEN;
 const token = env.TMDB_ACCESS_TOKEN || fallbackToken;
 
 if (!token) {
