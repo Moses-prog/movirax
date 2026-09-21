@@ -50,7 +50,7 @@ export default function NetworkStatus() {
 
   useEffect(() => {
     if (isOffline) {
-      const t = setTimeout(() => setShowOfflineText(true), 800);
+      const t = setTimeout(() => setShowOfflineText(true), 2500);
       return () => clearTimeout(t);
     }
   }, [isOffline]);
@@ -81,6 +81,8 @@ export default function NetworkStatus() {
             {/* Dot Card (Red) */}
             <motion.div 
               layout 
+              animate={{ scale: [1, 1.3, 1] }}
+              transition={{ scale: { duration: 1.5, repeat: Infinity, ease: "easeInOut" } }}
               className="bg-red-600/90 backdrop-blur-md shadow-lg flex items-center justify-center rounded-full shrink-0 h-9 w-9 origin-center"
             >
               <span className="relative flex h-2.5 w-2.5">
