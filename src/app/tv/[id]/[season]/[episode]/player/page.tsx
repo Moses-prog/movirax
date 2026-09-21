@@ -1,4 +1,5 @@
 "use client";
+import { NuqsAdapter } from "nuqs/adapters/next/app";
 import { Suspense } from "react";
 
 import { tmdb } from "@/api/tmdb";
@@ -94,7 +95,9 @@ const TvShowPlayerPageContent: NextPage<Params<{ id: number; season: number; epi
 const TvShowPlayerPage: NextPage<Params<{ id: number; season: number; episode: number }>> = ({ params }) => {
   return (
     <Suspense fallback={<div className="w-full h-screen flex items-center justify-center"><Spinner size="lg" color="warning" variant="simple" /></div>}>
+      <NuqsAdapter>
       <TvShowPlayerPageContent params={params} />
+          </NuqsAdapter>
     </Suspense>
   );
 };

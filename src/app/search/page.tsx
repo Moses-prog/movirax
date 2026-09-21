@@ -1,3 +1,4 @@
+import { NuqsAdapter } from "nuqs/adapters/next/app";
 import { siteConfig } from "@/config/site";
 import dynamic from "next/dynamic";
 import { Metadata, NextPage } from "next/types";
@@ -11,7 +12,9 @@ export const metadata: Metadata = {
 const SearchPage: NextPage = () => {
   return (
     <Suspense>
+      <NuqsAdapter>
       <SearchList />
+          </NuqsAdapter>
     </Suspense>
   );
 };

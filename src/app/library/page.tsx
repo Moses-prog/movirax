@@ -1,3 +1,4 @@
+import { NuqsAdapter } from "nuqs/adapters/next/app";
 import { siteConfig } from "@/config/site";
 import { Metadata, NextPage } from "next/types";
 import { cache, Suspense } from "react";
@@ -27,6 +28,7 @@ const LibraryPage: NextPage = async () => {
 
   return (
     <Suspense>
+      <NuqsAdapter>
       {error || !user ? (
         <UnauthorizedNotice
           title="Sign in to access your library"
@@ -35,6 +37,7 @@ const LibraryPage: NextPage = async () => {
       ) : (
         <LibraryList />
       )}
+          </NuqsAdapter>
     </Suspense>
   );
 };

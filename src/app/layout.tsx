@@ -75,8 +75,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
   return (
     <html suppressHydrationWarning lang="en">
       <body className={cn("bg-background min-h-dvh antialiased select-none overflow-x-clip", Poppins.className)}>
-        <Suspense>
-          <NuqsAdapter>
+        
             <Providers>
               <CookieConsent />
               <TopNavbar />
@@ -94,8 +93,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
                 <NetworkStatus />
               <ViewHistoryFAB />
             </Providers>
-          </NuqsAdapter>
-        </Suspense>
+          
         <SpeedInsights debug={false} />
         <Analytics debug={false} />
       </body>

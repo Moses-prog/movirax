@@ -1,3 +1,4 @@
+import { NuqsAdapter } from "nuqs/adapters/next/app";
 import { Suspense } from "react";
 import AuthForms from "@/components/sections/Auth/Forms";
 import { siteConfig } from "@/config/site";
@@ -14,7 +15,9 @@ const AuthPageContent: NextPage = () => {
 const AuthPage: NextPage = () => {
   return (
     <Suspense>
+      <NuqsAdapter>
       <AuthPageContent />
+          </NuqsAdapter>
     </Suspense>
   );
 };

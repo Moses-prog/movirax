@@ -1,3 +1,4 @@
+import { NuqsAdapter } from "nuqs/adapters/next/app";
 import { Metadata, NextPage } from "next/types";
 import { siteConfig } from "@/config/site";
 import dynamic from "next/dynamic";
@@ -11,7 +12,9 @@ export const metadata: Metadata = {
 const DiscoverPage: NextPage = () => {
   return (
     <Suspense>
+      <NuqsAdapter>
       <DiscoverListGroup />
+          </NuqsAdapter>
     </Suspense>
   );
 };

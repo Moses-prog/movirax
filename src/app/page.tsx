@@ -1,4 +1,5 @@
 "use client";
+import { NuqsAdapter } from "nuqs/adapters/next/app";
 import { Suspense } from "react";
 
 import { useEffect, useState } from "react";
@@ -49,9 +50,5 @@ function RootPageContent() {
 }
 
 export default function RootPage() {
-  return (
-    <Suspense fallback={<div className="w-full h-screen flex items-center justify-center"><Spinner size="lg" /></div>}>
-      <RootPageContent />
-    </Suspense>
-  );
+  return <RootPageContent />;
 }

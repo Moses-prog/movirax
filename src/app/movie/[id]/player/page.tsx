@@ -1,4 +1,5 @@
 "use client";
+import { NuqsAdapter } from "nuqs/adapters/next/app";
 import { Suspense } from "react";
 
 import { tmdb } from "@/api/tmdb";
@@ -58,7 +59,9 @@ const MoviePlayerPageContent: NextPage<Params<{ id: number }>> = ({ params }) =>
 const MoviePlayerPage: NextPage<Params<{ id: number }>> = ({ params }) => {
   return (
     <Suspense fallback={<div className="w-full h-screen flex items-center justify-center"><Spinner size="lg" variant="simple" /></div>}>
+      <NuqsAdapter>
       <MoviePlayerPageContent params={params} />
+          </NuqsAdapter>
     </Suspense>
   );
 };
