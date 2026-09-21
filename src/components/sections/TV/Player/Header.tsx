@@ -1,6 +1,7 @@
 import { cn } from "@/utils/helpers";
 import { ArrowLeft, List, Next, Prev, Server } from "@/utils/icons";
 import ActionButton from "./ActionButton";
+import { FiMaximize } from "react-icons/fi";
 import { TvShowPlayerProps } from "./Player";
 
 interface TvShowPlayerHeaderProps extends Omit<TvShowPlayerProps, "episodes" | "tv" | "startAt"> {
@@ -11,6 +12,7 @@ interface TvShowPlayerHeaderProps extends Omit<TvShowPlayerProps, "episodes" | "
   onOpenSource: () => void;
   onOpenEpisode: () => void;
   onOpenSeason: () => void;
+  onToggleFullscreen?: () => void;
 }
 
 const TvShowPlayerHeader: React.FC<TvShowPlayerHeaderProps> = ({

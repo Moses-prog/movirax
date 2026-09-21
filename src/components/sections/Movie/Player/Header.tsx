@@ -1,12 +1,14 @@
 import { cn } from "@/utils/helpers";
 import { ArrowLeft, Server } from "@/utils/icons";
 import ActionButton from "./ActionButton";
+import { FiMaximize } from "react-icons/fi";
 
 interface MoviePlayerHeaderProps {
   id: number;
   movieName: string;
   hidden?: boolean;
   onOpenSource: () => void;
+  onToggleFullscreen?: () => void;
 }
 
 const MoviePlayerHeader: React.FC<MoviePlayerHeaderProps> = ({

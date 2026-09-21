@@ -76,7 +76,27 @@ function installAdBlocker() {
       get(target, prop) {
         const val = (target as any)[prop];
         if (typeof val === "function") {
-          return (...args: any[]) => {
+            const toggleFullscreen = async () => {
+    try {
+      if (!document.fullscreenElement) {
+        await document.documentElement.requestFullscreen();
+        if (screen.orientation && screen.orientation.lock) {
+          await screen.orientation.lock("landscape").catch(console.error);
+        }
+      } else {
+        if (document.exitFullscreen) {
+          await document.exitFullscreen();
+        }
+        if (screen.orientation && screen.orientation.unlock) {
+          screen.orientation.unlock();
+        }
+      }
+    } catch (e) {
+      console.error("Fullscreen error:", e);
+    }
+  };
+
+  return (...args: any[]) => {
             if (["assign", "replace"].includes(prop as string) && !isSafe(args[0])) return;
             return val.apply(target, args);
           };
@@ -141,6 +161,7 @@ const TvShowPlayer: React.FC<TvShowPlayerProps> = ({
           onOpenSource={sourceHandlers.open}
           onOpenEpisode={episodeHandlers.open}
           onOpenSeason={seasonHandlers.open}
+            onToggleFullscreen={toggleFullscreen}
           totalSeasons={tv.number_of_seasons}
           currentSeason={episode.season_number}
           {...props}
