@@ -50,8 +50,8 @@ export async function getLandingMovieVideos(id: number) {
   return res.json();
 }
 
-export async function discoverMovies(page: number, genres?: string) {
-  return tmdb.discover.movie({ page, with_genres: genres });
+export async function discoverMovies(page: number, genres?: string, sortBy?: string) {
+  return tmdb.discover.movie({ page, with_genres: genres, sort_by: sortBy as any });
 }
 export async function popularMovies(page: number) {
   return tmdb.movies.popular({ page });
@@ -66,8 +66,8 @@ export async function topRatedMovies(page: number) {
   return tmdb.movies.topRated({ page });
 }
 
-export async function discoverTvShows(page: number, genres?: string) {
-  return tmdb.discover.tvShow({ page, with_genres: genres });
+export async function discoverTvShows(page: number, genres?: string, sortBy?: string) {
+  return tmdb.discover.tvShow({ page, with_genres: genres, sort_by: sortBy as any });
 }
 export async function popularTvShows(page: number) {
   return tmdb.tvShows.popular({ page });
