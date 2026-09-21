@@ -74,7 +74,7 @@ export const viewport: Viewport = {
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html suppressHydrationWarning lang="en">
-      <body className={cn("bg-background min-h-dvh antialiased overflow-x-clip", Poppins.className)}>
+      <body className={cn("bg-background min-h-dvh antialiased select-none overflow-x-clip", Poppins.className)}>
         <Suspense>
           <NuqsAdapter>
             <Providers>
