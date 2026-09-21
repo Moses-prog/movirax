@@ -78,27 +78,7 @@ function installAdBlocker() {
       get(target, prop) {
         const val = (target as any)[prop];
         if (typeof val === "function") {
-            const toggleFullscreen = async () => {
-    try {
-      if (!document.fullscreenElement) {
-        await document.documentElement.requestFullscreen();
-        if (screen.orientation && screen.orientation.lock) {
-          await screen.orientation.lock("landscape").catch(console.error);
-        }
-      } else {
-        if (document.exitFullscreen) {
-          await document.exitFullscreen();
-        }
-        if (screen.orientation && screen.orientation.unlock) {
-          screen.orientation.unlock();
-        }
-      }
-    } catch (e) {
-      console.error("Fullscreen error:", e);
-    }
-  };
-
-  return (...args: any[]) => {
+return (...args: any[]) => {
             if (["assign", "replace"].includes(prop as string) && !isSafe(args[0])) return;
             return val.apply(target, args);
           };
@@ -177,6 +157,26 @@ const MoviePlayer: React.FC<{ movie: MovieDetails; startAt?: number; defaultServ
   }, []);
 
   // ── Shield Logic ──
+  const toggleFullscreen = async () => {
+    try {
+      if (!document.fullscreenElement) {
+        await document.documentElement.requestFullscreen();
+        if (screen.orientation && screen.orientation.lock) {
+          await screen.orientation.lock("landscape").catch(console.error);
+        }
+      } else {
+        if (document.exitFullscreen) {
+          await document.exitFullscreen();
+        }
+        if (screen.orientation && screen.orientation.unlock) {
+          screen.orientation.unlock();
+        }
+      }
+    } catch (e) {
+      console.error("Fullscreen error:", e);
+    }
+  };
+
   const handleShieldInteraction = (e: React.MouseEvent | React.TouchEvent) => {
     e.stopPropagation();
     (window as any).__userGesture = true;
