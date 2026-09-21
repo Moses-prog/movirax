@@ -1,4 +1,5 @@
-import { tmdb } from "@/api/tmdb";
+import { getMovieGenres, getTvGenres } from "@/actions/tmdb";
+
 import { ContentType } from "@/types";
 import { cn } from "@/utils/helpers";
 import { Select, SelectItem, SelectProps } from "@heroui/react";
@@ -10,7 +11,7 @@ interface GenresSelectProps extends Omit<SelectProps, "children" | "selectionMod
 }
 
 const getQuery = (type: ContentType) => {
-  return type === "movie" ? tmdb.genres.movies() : tmdb.genres.tvShows();
+  return type === "movie" ? getMovieGenres() : getTvGenres();
 };
 
 const GenresSelect: React.FC<GenresSelectProps> = ({

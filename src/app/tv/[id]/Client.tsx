@@ -1,7 +1,9 @@
 "use client";
+import { getTvShowDetails } from "@/actions/tmdb";
+
 
 import { use, Suspense, useMemo } from "react";
-import { tmdb } from "@/api/tmdb";
+
 import { Spinner } from "@heroui/react";
 import { useQuery } from "@tanstack/react-query";
 import { notFound } from "next/navigation";
@@ -36,7 +38,7 @@ const TVShowDetailPage: NextPage<PageProps> = ({ params }) => {
   } = useQuery({
     queryKey: ["tv-show-detail", id],
     queryFn: () =>
-      tmdb.tvShows.details(id, [
+      getTvShowDetails(id, [
         "images",
         "videos",
         "credits",

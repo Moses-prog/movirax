@@ -1,8 +1,9 @@
 "use client";
+import { getMovieDetails } from "@/actions/tmdb";
 import { NuqsAdapter } from "nuqs/adapters/next/app";
 import { Suspense } from "react";
 
-import { tmdb } from "@/api/tmdb";
+
 import { getMovieLastPosition } from "@/actions/histories";
 import { fetchServerSettings } from "@/actions/settings";
 import MoviePlayer from "@/components/sections/Movie/Player/Player";
@@ -22,7 +23,7 @@ const MoviePlayerPageContent: NextPage<Params<{ id: number }>> = ({ params }) =>
     isPending,
     error,
   } = useQuery({
-    queryFn: () => tmdb.movies.details(id),
+    queryFn: () => getMovieDetails(id),
     queryKey: ["movie-player-detail", id],
   });
 

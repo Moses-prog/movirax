@@ -1,6 +1,8 @@
 "use client";
+import { getTrending } from "@/actions/tmdb";
 
-import { tmdb } from "@/api/tmdb";
+
+
 import ThreeDMarquee from "@/components/ui/background/ThreeDMarquee";
 import IconButton from "@/components/ui/button/IconButton";
 import Brand from "@/components/ui/other/BrandLogo";
@@ -37,12 +39,12 @@ const AuthForms: React.FC = () => {
   );
 
   const { data: movies, isPending: isPendingMovies } = useQuery({
-    queryFn: () => tmdb.trending.trending("movie", "day"),
+    queryFn: () => getTrending("movie", "day"),
     queryKey: ["movie-auth-posters"],
   });
 
   const { data: tvShows, isPending: isPendingTv } = useQuery({
-    queryFn: () => tmdb.trending.trending("tv", "day"),
+    queryFn: () => getTrending("tv", "day"),
     queryKey: ["tv-auth-posters"],
   });
 

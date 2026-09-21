@@ -1,8 +1,9 @@
 "use client";
+import { getTvShowDetails, getTvShowSeason } from "@/actions/tmdb";
 import { NuqsAdapter } from "nuqs/adapters/next/app";
 import { Suspense } from "react";
 
-import { tmdb } from "@/api/tmdb";
+
 import { Params } from "@/types";
 import { Spinner } from "@heroui/react";
 import { useQuery } from "@tanstack/react-query";
@@ -22,7 +23,7 @@ const TvShowPlayerPageContent: NextPage<Params<{ id: number; season: number; epi
     isPending: isPendingTv,
     error: errorTv,
   } = useQuery({
-    queryFn: () => tmdb.tvShows.details(id),
+    queryFn: () => getTvShowDetails(id),
     queryKey: ["tv-show-player-details", id],
   });
 
@@ -31,7 +32,7 @@ const TvShowPlayerPageContent: NextPage<Params<{ id: number; season: number; epi
     isPending: isPendingSeason,
     error: errorSeason,
   } = useQuery({
-    queryFn: () => tmdb.tvShows.season(id, season),
+    queryFn: () => getTvShowSeason(id, season),
     queryKey: ["tv-show-season", id, season],
   });
 

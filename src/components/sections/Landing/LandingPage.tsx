@@ -1,4 +1,6 @@
 "use client";
+import { getLandingMovies, getLandingMovieVideos } from "@/actions/tmdb";
+
 
 import { Skeleton } from "@heroui/react";
 import { useEffect, useState, useRef } from "react";
@@ -71,7 +73,7 @@ export default function LandingPage() {
   useEffect(() => {
     const fetchMovies = async () => {
       try {
-        const accessToken = process.env.NEXT_PUBLIC_TMDB_ACCESS_TOKEN;
+        const accessToken = process.env.TMDB_ACCESS_TOKEN;
         if (!accessToken) {
           setMoviesLoading(false);
           return;
