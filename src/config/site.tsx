@@ -17,6 +17,7 @@ export const siteConfig: SiteConfigType = {
   name: "MoviraX",
   description: "Your only choice for a free movies and tv shows streaming website.",
   favicon: "/favicon.ico",
+  ogImage: "/moviraxlogo.png",
   navItems: [
     {
       label: "Home",
