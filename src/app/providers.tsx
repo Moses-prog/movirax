@@ -8,7 +8,6 @@ import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { AppProgressProvider as ProgressProvider } from "@bprogress/next";
 import { NuqsAdapter } from "nuqs/adapters/next/app";
 import { usePathname, useRouter } from "next/navigation";
-import useDiscoverFilters from "@/hooks/useDiscoverFilters";
 import BrowserThemeColor from "@/components/BrowserThemeColor";
 
 import { ProfileProvider } from "@/contexts/ProfileContext";
@@ -18,8 +17,7 @@ export const queryClient = new QueryClient();
 export default function Providers({ children }: PropsWithChildren) {
   const { push } = useRouter();
   const pathName = usePathname();
-  const { content } = useDiscoverFilters();
-  const tv = pathName.includes("/tv/") || content === "tv";
+  
 
   return (
     <QueryClientProvider client={queryClient}>

@@ -22,6 +22,7 @@ const CookieConsent = dynamic(() => import("@/components/ui/overlay/CookieConsen
 const BanWarning = dynamic(() => import("@/components/ui/overlay/BanWarning"));
 
 export const metadata: Metadata = {
+  metadataBase: new URL("https://movirax.vercel.app"),
   title: siteConfig.name,
   applicationName: siteConfig.name,
   description: siteConfig.description,
