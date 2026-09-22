@@ -104,8 +104,8 @@ export const TvShowOverviewSection: React.FC<TvShowOverviewSectionProps> = ({
             <Genres genres={tv.genres} type="tv" />
           </div>
 
-          <div id="action" className="flex w-full flex-wrap justify-between gap-4 md:gap-0">
-            <div className="flex flex-wrap gap-2">
+          <div id="action" className="flex w-full flex-wrap justify-between gap-6 md:gap-4">
+            <div className="flex flex-wrap gap-4">
               <Button
                 color="warning"
                 variant="shadow"
@@ -142,7 +142,7 @@ export const TvShowOverviewSection: React.FC<TvShowOverviewSectionProps> = ({
 
               <Trailer color="warning" videos={tv.videos.results} />
             </div>
-            <div className="flex flex-wrap gap-2">
+            <div className="flex flex-wrap gap-4">
               <ShareButton id={tv.id} title={title} type="tv" />
               <BookmarkButton data={bookmarkData} />
             </div>
