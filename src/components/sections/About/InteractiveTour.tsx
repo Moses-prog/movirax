@@ -137,9 +137,9 @@ const LibrarySandbox = () => {
 const ProfilesSandbox = () => {
   const [active, setActive] = useState(0);
   const profiles = [
-    { name: "Dad", avatar: "https://api.dicebear.com/7.x/micah/svg?seed=Felix&backgroundColor=transparent" },
-    { name: "Mom", avatar: "https://api.dicebear.com/7.x/micah/svg?seed=Aneka&backgroundColor=transparent" },
-    { name: "Kids", avatar: "https://api.dicebear.com/7.x/micah/svg?seed=Jack&backgroundColor=transparent" },
+    { name: "Dad", avatar: "https://image.tmdb.org/t/p/w200/5qHNjhtjMD4YWH3UP0rm4tKwxCL.jpg" },
+    { name: "Mom", avatar: "https://image.tmdb.org/t/p/w200/8LqG2N6j98lFGMpuYsRUAhOunSd.jpg" },
+    { name: "Kids", avatar: "https://image.tmdb.org/t/p/w200/5OK84Wn1bIEIThFKcVoaN087mLj.jpg" },
   ];
   return (
     <div className="flex flex-col items-center justify-center gap-10 w-full h-full bg-content1 rounded-2xl border border-default-200 shadow-sm p-8">

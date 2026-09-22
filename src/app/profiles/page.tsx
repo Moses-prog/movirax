@@ -20,14 +20,14 @@ export default function ProfilesPage() {
   const [newName, setNewName] = useState('');
   const [isKids, setIsKids] = useState(false);
     const avatarOptions = [
-    'https://api.dicebear.com/7.x/micah/svg?seed=Felix&backgroundColor=transparent',
-    'https://api.dicebear.com/7.x/micah/svg?seed=Aneka&backgroundColor=transparent',
-    'https://api.dicebear.com/7.x/micah/svg?seed=Zoey&backgroundColor=transparent',
-    'https://api.dicebear.com/7.x/micah/svg?seed=Jack&backgroundColor=transparent',
-    'https://api.dicebear.com/7.x/micah/svg?seed=Jude&backgroundColor=transparent',
-    'https://api.dicebear.com/7.x/micah/svg?seed=Mia&backgroundColor=transparent',
-    'https://api.dicebear.com/7.x/micah/svg?seed=Leo&backgroundColor=transparent',
-    'https://api.dicebear.com/7.x/micah/svg?seed=Oscar&backgroundColor=transparent'
+    'https://image.tmdb.org/t/p/w200/5OK84Wn1bIEIThFKcVoaN087mLj.jpg',
+    'https://image.tmdb.org/t/p/w200/8LqG2N6j98lFGMpuYsRUAhOunSd.jpg',
+    'https://image.tmdb.org/t/p/w200/trzgptffGvAlAT6MEu01fz47cLW.jpg',
+    'https://image.tmdb.org/t/p/w200/8RZLOyYGsoRe9p44q3xin9QkMHv.jpg',
+    'https://image.tmdb.org/t/p/w200/tgxYh3jMs5bY2Ub4d2dcp9iaz1R.jpg',
+    'https://image.tmdb.org/t/p/w200/2lKs67r7FI4bPu0AXxMUJZxmUXn.jpg',
+    'https://image.tmdb.org/t/p/w200/3WdOloHpjtjL96uVOhFRRCcYSwq.jpg',
+    'https://image.tmdb.org/t/p/w200/5qHNjhtjMD4YWH3UP0rm4tKwxCL.jpg'
   ];
   const [selectedAvatar, setSelectedAvatar] = useState(avatarOptions[0]);
 
