@@ -69,7 +69,7 @@ const TVShowDetailPage: NextPage<PageProps> = ({ params }) => {
   if (error || !tv) return notFound();
 
   return (
-    <div className="mx-auto max-w-5xl px-4 py-8">
+    <div className="mx-auto max-w-5xl px-4 md:px-0 py-8">
       <Suspense
         fallback={
           <div className="flex justify-center py-20">
