@@ -128,21 +128,36 @@ const TvShowPlayer: React.FC<TvShowPlayerProps> = ({
 
   const toggleFullscreen = async () => {
     try {
-      if (!document.fullscreenElement) {
-        await iframeRef.current?.requestFullscreen();
+      if (!document.fullscreenElement && !(document as any).webkitFullscreenElement) {
+        const el = iframeRef.current as any;
+        if (!el) return;
+        
+        if (el.requestFullscreen) {
+          await el.requestFullscreen();
+        } else if (el.webkitRequestFullscreen) {
+          await el.webkitRequestFullscreen();
+        } else if (el.msRequestFullscreen) {
+          await el.msRequestFullscreen();
+        }
+
         if (screen.orientation && screen.orientation.lock) {
           await screen.orientation.lock("landscape").catch(console.error);
         }
       } else {
         if (document.exitFullscreen) {
           await document.exitFullscreen();
+        } else if ((document as any).webkitExitFullscreen) {
+          await (document as any).webkitExitFullscreen();
+        } else if ((document as any).msExitFullscreen) {
+          await (document as any).msExitFullscreen();
         }
+        
         if (screen.orientation && screen.orientation.unlock) {
           screen.orientation.unlock();
         }
       }
-    } catch (e) {
-      console.error("Fullscreen error:", e);
+    } catch (err) {
+      console.error("Fullscreen error:", err);
     }
   };
 
