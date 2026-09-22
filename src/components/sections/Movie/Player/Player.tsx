@@ -161,7 +161,7 @@ const MoviePlayer: React.FC<{ movie: MovieDetails; startAt?: number; defaultServ
   const toggleFullscreen = async () => {
     try {
       if (!document.fullscreenElement) {
-        await containerRef.current?.requestFullscreen();
+        await iframeRef.current?.requestFullscreen();
         if (screen.orientation && screen.orientation.lock) {
           await screen.orientation.lock("landscape").catch(console.error);
         }
