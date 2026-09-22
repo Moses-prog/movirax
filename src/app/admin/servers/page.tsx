@@ -24,8 +24,10 @@ export default function ServersPage() {
     setIsLoading(true);
     try {
       const settings = await fetchServerSettings();
-      setMovieServer(settings.defaultMovie.toString());
-      setTvServer(settings.defaultTv.toString());
+      const mKey = settings.defaultMovie.toString();
+      setMovieServer(mockPlayersMovie[settings.defaultMovie] ? mKey : '0');
+      const tKey = settings.defaultTv.toString();
+      setTvServer(mockPlayersTv[settings.defaultTv] ? tKey : '0');
     } catch (e) {
       console.error(e);
       addToast({ title: "Failed to load settings", color: "danger" });
