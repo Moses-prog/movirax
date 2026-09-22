@@ -10,6 +10,7 @@ import LandingPage from "@/components/sections/Landing/LandingPage";
 
 const ContinueWatching = dynamic(() => import("@/components/sections/Home/ContinueWatching"));
 const HomePageList = dynamic(() => import("@/components/sections/Home/List"));
+const BackToTopButton = dynamic(() => import("@/components/ui/button/BackToTopButton"));
 
 const HomePage = () => {
   return (
@@ -18,7 +19,8 @@ const HomePage = () => {
         <NuqsAdapter>
           <ContinueWatching />
           <HomePageList />
-        </NuqsAdapter>
+          </NuqsAdapter>
+          <BackToTopButton />
       </Suspense>
     </div>
   );
