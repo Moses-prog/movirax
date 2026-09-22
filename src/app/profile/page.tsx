@@ -68,7 +68,7 @@ export default function UserProfilePage() {
 
   const isPro = !!subscription && subscription.status === 'active';
   const planName = isPro ? subscription.pricing_plans?.name || 'Pro' : 'Free';
-  const avatar = `${env.NEXT_PUBLIC_AVATAR_PROVIDER_URL}${user?.email}`;
+  const avatar = `https://ui-avatars.com/api/?name=${encodeURIComponent(user?.username || user?.email || 'User')}&background=18181b&color=fff&size=256&bold=true`;
 
   let daysRemaining = '∞';
   if (isPro && subscription.current_period_end) {

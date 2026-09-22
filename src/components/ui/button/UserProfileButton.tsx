@@ -30,7 +30,7 @@ const UserProfileButton: React.FC = () => {
   if (isLoading) return null;
 
   const guest = !user;
-  const mainAvatar = `${env.NEXT_PUBLIC_AVATAR_PROVIDER_URL}${user?.email}`;
+  const mainAvatar = `https://ui-avatars.com/api/?name=${encodeURIComponent(user?.username || user?.email || 'User')}&background=18181b&color=fff&size=256&bold=true`;
   
   const displayName = activeProfile ? activeProfile.name : user?.username;
   const displayAvatar = activeProfile && activeProfile.avatar ? activeProfile.avatar : mainAvatar;

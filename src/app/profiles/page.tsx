@@ -20,14 +20,14 @@ export default function ProfilesPage() {
   const [newName, setNewName] = useState('');
   const [isKids, setIsKids] = useState(false);
     const avatarOptions = [
-    'https://api.dicebear.com/7.x/avataaars/svg?seed=Felix&backgroundColor=b6e3f4',
-    'https://api.dicebear.com/7.x/avataaars/svg?seed=Aneka&backgroundColor=ffdfbf',
-    'https://api.dicebear.com/7.x/avataaars/svg?seed=Zoey&backgroundColor=c0aede',
-    'https://api.dicebear.com/7.x/avataaars/svg?seed=Jack&backgroundColor=d1d4f9',
-    'https://api.dicebear.com/7.x/avataaars/svg?seed=Jude&backgroundColor=b6e3f4',
-    'https://api.dicebear.com/7.x/bottts/svg?seed=Robot1&backgroundColor=ffdfbf',
-    'https://api.dicebear.com/7.x/bottts/svg?seed=Robot2&backgroundColor=c0aede',
-    'https://api.dicebear.com/7.x/thumbs/svg?seed=Thumbs1&backgroundColor=d1d4f9'
+    'https://api.dicebear.com/7.x/micah/svg?seed=Felix&backgroundColor=transparent',
+    'https://api.dicebear.com/7.x/micah/svg?seed=Aneka&backgroundColor=transparent',
+    'https://api.dicebear.com/7.x/micah/svg?seed=Zoey&backgroundColor=transparent',
+    'https://api.dicebear.com/7.x/micah/svg?seed=Jack&backgroundColor=transparent',
+    'https://api.dicebear.com/7.x/micah/svg?seed=Jude&backgroundColor=transparent',
+    'https://api.dicebear.com/7.x/micah/svg?seed=Mia&backgroundColor=transparent',
+    'https://api.dicebear.com/7.x/micah/svg?seed=Leo&backgroundColor=transparent',
+    'https://api.dicebear.com/7.x/micah/svg?seed=Oscar&backgroundColor=transparent'
   ];
   const [selectedAvatar, setSelectedAvatar] = useState(avatarOptions[0]);
 
