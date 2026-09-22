@@ -129,7 +129,7 @@ const TvShowPlayer: React.FC<TvShowPlayerProps> = ({
   const toggleFullscreen = async () => {
     try {
       if (!document.fullscreenElement) {
-        await document.documentElement.requestFullscreen();
+        await containerRef.current?.requestFullscreen();
         if (screen.orientation && screen.orientation.lock) {
           await screen.orientation.lock("landscape").catch(console.error);
         }

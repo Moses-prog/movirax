@@ -43,18 +43,18 @@ const SubscriptionBadge = ({ userId }: { userId: string }) => {
     load();
   }, [userId]);
 
-  if (loading) return <div className="h-7 w-20 animate-pulse bg-white/10 rounded-full hidden sm:block" />;
+  if (loading) return <div className="h-7 w-20 animate-pulse bg-white/10 rounded-full block" />;
   
   if (sub && sub.status === 'active') {
     return (
-      <Button as={Link} href="/profile" size="sm" color="warning" variant="flat" className="font-bold border border-warning/20 bg-warning/10 text-warning hidden sm:flex h-8">
+      <Button as={Link} href="/profile" size="sm" color="warning" variant="flat" className="font-bold border border-warning/20 bg-warning/10 text-warning flex h-8 px-2 min-w-0">
         {sub.pricing_plans?.name || 'Pro'}
       </Button>
     );
   }
 
   return (
-    <Button as={Link} href="/pricing" size="sm" color="danger" className="font-bold shadow-md hidden sm:flex h-8">
+    <Button as={Link} href="/pricing" size="sm" color="danger" className="font-bold shadow-md flex h-8 px-2 min-w-0">
       Upgrade Plan
     </Button>
   );

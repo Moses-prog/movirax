@@ -104,6 +104,7 @@ const MoviePlayer: React.FC<{ movie: MovieDetails; startAt?: number; defaultServ
   defaultServer = 0,
 }) => {
   const iframeRef = useRef<HTMLIFrameElement>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
   const shieldTimerRef = useRef<NodeJS.Timeout | null>(null);
 
   const [isShieldActive, setIsShieldActive] = useState(true);
@@ -160,7 +161,7 @@ const MoviePlayer: React.FC<{ movie: MovieDetails; startAt?: number; defaultServ
   const toggleFullscreen = async () => {
     try {
       if (!document.fullscreenElement) {
-        await document.documentElement.requestFullscreen();
+        await containerRef.current?.requestFullscreen();
         if (screen.orientation && screen.orientation.lock) {
           await screen.orientation.lock("landscape").catch(console.error);
         }
@@ -195,7 +196,7 @@ const MoviePlayer: React.FC<{ movie: MovieDetails; startAt?: number; defaultServ
   return (
     <>
       <AdsWarning />
-      <div className={cn("relative h-screen w-full bg-black overflow-hidden flex flex-col", SpacingClasses.reset)}>
+      <div ref={containerRef} className={cn("relative h-screen w-full bg-black overflow-hidden flex flex-col", SpacingClasses.reset)}>
         
         <MoviePlayerHeader
           id={movie.id}
