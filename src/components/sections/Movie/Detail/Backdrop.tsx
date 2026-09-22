@@ -52,7 +52,7 @@ const BackdropSection: React.FC<{
         <Image
           radius="none"
           alt={movieTitle || "Movie backdrop"}
-          className="z-0 h-[35vh] w-screen object-cover object-center md:h-[50vh] lg:h-[70vh]"
+          className="z-0 h-[35vh] w-full object-cover object-center md:h-[50vh] lg:h-[70vh]"
           src={backdropImage}
         />
       )}

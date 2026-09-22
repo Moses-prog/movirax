@@ -68,13 +68,14 @@ export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
   maximumScale: 1,
+  userScalable: false,
   viewportFit: "cover", 
 };
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html suppressHydrationWarning lang="en">
-      <body className={cn("bg-background min-h-dvh antialiased select-none overflow-x-clip", Poppins.className)}>
+      <body className={cn("bg-background min-h-dvh antialiased select-none overflow-x-hidden", Poppins.className)}>
         
             <Providers>
               <CookieConsent />
