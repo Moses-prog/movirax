@@ -29,6 +29,7 @@ const TvShowPlayerHeader: React.FC<TvShowPlayerHeaderProps> = ({
   onOpenSource,
   onOpenEpisode,
   onOpenSeason,
+  onToggleFullscreen,
 }) => {
   return (
     <div
