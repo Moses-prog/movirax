@@ -16,6 +16,7 @@ const MoviePlayerHeader: React.FC<MoviePlayerHeaderProps> = ({
   movieName,
   hidden,
   onOpenSource,
+  onToggleFullscreen,
 }) => {
   return (
     <div
@@ -36,6 +37,11 @@ const MoviePlayerHeader: React.FC<MoviePlayerHeaderProps> = ({
         <ActionButton label="Sources" tooltip="Sources" onClick={onOpenSource}>
           <Server size={34} />
         </ActionButton>
+        {onToggleFullscreen && (
+          <ActionButton label="Fullscreen" tooltip="Fullscreen" onClick={onToggleFullscreen}>
+            <FiMaximize size={34} />
+          </ActionButton>
+        )}
       </div>
     </div>
   );

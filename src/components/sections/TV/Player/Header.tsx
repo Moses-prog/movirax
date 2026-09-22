@@ -74,6 +74,11 @@ const TvShowPlayerHeader: React.FC<TvShowPlayerHeaderProps> = ({
         <ActionButton label="Episodes" tooltip="Episodes" onClick={onOpenEpisode}>
           <List size={34} />
         </ActionButton>
+        {onToggleFullscreen && (
+          <ActionButton label="Fullscreen" tooltip="Fullscreen" onClick={onToggleFullscreen}>
+            <FiMaximize size={34} />
+          </ActionButton>
+        )}
       </div>
     </div>
   );
