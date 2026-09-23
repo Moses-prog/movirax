@@ -38,6 +38,7 @@ const LibraryList = () => {
   const { hasAccess, feature, isLoading: isFeatureLoading } = useFeatureAccess('f6'); // f6 is Watchlist & History
   const { ref, inViewport } = useInViewport();
   const { content } = useDiscoverFilters();
+  const { activeProfile } = useProfile();
   const { data: user, isLoading: isUserLoading } = useSupabaseUser();
   const [isPending, startTransition] = useTransition();
   const [sortOption, setSortOption] = useState<SortOption>("created_at");
