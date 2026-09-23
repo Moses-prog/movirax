@@ -7,6 +7,7 @@ import { Suspense } from "react";
 import { Params } from "@/types";
 import { Spinner } from "@heroui/react";
 import { useQuery } from "@tanstack/react-query";
+import { useProfile } from "@/contexts/ProfileContext";
 import { notFound } from "next/navigation";
 import { use } from "react";
 import dynamic from "next/dynamic";
@@ -16,6 +17,7 @@ import { fetchServerSettings } from "@/actions/settings";
 const TvShowPlayer = dynamic(() => import("@/components/sections/TV/Player/Player"));
 
 const TvShowPlayerPageContent: NextPage<Params<{ id: number; season: number; episode: number }>> = ({ params }) => {
+  const { activeProfile } = useProfile();
   const { id, season, episode } = use(params);
 
   const {
@@ -46,7 +48,7 @@ const TvShowPlayerPageContent: NextPage<Params<{ id: number; season: number; epi
       const response = await getTvShowLastPosition(id, season, episode);
       return response.data || 0;
     },
-    queryKey: ["tv-show-player-start-at", id, season, episode],
+    queryKey: ["tv-show-player-start-at", id, season, episode, activeProfile?.id],
   });
 
   if (isPendingTv || isPendingSeason || isPendingStartAt || isPendingSettings) {

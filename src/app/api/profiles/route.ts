@@ -18,7 +18,7 @@ export async function GET() {
       const defaultProfile: SubProfile = {
         id: `p_${Date.now()}`,
         name: user.user_metadata?.full_name || 'My Profile',
-        avatar: '/avatars/1.png'
+        avatar: 'https://image.tmdb.org/t/p/w200/5OK84Wn1bIEIThFKcVoaN087mLj.jpg'
       };
       await addUserProfile(user.id, defaultProfile);
       profiles = [defaultProfile];

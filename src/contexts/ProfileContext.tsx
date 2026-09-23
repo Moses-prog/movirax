@@ -59,8 +59,10 @@ export function ProfileProvider({ children }: { children: React.ReactNode }) {
           if (savedProfileId) {
             const found = profilesJson.data.find((p: SubProfile) => p.id === savedProfileId);
             if (found) {
-              setActiveProfileState(found);
-            }
+                setActiveProfileState(found);
+              } else {
+                Cookies.remove('movira_active_profile');
+              }
           } else if (profilesJson.data.length === 1) {
             // Auto select if only 1
             setActiveProfileState(profilesJson.data[0]);

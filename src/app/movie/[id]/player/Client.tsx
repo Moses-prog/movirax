@@ -11,11 +11,13 @@ import { Params } from "@/types";
 import { isEmpty } from "@/utils/helpers";
 import { Spinner } from "@heroui/react";
 import { useQuery } from "@tanstack/react-query";
+import { useProfile } from "@/contexts/ProfileContext";
 import { NextPage } from "next";
 import { notFound } from "next/navigation";
 import { use } from "react";
 
 const MoviePlayerPageContent: NextPage<Params<{ id: number }>> = ({ params }) => {
+  const { activeProfile } = useProfile();
   const { id } = use(params);
 
   const {
@@ -34,7 +36,7 @@ const MoviePlayerPageContent: NextPage<Params<{ id: number }>> = ({ params }) =>
 
   const { data: startAtResponse, isPending: isPendingStartAt } = useQuery({
     queryFn: () => getMovieLastPosition(id, "movie"),
-    queryKey: ["movie-player-start-at", id],
+    queryKey: ["movie-player-start-at", id, activeProfile?.id],
   });
 
   // Extract the position from ActionResponse
