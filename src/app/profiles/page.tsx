@@ -45,17 +45,42 @@ export default function ProfilesPage() {
   const [pinError, setPinError] = useState(false);
   const [pinAttempts, setPinAttempts] = useState(0);
   const [isLockedOut, setIsLockedOut] = useState(false);
+  const [lockoutMsg, setLockoutMsg] = useState("");
 
   useEffect(() => {
-    const lockoutUntil = localStorage.getItem("movira_pin_lockout");
-    if (lockoutUntil) {
-      if (Date.now() < parseInt(lockoutUntil)) {
-        setIsLockedOut(true);
-      } else {
-        localStorage.removeItem("movira_pin_lockout");
+    let interval: NodeJS.Timeout;
+    
+    const checkLockout = () => {
+      const lockoutUntil = localStorage.getItem("movira_pin_lockout");
+      if (lockoutUntil) {
+        const timeDiff = parseInt(lockoutUntil) - Date.now();
+        if (timeDiff > 0) {
+          setIsLockedOut(true);
+          const hours = Math.floor(timeDiff / (1000 * 60 * 60));
+          const minutes = Math.floor((timeDiff % (1000 * 60 * 60)) / (1000 * 60));
+          const seconds = Math.floor((timeDiff % (1000 * 60)) / 1000);
+          
+          let timeStr = '';
+          if (hours > 0) timeStr += `${hours}h `;
+          if (minutes > 0 || hours > 0) timeStr += `${minutes}m `;
+          timeStr += `${seconds}s`;
+          
+          setLockoutMsg(`Too many attempts. Please try again in ${timeStr.trim()}.`);
+        } else {
+          setIsLockedOut(false);
+          localStorage.removeItem("movira_pin_lockout");
+          setLockoutMsg("");
+        }
       }
-    }
-  }, [isPinOpen]);
+    };
+
+    checkLockout();
+    
+    // Always poll if there's a lockout to keep the timer updated
+    interval = setInterval(checkLockout, 1000);
+    
+    return () => clearInterval(interval);
+  }, []);
   const { isOpen: isSetPinOpen, onOpen: onSetPinOpen, onOpenChange: onSetPinOpenChange } = useDisclosure();
   const [tempPin, setTempPin] = useState('');
   const [isSettingPinFor, setIsSettingPinFor] = useState<'add' | 'edit' | null>(null);
@@ -414,7 +439,10 @@ export default function ProfilesPage() {
               </ModalHeader>
               <ModalBody className="py-6 flex flex-col items-center">
                 {isLockedOut ? (
-                  <p className="text-danger font-bold text-center">Too many attempts. Please try again later.</p>
+                  <div className="text-center flex flex-col items-center gap-3">
+                    <AlertCircle className="w-12 h-12 text-danger" />
+                    <p className="text-danger font-bold">{lockoutMsg || "Too many attempts. Please try again later."}</p>
+                  </div>
                 ) : (
                   <>
                     <InputOtp 
