@@ -124,7 +124,7 @@ const MoviePlayer: React.FC<{ movie: MovieDetails; startAt?: number; defaultServ
     parseAsInteger.withDefault(defaultServer),
   );
 
-  usePlayerEvents({ saveHistory: true });
+  usePlayerEvents({ mediaId: movie.id, mediaType: "movie", saveHistory: true });
   useDocumentTitle(`Play ${title} | ${siteConfig.name}`);
 
   const isInitialMobile = useRef(typeof window !== "undefined" ? window.innerWidth < 768 : false).current;

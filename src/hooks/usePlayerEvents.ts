@@ -84,6 +84,8 @@ export const playerAdapters = {
 } as const satisfies AdapterMap;
 
 export interface UsePlayerEventsOptions {
+  mediaId?: number | string;
+  mediaType?: "movie" | "tv";
   metadata?: { season?: number; episode?: number };
   saveHistory?: boolean;
   onPlay?: (data: UnifiedPlayerEventData) => void;
@@ -97,7 +99,7 @@ export function usePlayerEvents(options: UsePlayerEventsOptions = {}) {
   const { data: user } = useSupabaseUser();
   const documentState = useDocumentVisibility();
 
-  const { metadata, saveHistory, onPlay, onPause, onSeeked, onEnded, onTimeUpdate } = options;
+  const { mediaId, mediaType, metadata, saveHistory, onPlay, onPause, onSeeked, onEnded, onTimeUpdate } = options;
 
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentTime, setCurrentTime] = useState(0);
@@ -107,12 +109,36 @@ export function usePlayerEvents(options: UsePlayerEventsOptions = {}) {
 
   const eventDataRef = useRef<UnifiedPlayerEventData | null>(null);
 
+  // Fallback: Initial sync for players that don't emit postMessage events (e.g. vidsrc.sh)
+  useEffect(() => {
+    if (!saveHistory || !user || !mediaId) return;
+    
+    // Give it a brief delay to avoid spamming if they immediately close it
+    const timer = setTimeout(() => {
+      if (!eventDataRef.current) {
+        syncToServer({
+          event: "play",
+          currentTime: 0,
+          duration: 0,
+          mediaId: mediaId,
+          mediaType: mediaType || "movie",
+          season: metadata?.season,
+          episode: metadata?.episode
+        });
+      }
+    }, 5000);
+
+    return () => clearTimeout(timer);
+  }, [saveHistory, user, mediaId, mediaType, metadata?.season, metadata?.episode]);
+
   const syncToServer = async (data: UnifiedPlayerEventData, completed?: boolean) => {
     if (!saveHistory || !user) return;
-    if (diff(data.currentTime, lastCurrentTime) <= 5) return; // prevent spam
+    if (lastCurrentTime !== 0 && diff(data.currentTime, lastCurrentTime) <= 5) return; // prevent spam
 
     const payload: UnifiedPlayerEventData = {
       ...data,
+      mediaId: data.mediaId || mediaId || "",
+      mediaType: data.mediaType || mediaType || "movie",
       season: data.season || metadata?.season || 0,
       episode: data.episode || metadata?.episode || 0,
     };
@@ -156,32 +182,40 @@ export function usePlayerEvents(options: UsePlayerEventsOptions = {}) {
       const parsed = adapter.parse(rawData);
       if (!parsed) return;
 
-      eventDataRef.current = parsed;
-      setLastEvent(parsed.event);
+      // Inject explicitly provided mediaId and mediaType if adapter didn't parse them
+      const enrichedParsed = {
+        ...parsed,
+        mediaId: parsed.mediaId || mediaId || "",
+        mediaType: parsed.mediaType || mediaType || "movie",
+        season: parsed.season || metadata?.season || 0,
+        episode: parsed.episode || metadata?.episode || 0,
+      };
 
-      switch (parsed.event) {
+      eventDataRef.current = enrichedParsed;
+      setLastEvent(enrichedParsed.event);
+      switch (enrichedParsed.event) {
         case "play":
           setIsPlaying(true);
-          onPlay?.(parsed);
+          onPlay?.(enrichedParsed);
           break;
         case "pause":
           setIsPlaying(false);
-          onPause?.(parsed);
+          onPause?.(enrichedParsed);
           break;
         case "ended":
           setIsPlaying(false);
-          syncToServer(parsed, true);
-          onEnded?.(parsed);
+          syncToServer(enrichedParsed, true);
+          onEnded?.(enrichedParsed);
           break;
         case "seeked":
-          setCurrentTime(parsed.currentTime);
-          setDuration(parsed.duration);
-          onSeeked?.(parsed);
+          setCurrentTime(enrichedParsed.currentTime);
+          setDuration(enrichedParsed.duration);
+          onSeeked?.(enrichedParsed);
           break;
         case "timeupdate":
-          setCurrentTime(parsed.currentTime);
-          setDuration(parsed.duration);
-          onTimeUpdate?.(parsed);
+          setCurrentTime(enrichedParsed.currentTime);
+          setDuration(enrichedParsed.duration);
+          onTimeUpdate?.(enrichedParsed);
           break;
       }
     };

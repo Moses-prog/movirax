@@ -119,6 +119,8 @@ const TvShowPlayer: React.FC<TvShowPlayerProps> = ({
   );
 
   usePlayerEvents({
+    mediaId: tv.id,
+    mediaType: "tv",
     saveHistory: true,
     metadata: { season: episode.season_number, episode: episode.episode_number },
   });
