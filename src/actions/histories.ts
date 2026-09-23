@@ -114,10 +114,6 @@ export const syncHistory = async (
               backdrop_path: historyData.backdrop_path,
               vote_average: historyData.vote_average,
             },
-            title: historyData.title,
-            poster_path: historyData.poster_path,
-            backdrop_path: historyData.backdrop_path,
-            vote_average: historyData.vote_average,
           });
       }
     } catch (e) {
