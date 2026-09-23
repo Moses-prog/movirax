@@ -6,6 +6,7 @@ import { ActionResponse } from "@/types";
 import { HistoryDetail } from "@/types/movie";
 import { mutateMovieTitle, mutateTvShowTitle } from "@/utils/movies";
 import { createClient } from "@/utils/supabase/server";
+import { cookies } from "next/headers";
 import { revalidatePath } from "next/cache";
 
 export const syncHistory = async (
@@ -75,6 +76,52 @@ export const syncHistory = async (
         .from("histories")
         .insert(historyData);
       if (error) throw error;
+    }
+
+    
+    // 3. Also add to viewed_movies for the manual history page
+    try {
+      const cookieStore = await cookies();
+      const profileId = cookieStore.get("movira_active_profile")?.value || "default";
+      
+      const { data: existingViewed } = await supabase
+        .from("viewed_movies")
+        .select("id")
+        .eq("user_id", user.id)
+        .eq("profile_id", profileId)
+        .eq("movie_id", historyData.media_id)
+        .eq("movie_type", historyData.type)
+        .maybeSingle();
+
+      if (existingViewed) {
+        await supabase
+          .from("viewed_movies")
+          .update({ viewed_at: new Date().toISOString() })
+          .eq("id", existingViewed.id);
+      } else {
+        await supabase
+          .from("viewed_movies")
+          .insert({
+            user_id: user.id,
+            profile_id: profileId,
+            movie_id: historyData.media_id,
+            movie_type: historyData.type,
+            movie_data: {
+              id: historyData.media_id,
+              type: historyData.type,
+              title: historyData.title,
+              poster_path: historyData.poster_path,
+              backdrop_path: historyData.backdrop_path,
+              vote_average: historyData.vote_average,
+            },
+            title: historyData.title,
+            poster_path: historyData.poster_path,
+            backdrop_path: historyData.backdrop_path,
+            vote_average: historyData.vote_average,
+          });
+      }
+    } catch (e) {
+      console.error("Failed to add to viewed_movies", e);
     }
 
     // Refresh the home page data
