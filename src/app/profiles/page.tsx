@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useProfile } from '@/contexts/ProfileContext';
 import { useRouter } from 'next/navigation';
 import { Button, Modal, ModalContent, ModalHeader, ModalBody, ModalFooter, useDisclosure, Input, InputOtp, addToast } from '@heroui/react';
@@ -45,6 +45,17 @@ export default function ProfilesPage() {
   const [pinError, setPinError] = useState(false);
   const [pinAttempts, setPinAttempts] = useState(0);
   const [isLockedOut, setIsLockedOut] = useState(false);
+
+  useEffect(() => {
+    const lockoutUntil = localStorage.getItem("movira_pin_lockout");
+    if (lockoutUntil) {
+      if (Date.now() < parseInt(lockoutUntil)) {
+        setIsLockedOut(true);
+      } else {
+        localStorage.removeItem("movira_pin_lockout");
+      }
+    }
+  }, [isPinOpen]);
   const { isOpen: isSetPinOpen, onOpen: onSetPinOpen, onOpenChange: onSetPinOpenChange } = useDisclosure();
   const [tempPin, setTempPin] = useState('');
   const [isSettingPinFor, setIsSettingPinFor] = useState<'add' | 'edit' | null>(null);
@@ -430,11 +441,8 @@ export default function ProfilesPage() {
                               setPinError(true);
                               if (newAttempts >= 5) {
                                 setIsLockedOut(true);
-                                setTimeout(() => {
-                                  setIsLockedOut(false);
-                                  setPinAttempts(0);
-                                  onClose();
-                                }, 60000); // 1 minute lockout
+                                const lockoutTime = Date.now() + 18000000;
+                                localStorage.setItem("movira_pin_lockout", lockoutTime.toString());
                               }
                             }
                           }, 300);
