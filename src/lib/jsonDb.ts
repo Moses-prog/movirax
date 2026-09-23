@@ -14,6 +14,7 @@ export interface SubProfile {
   name: string;
   avatar: string;
   isKids?: boolean;
+  pin?: string | null;
 }
 
 // Helper functions for features
@@ -44,8 +45,9 @@ export async function getUserProfiles(userId: string): Promise<SubProfile[]> {
     id: p.id,
     name: p.name,
     avatar: p.avatar,
-    isKids: p.is_kids
-  }));
+    isKids: p.is_kids,
+      pin: p.parent_pin
+    }));
 }
 
 export async function addUserProfile(userId: string, profile: SubProfile): Promise<boolean> {
@@ -59,8 +61,9 @@ export async function addUserProfile(userId: string, profile: SubProfile): Promi
     user_id: userId,
     name: profile.name,
     avatar: profile.avatar,
-    is_kids: profile.isKids || false
-  });
+    is_kids: profile.isKids || false,
+      parent_pin: profile.pin || null
+    });
   return !error;
 }
 
@@ -70,6 +73,7 @@ export async function updateUserProfile(userId: string, profileId: string, updat
   if (updates.name !== undefined) dbUpdates.name = updates.name;
   if (updates.avatar !== undefined) dbUpdates.avatar = updates.avatar;
   if (updates.isKids !== undefined) dbUpdates.is_kids = updates.isKids;
+  if (updates.pin !== undefined) dbUpdates.parent_pin = updates.pin === "" ? null : updates.pin;
 
   const { error } = await (supabase as any).from('user_profiles').update(dbUpdates).eq('user_id', userId).eq('id', profileId);
   return !error;

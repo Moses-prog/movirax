@@ -5,7 +5,7 @@ import { useProfile } from '@/contexts/ProfileContext';
 import { useRouter } from 'next/navigation';
 import { Button, Modal, ModalContent, ModalHeader, ModalBody, ModalFooter, useDisclosure, Input, addToast } from '@heroui/react';
 import { Switch } from '@heroui/switch';
-import { Plus, Edit2, CheckCircle2, AlertCircle, Image as ImageIcon } from 'lucide-react';
+import { Plus, Edit2, CheckCircle2, AlertCircle, Image as ImageIcon, Lock } from 'lucide-react';
 
 import { useFeatureAccess } from '@/hooks/useFeatureAccess';
 import UpgradeNotice from '@/components/ui/notice/Upgrade';
@@ -19,6 +19,7 @@ export default function ProfilesPage() {
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
   const [newName, setNewName] = useState('');
   const [isKids, setIsKids] = useState(false);
+  const [newPin, setNewPin] = useState('');
     const avatarOptions = [
     'https://image.tmdb.org/t/p/w200/5OK84Wn1bIEIThFKcVoaN087mLj.jpg',
     'https://image.tmdb.org/t/p/w200/8LqG2N6j98lFGMpuYsRUAhOunSd.jpg',
@@ -35,8 +36,13 @@ export default function ProfilesPage() {
   const [editingProfile, setEditingProfile] = useState<any>(null);
   const [editName, setEditName] = useState('');
   const [editIsKids, setEditIsKids] = useState(false);
+  const [editPin, setEditPin] = useState('');
   const [confirmDeletePending, setConfirmDeletePending] = useState(false);
   const [editAvatar, setEditAvatar] = useState(avatarOptions[0]);
+  const { isOpen: isPinOpen, onOpen: onPinOpen, onOpenChange: onPinOpenChange } = useDisclosure();
+  const [selectedLockedProfile, setSelectedLockedProfile] = useState<any>(null);
+  const [enteredPin, setEnteredPin] = useState('');
+  const [pinError, setPinError] = useState(false);
 
   if (isFeatureLoading || isLoading) {
     return <div className="min-h-screen flex items-center justify-center bg-background"><div className="w-16 h-16 border-4 border-primary border-t-transparent rounded-full animate-spin"/></div>;
@@ -62,12 +68,34 @@ export default function ProfilesPage() {
       setEditName(profile.name);
       setEditIsKids(profile.isKids || false);
       setEditAvatar(profile.avatar || avatarOptions[0]);
+      setEditPin(profile.pin || '');
       onEditOpen();
       return;
     }
+    
+    if (profile.pin) {
+      setSelectedLockedProfile(profile);
+      setEnteredPin('');
+      setPinError(false);
+      onPinOpen();
+      return;
+    }
+
     setActiveProfile(profile);
     router.push('/');
     router.refresh();
+  };
+
+  
+  const handlePinSubmit = (onClose: () => void) => {
+    if (selectedLockedProfile?.pin === enteredPin) {
+      setActiveProfile(selectedLockedProfile);
+      onClose();
+      router.push('/');
+      router.refresh();
+    } else {
+      setPinError(true);
+    }
   };
 
   const handleAddProfile = async (onClose: () => void) => {
@@ -78,13 +106,14 @@ export default function ProfilesPage() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           action: 'add',
-          newProfile: { name: newName, avatar: selectedAvatar, isKids }
+          newProfile: { name: newName, avatar: selectedAvatar, isKids, pin: newPin }
         })
       });
             if (res.ok) {
         await refreshProfiles();
         setNewName('');
         setIsKids(false);
+        setNewPin('');
         onClose();
         addToast({ title: 'Profile added successfully', color: 'success' });
       } else {
@@ -104,7 +133,7 @@ export default function ProfilesPage() {
         body: JSON.stringify({
           action: 'update',
           profileId: editingProfile.id,
-          updates: { name: editName, isKids: editIsKids, avatar: editAvatar }
+          updates: { name: editName, isKids: editIsKids, avatar: editAvatar, pin: editPin }
         })
       });
             if (res.ok) {
@@ -176,9 +205,12 @@ export default function ProfilesPage() {
                 </div>
               )}
             </div>
-            <span className={`text-lg font-medium transition-colors ${isEditingMode ? 'text-white/70' : 'text-muted-foreground group-hover:text-white'}`}>
-              {profile.name}
-            </span>
+            <div className="flex items-center gap-2">
+                <span className={`text-lg font-medium transition-colors ${isEditingMode ? 'text-white/70' : 'text-muted-foreground group-hover:text-white'}`}>
+                  {profile.name}
+                </span>
+                {profile.pin && <Lock className="w-4 h-4 text-white/50" />}
+              </div>
           </div>
         ))}
 
@@ -248,8 +280,18 @@ export default function ProfilesPage() {
                     <p className="text-xs text-muted-foreground">Restrict access to mature content.</p>
                   </div>
                   <Switch isSelected={isKids} onValueChange={setIsKids} color="danger" />
-                </div>
-              </ModalBody>
+                  </div>
+                  <Input 
+                    label="Profile PIN (Optional)" 
+                    placeholder="Enter 4-digit PIN to lock" 
+                    type="password"
+                    maxLength={4}
+                    inputMode="numeric"
+                    value={newPin} 
+                    onChange={(e) => setNewPin(e.target.value.replace(/\D/g, ''))}
+                    classNames={{ inputWrapper: "bg-white/5 border border-white/10 focus-within:border-red-500/50" }}
+                  />
+                </ModalBody>
               <ModalFooter>
                 <Button variant="light" onPress={onClose}>Cancel</Button>
                 <Button color="danger" onPress={() => handleAddProfile(onClose)} isDisabled={!newName.trim()}>
@@ -294,8 +336,18 @@ export default function ProfilesPage() {
                     <p className="text-xs text-muted-foreground">Restrict access to mature content.</p>
                   </div>
                   <Switch isSelected={editIsKids} onValueChange={setEditIsKids} color="danger" />
-                </div>
-              </ModalBody>
+                  </div>
+                  <Input 
+                    label="Profile PIN (Optional)" 
+                    placeholder="Leave empty to remove PIN" 
+                    type="password"
+                    maxLength={4}
+                    inputMode="numeric"
+                    value={editPin} 
+                    onChange={(e) => setEditPin(e.target.value.replace(/\D/g, ''))}
+                    classNames={{ inputWrapper: "bg-white/5 border border-white/10 focus-within:border-red-500/50" }}
+                  />
+                </ModalBody>
               <ModalFooter className="flex justify-between w-full">
                 <Button 
                     color="danger" 

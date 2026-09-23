@@ -47,7 +47,8 @@ export async function POST(request: NextRequest) {
         id: `p_${Date.now()}`,
         name: newProfile.name,
         avatar: newProfile.avatar || '/avatars/1.png',
-        isKids: newProfile.isKids || false
+        isKids: newProfile.isKids || false,
+        pin: newProfile.pin || null
       };
       const success = await addUserProfile(user.id, profile);
       if (success) {
