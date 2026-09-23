@@ -2,7 +2,7 @@
 
 import { SupabaseClient } from "@supabase/supabase-js";
 import { createClient } from "@/utils/supabase/server";
-import { cookies } from "next/headers";
+import { cookies, headers } from "next/headers";
 import {
   ForgotPasswordFormInput,
   ForgotPasswordFormSchema,
