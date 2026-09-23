@@ -19,26 +19,26 @@ export interface SubProfile {
 // Helper functions for features
 export async function getFeatures(): Promise<FeatureFlag[]> {
   const supabase = await createClient();
-  const { data } = await supabase.from('app_features').select('*').order('id');
+  const { data } = await (supabase as any).from('app_features').select('*').order('id');
   return data || [];
 }
 
 export async function updateFeature(id: string, updates: Partial<FeatureFlag>): Promise<boolean> {
   const supabase = await createClient(true);
-  const { error } = await supabase.from('app_features').update(updates).eq('id', id);
+  const { error } = await (supabase as any).from('app_features').update(updates).eq('id', id);
   return !error;
 }
 
 export async function addFeature(feature: FeatureFlag): Promise<boolean> {
   const supabase = await createClient(true);
-  const { error } = await supabase.from('app_features').insert(feature);
+  const { error } = await (supabase as any).from('app_features').insert(feature);
   return !error;
 }
 
 // Helper functions for profiles
 export async function getUserProfiles(userId: string): Promise<SubProfile[]> {
   const supabase = await createClient();
-  const { data } = await supabase.from('user_profiles').select('*').eq('user_id', userId).order('created_at');
+  const { data } = await (supabase as any).from('user_profiles').select('*').eq('user_id', userId).order('created_at');
   if (!data) return [];
   return data.map(p => ({
     id: p.id,
@@ -51,10 +51,10 @@ export async function getUserProfiles(userId: string): Promise<SubProfile[]> {
 export async function addUserProfile(userId: string, profile: SubProfile): Promise<boolean> {
   const supabase = await createClient();
   // Check count
-  const { count } = await supabase.from('user_profiles').select('*', { count: 'exact', head: true }).eq('user_id', userId);
+  const { count } = await (supabase as any).from('user_profiles').select('*', { count: 'exact', head: true }).eq('user_id', userId);
   if (count && count >= 5) return false;
 
-  const { error } = await supabase.from('user_profiles').insert({
+  const { error } = await (supabase as any).from('user_profiles').insert({
     id: profile.id,
     user_id: userId,
     name: profile.name,
@@ -71,12 +71,12 @@ export async function updateUserProfile(userId: string, profileId: string, updat
   if (updates.avatar !== undefined) dbUpdates.avatar = updates.avatar;
   if (updates.isKids !== undefined) dbUpdates.is_kids = updates.isKids;
 
-  const { error } = await supabase.from('user_profiles').update(dbUpdates).eq('user_id', userId).eq('id', profileId);
+  const { error } = await (supabase as any).from('user_profiles').update(dbUpdates).eq('user_id', userId).eq('id', profileId);
   return !error;
 }
 
 export async function deleteUserProfile(userId: string, profileId: string): Promise<boolean> {
   const supabase = await createClient();
-  const { error } = await supabase.from('user_profiles').delete().eq('user_id', userId).eq('id', profileId);
+  const { error } = await (supabase as any).from('user_profiles').delete().eq('user_id', userId).eq('id', profileId);
   return !error;
 }
