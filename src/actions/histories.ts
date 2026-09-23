@@ -40,6 +40,7 @@ export const syncHistory = async (
     // 2. Perform Upsert
     const cookieStore = await cookies();
     const profileId = cookieStore.get("movira_active_profile")?.value || "default";
+  console.log("Cookie value for profileId:", profileId);
 
     const historyData = {
       user_id: user.id,
@@ -135,11 +136,13 @@ export const syncHistory = async (
 };
 
 export const getUserHistories = async (limit: number = 20): Promise<ActionResponse<HistoryDetail[]>> => {
+  console.log("getUserHistories called!");
   try {
     const supabase = await createClient();
       const { data: { user } } = await supabase.auth.getUser();
       const cookieStore = await cookies();
       const profileId = cookieStore.get("movira_active_profile")?.value || "default";
+  console.log("Cookie value for profileId:", profileId);
 
     if (!user) return { success: false, message: "Not authenticated" };
 
@@ -169,6 +172,7 @@ export const getMovieLastPosition = async (
       const { data: { user } } = await supabase.auth.getUser();
       const cookieStore = await cookies();
       const profileId = cookieStore.get("movira_active_profile")?.value || "default";
+  console.log("Cookie value for profileId:", profileId);
 
     if (!user) return { success: false, message: "Not authenticated" };
 
@@ -204,6 +208,7 @@ export const getTvShowLastPosition = async (
       const { data: { user } } = await supabase.auth.getUser();
       const cookieStore = await cookies();
       const profileId = cookieStore.get("movira_active_profile")?.value || "default";
+  console.log("Cookie value for profileId:", profileId);
 
     if (!user) return { success: false, message: "Not authenticated" };
 

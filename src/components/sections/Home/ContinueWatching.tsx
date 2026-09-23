@@ -6,9 +6,11 @@ import useDiscoverFilters from "@/hooks/useDiscoverFilters";
 import ResumeCard from "./Cards/Resume";
 import { useQuery } from "@tanstack/react-query";
 import { getUserHistories } from "@/actions/histories";
+import { useProfile } from "@/contexts/ProfileContext";
 
 const ContinueWatching: React.FC = () => {
   const { content } = useDiscoverFilters();
+  const { activeProfile } = useProfile();
   
   const { data, isLoading, isError } = useQuery({
     queryFn: async () => {
@@ -26,7 +28,7 @@ const ContinueWatching: React.FC = () => {
         return { success: false, data: [], message: err.message };
       }
     },
-    queryKey: ["continue-watching"],
+    queryKey: ["continue-watching", activeProfile?.id],
     retry: 1,
     staleTime: 1000 * 60 * 5, // 5 minutes
   });

@@ -11,6 +11,7 @@ import { Trash } from "@/utils/icons";
 import { addToast, Button, Select, SelectItem, Spinner } from "@heroui/react";
 import { useDisclosure, useInViewport } from "@mantine/hooks";
 import { useInfiniteQuery, useMutation } from "@tanstack/react-query";
+import { useProfile } from "@/contexts/ProfileContext";
 import { Suspense, useEffect, useMemo, useState, useTransition } from "react";
 import MoviePosterCard from "../Movie/Cards/Poster";
 import TvShowPosterCard from "../TV/Cards/Poster";
@@ -44,7 +45,7 @@ const LibraryList = () => {
 
   const { data, fetchNextPage, hasNextPage, isFetchingNextPage, status, refetch } =
     useInfiniteQuery({
-      queryKey: ["watchlist", content, user?.id],
+      queryKey: ["watchlist", content, user?.id, activeProfile?.id],
       queryFn: async ({ pageParam = 1 }) => {
         if (!user) return { success: true, data: [], hasNextPage: false };
         return await getWatchlist(content as FilterType, pageParam, ITEMS_PER_PAGE);

@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useProfile } from "@/contexts/ProfileContext";
 import { Button, Card, Spinner } from "@heroui/react";
 import { Select, SelectItem } from "@heroui/select";
 import { getViewedMovies, removeFromViewedMovies } from "@/actions/library";
@@ -35,6 +36,7 @@ export default function ViewHistoryPage() {
   const [totalPages, setTotalPages] = useState(0);
 
   const limit = 20;
+  const { activeProfile } = useProfile();
 
   // Fetch viewed movies with error handling
   useEffect(() => {
@@ -84,7 +86,7 @@ export default function ViewHistoryPage() {
     };
 
     fetchViewedMovies();
-  }, [filterType, currentPage, hasAccess]);
+  }, [filterType, currentPage, hasAccess, activeProfile?.id]);
 
   const handleRemove = async (movieId: number, movieType: "movie" | "tv") => {
     try {
