@@ -3,7 +3,7 @@
 import React, { useState } from 'react';
 import { useProfile } from '@/contexts/ProfileContext';
 import { useRouter } from 'next/navigation';
-import { Button, Modal, ModalContent, ModalHeader, ModalBody, ModalFooter, useDisclosure, Input, addToast } from '@heroui/react';
+import { Button, Modal, ModalContent, ModalHeader, ModalBody, ModalFooter, useDisclosure, Input, InputOtp, addToast } from '@heroui/react';
 import { Switch } from '@heroui/switch';
 import { Plus, Edit2, CheckCircle2, AlertCircle, Image as ImageIcon, Lock } from 'lucide-react';
 
@@ -281,16 +281,18 @@ export default function ProfilesPage() {
                   </div>
                   <Switch isSelected={isKids} onValueChange={setIsKids} color="danger" />
                   </div>
-                  <Input 
-                    label="Profile PIN (Optional)" 
-                    placeholder="Enter 4-digit PIN to lock" 
-                    type="password"
-                    maxLength={4}
-                    inputMode="numeric"
-                    value={newPin} 
-                    onChange={(e) => setNewPin(e.target.value.replace(/\D/g, ''))}
-                    classNames={{ inputWrapper: "bg-white/5 border border-white/10 focus-within:border-red-500/50" }}
-                  />
+                                    <div className="flex flex-col items-start p-4 bg-white/5 rounded-xl border border-white/5 mt-2 gap-3">
+                    <div className="w-full">
+                      <p className="font-bold">Profile PIN Lock</p>
+                      <p className="text-xs text-muted-foreground">Require a 4-digit PIN to access this profile.</p>
+                    </div>
+                    <InputOtp 
+                      length={4}
+                      value={newPin}
+                      onValueChange={(val) => setNewPin(val)}
+                      size="md"
+                    />
+                  </div>
                 </ModalBody>
               <ModalFooter>
                 <Button variant="light" onPress={onClose}>Cancel</Button>
@@ -337,16 +339,18 @@ export default function ProfilesPage() {
                   </div>
                   <Switch isSelected={editIsKids} onValueChange={setEditIsKids} color="danger" />
                   </div>
-                  <Input 
-                    label="Profile PIN (Optional)" 
-                    placeholder="Leave empty to remove PIN" 
-                    type="password"
-                    maxLength={4}
-                    inputMode="numeric"
-                    value={editPin} 
-                    onChange={(e) => setEditPin(e.target.value.replace(/\D/g, ''))}
-                    classNames={{ inputWrapper: "bg-white/5 border border-white/10 focus-within:border-red-500/50" }}
-                  />
+                                    <div className="flex flex-col items-start p-4 bg-white/5 rounded-xl border border-white/5 mt-2 gap-3">
+                    <div className="w-full">
+                      <p className="font-bold">Profile PIN Lock</p>
+                      <p className="text-xs text-muted-foreground">Require a 4-digit PIN to access this profile.</p>
+                    </div>
+                    <InputOtp 
+                      length={4}
+                      value={editPin}
+                      onValueChange={(val) => setEditPin(val)}
+                      size="md"
+                    />
+                  </div>
                 </ModalBody>
               <ModalFooter className="flex justify-between w-full">
                 <Button 
