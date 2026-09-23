@@ -35,6 +35,7 @@ export default function ProfilesPage() {
   const [editingProfile, setEditingProfile] = useState<any>(null);
   const [editName, setEditName] = useState('');
   const [editIsKids, setEditIsKids] = useState(false);
+  const [confirmDeletePending, setConfirmDeletePending] = useState(false);
   const [editAvatar, setEditAvatar] = useState(avatarOptions[0]);
 
   if (isFeatureLoading || isLoading) {
@@ -55,6 +56,7 @@ export default function ProfilesPage() {
   }
 
   const handleSelectProfile = (profile: any) => {
+    setConfirmDeletePending(false);
     if (isEditingMode) {
       setEditingProfile(profile);
       setEditName(profile.name);
