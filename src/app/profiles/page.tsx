@@ -43,6 +43,8 @@ export default function ProfilesPage() {
   const [selectedLockedProfile, setSelectedLockedProfile] = useState<any>(null);
   const [enteredPin, setEnteredPin] = useState('');
   const [pinError, setPinError] = useState(false);
+  const [pinAttempts, setPinAttempts] = useState(0);
+  const [isLockedOut, setIsLockedOut] = useState(false);
   const { isOpen: isSetPinOpen, onOpen: onSetPinOpen, onOpenChange: onSetPinOpenChange } = useDisclosure();
   const [tempPin, setTempPin] = useState('');
   const [isSettingPinFor, setIsSettingPinFor] = useState<'add' | 'edit' | null>(null);
@@ -400,37 +402,57 @@ export default function ProfilesPage() {
                 Enter PIN for {selectedLockedProfile?.name}
               </ModalHeader>
               <ModalBody className="py-6 flex flex-col items-center">
-                <InputOtp 
-                  length={4}
-                  value={enteredPin}
-                  onValueChange={(val) => {
-                    setEnteredPin(val);
-                    setPinError(false);
-                    if (val.length === 4) {
-                      setTimeout(() => {
-                        if (selectedLockedProfile?.pin === val) {
-                          onClose();
-                          if (isEditingMode) {
-                            openEditModalForProfile(selectedLockedProfile);
-                          } else {
-                            setActiveProfile(selectedLockedProfile);
-                            router.push('/');
-                            router.refresh();
-                          }
-                        } else {
-                          setPinError(true);
+                {isLockedOut ? (
+                  <p className="text-danger font-bold text-center">Too many attempts. Please try again later.</p>
+                ) : (
+                  <>
+                    <InputOtp 
+                      length={4}
+                      value={enteredPin}
+                      onValueChange={(val) => {
+                        setEnteredPin(val);
+                        setPinError(false);
+                        if (val.length === 4) {
+                          setTimeout(() => {
+                            if (selectedLockedProfile?.pin === val) {
+                              setPinAttempts(0);
+                              onClose();
+                              if (isEditingMode) {
+                                openEditModalForProfile(selectedLockedProfile);
+                              } else {
+                                setActiveProfile(selectedLockedProfile);
+                                router.push('/');
+                                router.refresh();
+                              }
+                            } else {
+                              const newAttempts = pinAttempts + 1;
+                              setPinAttempts(newAttempts);
+                              setPinError(true);
+                              if (newAttempts >= 5) {
+                                setIsLockedOut(true);
+                                setTimeout(() => {
+                                  setIsLockedOut(false);
+                                  setPinAttempts(0);
+                                  onClose();
+                                }, 60000); // 1 minute lockout
+                              }
+                            }
+                          }, 300);
                         }
-                      }, 300);
-                    }
-                  }}
-                  isInvalid={pinError}
-                  errorMessage={pinError ? "Incorrect PIN" : ""}
-                  autoFocus
-                  classNames={{
-                    segmentWrapper: "gap-x-4",
-                    segment: "w-14 h-14 rounded-full border-2 border-white/20 data-[active=true]:border-primary text-xl font-bold bg-white/5",
-                  }}
-                />
+                      }}
+                      isInvalid={pinError}
+                      errorMessage={pinError ? "Incorrect PIN" : ""}
+                      autoFocus
+                      classNames={{
+                        segmentWrapper: "gap-x-4",
+                        segment: "w-14 h-14 rounded-full border-2 border-white/20 data-[active=true]:border-primary text-xl font-bold bg-white/5",
+                      }}
+                    />
+                    <p className="text-xs text-muted-foreground mt-4">
+                      {5 - pinAttempts} attempts remaining
+                    </p>
+                  </>
+                )}
               </ModalBody>
               <ModalFooter>
                 <Button variant="flat" onPress={onClose} className="w-full">

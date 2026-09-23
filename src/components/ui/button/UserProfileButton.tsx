@@ -5,16 +5,7 @@ import { DropdownItemProps } from "@/types/component";
 import { env } from "@/utils/env";
 import { Gear, Logout, User, Help } from "@/utils/icons";
 import { useRouter } from "@bprogress/next/app";
-import {
-  addToast,
-  Avatar,
-  Button,
-  Dropdown,
-  DropdownItem,
-  DropdownMenu,
-  DropdownTrigger,
-  Spinner,
-} from "@heroui/react";
+import { addToast, Avatar, Button, Dropdown, DropdownItem, DropdownMenu, DropdownTrigger, Spinner, Modal, ModalContent, ModalHeader, ModalBody, ModalFooter, useDisclosure, InputOtp } from "@heroui/react";
 import Link from "next/link";
 import { useMemo, useState } from "react";
 
@@ -25,6 +16,12 @@ const UserProfileButton: React.FC = () => {
   const [logout, setLogout] = useState(false);
   const { data: user, isLoading } = useSupabaseUser();
   const { mobile, desktop } = useBreakpoints();
+  const { isOpen: isPinOpen, onOpen: onPinOpen, onOpenChange: onPinOpenChange, onClose: onPinClose } = useDisclosure();
+  const [selectedLockedProfile, setSelectedLockedProfile] = useState<any>(null);
+  const [enteredPin, setEnteredPin] = useState('');
+  const [pinError, setPinError] = useState(false);
+  const [pinAttempts, setPinAttempts] = useState(0);
+  const [isLockedOut, setIsLockedOut] = useState(false);
   const { activeProfile, profiles, setActiveProfile } = useProfile();
 
   if (isLoading) return null;
