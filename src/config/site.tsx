@@ -130,19 +130,19 @@ export const siteConfig: SiteConfigType = {
       },
       {
         name: "Popular TV Shows",
-        // @ts-expect-error: Property 'adult' is missing in type 'PopularTvShowResult' but required in type 'TV'.
+        
         query: (page = 1) => popularTvShows(page),
         param: "popular",
       },
       {
         name: "On The Air TV Shows",
-        // @ts-expect-error: Property 'adult' is missing in type 'OnTheAirResult' but required in type 'TV'.
+        
         query: (page = 1) => onTheAirTvShows(page),
         param: "onTheAir",
       },
       {
         name: "Top Rated TV Shows",
-        // @ts-expect-error:
+        
         query: (page = 1) => topRatedTvShows(page),
         param: "topRated",
       },

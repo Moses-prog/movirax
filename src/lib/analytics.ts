@@ -21,7 +21,7 @@ export async function getAnalyticsStats(): Promise<AnalyticsStats> {
   const totalUsers = authUsers ? authUsers.length : 0;
   
   // Get all subscriptions with pricing info
-  const { data: subs } = await supabase.from('user_subscriptions').select('*, pricing_plans(*)');
+  const { data: subs } = await (supabase as any).from('user_subscriptions').select('*, pricing_plans(*)');
   
   let mrr = 0;
   let activeSubscribers = 0;
