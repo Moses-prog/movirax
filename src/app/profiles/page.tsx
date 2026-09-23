@@ -36,13 +36,16 @@ export default function ProfilesPage() {
   const [editingProfile, setEditingProfile] = useState<any>(null);
   const [editName, setEditName] = useState('');
   const [editIsKids, setEditIsKids] = useState(false);
-  const [editPin, setEditPin] = useState('');
+    const [editPin, setEditPin] = useState('');
   const [confirmDeletePending, setConfirmDeletePending] = useState(false);
   const [editAvatar, setEditAvatar] = useState(avatarOptions[0]);
   const { isOpen: isPinOpen, onOpen: onPinOpen, onOpenChange: onPinOpenChange } = useDisclosure();
   const [selectedLockedProfile, setSelectedLockedProfile] = useState<any>(null);
   const [enteredPin, setEnteredPin] = useState('');
   const [pinError, setPinError] = useState(false);
+  const { isOpen: isSetPinOpen, onOpen: onSetPinOpen, onOpenChange: onSetPinOpenChange } = useDisclosure();
+  const [tempPin, setTempPin] = useState('');
+  const [isSettingPinFor, setIsSettingPinFor] = useState<'add' | 'edit' | null>(null);
 
   if (isFeatureLoading || isLoading) {
     return <div className="min-h-screen flex items-center justify-center bg-background"><div className="w-16 h-16 border-4 border-primary border-t-transparent rounded-full animate-spin"/></div>;
@@ -281,17 +284,18 @@ export default function ProfilesPage() {
                   </div>
                   <Switch isSelected={isKids} onValueChange={setIsKids} color="danger" />
                   </div>
-                                    <div className="flex flex-col items-start p-4 bg-white/5 rounded-xl border border-white/5 mt-2 gap-3">
-                    <div className="w-full">
-                      <p className="font-bold">Profile PIN Lock</p>
+                                                      <div className="flex items-center justify-between p-4 bg-white/5 rounded-xl border border-white/5 mt-2">
+                    <div className="flex flex-col gap-1">
+                      <p className="font-bold">Profile Lock</p>
                       <p className="text-xs text-muted-foreground">Require a 4-digit PIN to access this profile.</p>
                     </div>
-                    <InputOtp 
-                      length={4}
-                      value={newPin}
-                      onValueChange={(val) => setNewPin(val)}
-                      size="md"
-                    />
+                    <Button 
+                      color={newPin ? "success" : "default"} 
+                      variant="flat" 
+                      onPress={() => { setIsSettingPinFor('add'); setTempPin(newPin); onSetPinOpen(); }}
+                    >
+                      {newPin ? <><CheckCircle2 className="w-4 h-4 mr-2" /> PIN Set</> : <><Lock className="w-4 h-4 mr-2" /> Add PIN</>}
+                    </Button>
                   </div>
                 </ModalBody>
               <ModalFooter>
@@ -339,17 +343,18 @@ export default function ProfilesPage() {
                   </div>
                   <Switch isSelected={editIsKids} onValueChange={setEditIsKids} color="danger" />
                   </div>
-                                    <div className="flex flex-col items-start p-4 bg-white/5 rounded-xl border border-white/5 mt-2 gap-3">
-                    <div className="w-full">
-                      <p className="font-bold">Profile PIN Lock</p>
+                                                      <div className="flex items-center justify-between p-4 bg-white/5 rounded-xl border border-white/5 mt-2">
+                    <div className="flex flex-col gap-1">
+                      <p className="font-bold">Profile Lock</p>
                       <p className="text-xs text-muted-foreground">Require a 4-digit PIN to access this profile.</p>
                     </div>
-                    <InputOtp 
-                      length={4}
-                      value={editPin}
-                      onValueChange={(val) => setEditPin(val)}
-                      size="md"
-                    />
+                    <Button 
+                      color={editPin ? "success" : "default"} 
+                      variant="flat" 
+                      onPress={() => { setIsSettingPinFor('edit'); setTempPin(editPin); onSetPinOpen(); }}
+                    >
+                      {editPin ? <><CheckCircle2 className="w-4 h-4 mr-2" /> PIN Set</> : <><Lock className="w-4 h-4 mr-2" /> Add PIN</>}
+                    </Button>
                   </div>
                 </ModalBody>
               <ModalFooter className="flex justify-between w-full">
