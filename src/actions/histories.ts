@@ -38,8 +38,12 @@ export const syncHistory = async (
     }
 
     // 2. Perform Upsert
+    const cookieStore = await cookies();
+    const profileId = cookieStore.get("movira_active_profile")?.value || "default";
+
     const historyData = {
       user_id: user.id,
+      profile_id: profileId,
       media_id: Number(data.mediaId),
       type: data.mediaType,
       season: data.season || 0,
@@ -59,6 +63,7 @@ export const syncHistory = async (
       .from("histories")
       .select("id")
       .eq("user_id", user.id)
+      .eq("profile_id", profileId)
       .eq("media_id", historyData.media_id)
       .eq("type", historyData.type)
       .eq("season", historyData.season)
@@ -81,8 +86,6 @@ export const syncHistory = async (
     
     // 3. Also add to viewed_movies for the manual history page
     try {
-      const cookieStore = await cookies();
-      const profileId = cookieStore.get("movira_active_profile")?.value || "default";
       
       const { data: existingViewed } = await supabase
         .from("viewed_movies")
@@ -133,7 +136,9 @@ export const syncHistory = async (
 export const getUserHistories = async (limit: number = 20): Promise<ActionResponse<HistoryDetail[]>> => {
   try {
     const supabase = await createClient();
-    const { data: { user } } = await supabase.auth.getUser();
+      const { data: { user } } = await supabase.auth.getUser();
+      const cookieStore = await cookies();
+      const profileId = cookieStore.get("movira_active_profile")?.value || "default";
 
     if (!user) return { success: false, message: "Not authenticated" };
 
@@ -141,6 +146,7 @@ export const getUserHistories = async (limit: number = 20): Promise<ActionRespon
       .from("histories")
       .select("*")
       .eq("user_id", user.id)
+        .eq("profile_id", profileId)
       .order("updated_at", { ascending: false }) // Use updated_at so most recent watch is first
       .limit(limit);
 
@@ -158,7 +164,9 @@ export const getMovieLastPosition = async (
 ): Promise<ActionResponse<number>> => {
   try {
     const supabase = await createClient();
-    const { data: { user } } = await supabase.auth.getUser();
+      const { data: { user } } = await supabase.auth.getUser();
+      const cookieStore = await cookies();
+      const profileId = cookieStore.get("movira_active_profile")?.value || "default";
 
     if (!user) return { success: false, message: "Not authenticated" };
 
@@ -166,6 +174,7 @@ export const getMovieLastPosition = async (
       .from("histories")
       .select("last_position")
       .eq("user_id", user.id)
+        .eq("profile_id", profileId)
       .eq("media_id", Number(mediaId))
       .eq("type", mediaType)
       .single(); // Fetch single record
@@ -189,7 +198,9 @@ export const getTvShowLastPosition = async (
 ): Promise<ActionResponse<number>> => {
   try {
     const supabase = await createClient();
-    const { data: { user } } = await supabase.auth.getUser();
+      const { data: { user } } = await supabase.auth.getUser();
+      const cookieStore = await cookies();
+      const profileId = cookieStore.get("movira_active_profile")?.value || "default";
 
     if (!user) return { success: false, message: "Not authenticated" };
 
@@ -197,6 +208,7 @@ export const getTvShowLastPosition = async (
       .from("histories")
       .select("last_position")
       .eq("user_id", user.id)
+        .eq("profile_id", profileId)
       .eq("media_id", showId)
       .eq("type", "tv")
       .eq("season", season)

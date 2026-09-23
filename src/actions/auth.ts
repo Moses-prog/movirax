@@ -2,6 +2,7 @@
 
 import { SupabaseClient } from "@supabase/supabase-js";
 import { createClient } from "@/utils/supabase/server";
+import { cookies } from "next/headers";
 import {
   ForgotPasswordFormInput,
   ForgotPasswordFormSchema,
@@ -83,6 +84,9 @@ const signInWithEmailAction: AuthAction<LoginFormInput> = async (data, supabase)
       message: `Database error. Could not get username for ${user.user.email}.`,
     };
   }
+
+  const cookieStore = await cookies();
+  cookieStore.delete("movira_active_profile");
 
   return { success: true, message: `Welcome back, ${username.username}` };
 };
@@ -174,6 +178,9 @@ export const signOut = async (): ActionResponse => {
   const { error } = await supabase.auth.signOut();
 
   if (error) return { success: false, message: error.message };
+
+  const cookieStore = await cookies();
+  cookieStore.delete("movira_active_profile");
 
   return { success: true, message: "You have been signed out." };
 };
