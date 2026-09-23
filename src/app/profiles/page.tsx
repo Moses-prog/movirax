@@ -64,23 +64,29 @@ export default function ProfilesPage() {
     );
   }
 
+    const openEditModalForProfile = (profile: any) => {
+    setEditingProfile(profile);
+    setEditName(profile.name);
+    setEditIsKids(profile.isKids || false);
+    setEditAvatar(profile.avatar || avatarOptions[0]);
+    setEditPin(profile.pin || '');
+    onEditOpen();
+  };
+
   const handleSelectProfile = (profile: any) => {
     setConfirmDeletePending(false);
-    if (isEditingMode) {
-      setEditingProfile(profile);
-      setEditName(profile.name);
-      setEditIsKids(profile.isKids || false);
-      setEditAvatar(profile.avatar || avatarOptions[0]);
-      setEditPin(profile.pin || '');
-      onEditOpen();
-      return;
-    }
     
+    // If the profile is locked, require the PIN before doing ANYTHING (entering OR editing)
     if (profile.pin) {
       setSelectedLockedProfile(profile);
       setEnteredPin('');
       setPinError(false);
       onPinOpen();
+      return;
+    }
+
+    if (isEditingMode) {
+      openEditModalForProfile(profile);
       return;
     }
 
@@ -92,10 +98,14 @@ export default function ProfilesPage() {
   
   const handlePinSubmit = (onClose: () => void) => {
     if (selectedLockedProfile?.pin === enteredPin) {
-      setActiveProfile(selectedLockedProfile);
       onClose();
-      router.push('/');
-      router.refresh();
+      if (isEditingMode) {
+        openEditModalForProfile(selectedLockedProfile);
+      } else {
+        setActiveProfile(selectedLockedProfile);
+        router.push('/');
+        router.refresh();
+      }
     } else {
       setPinError(true);
     }
