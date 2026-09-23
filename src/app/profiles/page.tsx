@@ -296,13 +296,13 @@ export default function ProfilesPage() {
               </ModalBody>
               <ModalFooter className="flex justify-between w-full">
                 <Button 
-                  color="danger" 
-                  variant="flat" 
-                  onPress={() => handleDeleteProfile(onClose)}
-                  isDisabled={profiles.length <= 1}
-                >
-                  Delete Profile
-                </Button>
+                    color="danger" 
+                    variant={confirmDeletePending ? "solid" : "flat"} 
+                    onPress={() => handleDeleteProfile(onClose)}
+                    isDisabled={profiles.length <= 1}
+                  >
+                    {confirmDeletePending ? "Yes, Delete" : "Delete Profile"}
+                  </Button>
                 <div className="flex gap-2">
                   <Button variant="light" onPress={onClose}>Cancel</Button>
                   <Button color="primary" onPress={() => handleSaveEdit(onClose)} isDisabled={!editName.trim()}>
