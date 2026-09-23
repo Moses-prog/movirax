@@ -145,7 +145,10 @@ export function usePlayerEvents(options: UsePlayerEventsOptions = {}) {
 
     const { success, message } = await syncHistory(payload, completed);
     if (success) setLastCurrentTime(data.currentTime);
-    else console.error("Save history failed:", message);
+    else {
+      console.error("Save history failed:", message);
+      alert("History sync failed: " + message);
+    }
   };
 
   useEffect(() => {
