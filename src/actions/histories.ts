@@ -59,7 +59,8 @@ export const syncHistory = async (
       vote_average: media.vote_average,
     };
 
-    const { data: existing } = await supabase
+    const supabaseAny = supabase as any;
+    const { data: existing } = await supabaseAny
       .from("histories")
       .select("id")
       .eq("user_id", user.id)
@@ -71,13 +72,13 @@ export const syncHistory = async (
       .maybeSingle();
 
     if (existing) {
-      const { error } = await supabase
+      const { error } = await supabaseAny
         .from("histories")
         .update(historyData)
         .eq("id", existing.id);
       if (error) throw error;
     } else {
-      const { error } = await supabase
+      const { error } = await supabaseAny
         .from("histories")
         .insert(historyData);
       if (error) throw error;
@@ -142,7 +143,8 @@ export const getUserHistories = async (limit: number = 20): Promise<ActionRespon
 
     if (!user) return { success: false, message: "Not authenticated" };
 
-    const { data, error } = await supabase
+    const supabaseAny = supabase as any;
+    const { data, error } = await supabaseAny
       .from("histories")
       .select("*")
       .eq("user_id", user.id)
@@ -170,7 +172,8 @@ export const getMovieLastPosition = async (
 
     if (!user) return { success: false, message: "Not authenticated" };
 
-    const { data, error } = await supabase
+    const supabaseAny = supabase as any;
+    const { data, error } = await supabaseAny
       .from("histories")
       .select("last_position")
       .eq("user_id", user.id)
@@ -204,7 +207,8 @@ export const getTvShowLastPosition = async (
 
     if (!user) return { success: false, message: "Not authenticated" };
 
-    const { data, error } = await supabase
+    const supabaseAny = supabase as any;
+    const { data, error } = await supabaseAny
       .from("histories")
       .select("last_position")
       .eq("user_id", user.id)

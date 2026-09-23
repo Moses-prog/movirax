@@ -78,8 +78,9 @@ export async function addToWatchlist(item: WatchlistItem): Promise<ActionRespons
     const profileId = cookieStore.get('movira_active_profile')?.value || 'default';
 
     // Add to watchlist
-    const { data, error } = await supabase
-      .from("watchlist")
+    const supabaseAny = supabase as any;
+      const { data, error } = await supabaseAny
+        .from("watchlist")
       .insert({
         user_id: user.id,
         profile_id: profileId,
@@ -290,8 +291,9 @@ export async function checkInWatchlist(
     const profileId = cookieStore.get('movira_active_profile')?.value || 'default';
 
     // Check if exists
-    const { data, error } = await supabase
-      .from("watchlist")
+    const supabaseAny = supabase as any;
+      const { data, error } = await supabaseAny
+        .from("watchlist")
       .select("id")
       .eq("user_id", user.id)
       .eq("profile_id", profileId)
@@ -354,8 +356,9 @@ export async function getWatchlist(
     const profileId = cookieStore.get('movira_active_profile')?.value || 'default';
 
     // Build query
-    let query = supabase
-      .from("watchlist")
+    const supabaseAny = supabase as any;
+      let query = supabaseAny
+        .from("watchlist")
       .select("*", { count: "exact" })
       .eq("user_id", user.id)
       .eq("profile_id", profileId)

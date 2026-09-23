@@ -31,26 +31,26 @@ export interface UserSubscription {
 
 export async function getPricingPlans(): Promise<PricingPlan[]> {
   const supabase = await createClient();
-  const { data } = await supabase.from('pricing_plans').select('*').order('price');
+  const { data } = await (supabase as any).from('pricing_plans').select('*').order('price');
   return data || [];
 }
 
 export async function updatePricingPlan(id: string, updates: Partial<PricingPlan>): Promise<boolean> {
   const supabase = await createClient(true);
-  const { error } = await supabase.from('pricing_plans').update(updates).eq('id', id);
+  const { error } = await (supabase as any).from('pricing_plans').update(updates).eq('id', id);
   return !error;
 }
 
 export async function getAllSubscriptions(): Promise<UserSubscription[]> {
   const supabase = await createClient(true);
-  const { data } = await supabase.from('user_subscriptions')
+  const { data } = await (supabase as any).from('user_subscriptions')
     .select('*, pricing_plans(*)').order('created_at', { ascending: false });
   return data || [];
 }
 
 export async function getUserSubscription(userId: string): Promise<UserSubscription | null> {
   const supabase = await createClient();
-  const { data } = await supabase.from('user_subscriptions')
+  const { data } = await (supabase as any).from('user_subscriptions')
     .select('*, pricing_plans(*)')
     .eq('user_id', userId)
     .eq('status', 'active')
@@ -62,7 +62,7 @@ export async function getUserSubscription(userId: string): Promise<UserSubscript
 
 export async function cancelUserSubscription(id: string): Promise<boolean> {
   const supabase = await createClient(true);
-  const { error } = await supabase.from('user_subscriptions').update({ status: 'cancelled' }).eq('id', id);
+  const { error } = await (supabase as any).from('user_subscriptions').update({ status: 'cancelled' }).eq('id', id);
   return !error;
 }
 
@@ -81,7 +81,7 @@ export async function activateSubscription(
   const endDate = new Date();
   endDate.setDate(endDate.getDate() + daysValid);
   
-  const { error } = await supabase.from('user_subscriptions').insert({
+  const { error } = await (supabase as any).from('user_subscriptions').insert({
     user_id: userId,
     user_email: userEmail,
     user_name: userName,
@@ -108,14 +108,14 @@ export async function updateSubscriptionStatus(
   const supabase = await createClient(true);
   
   // Try matching by reference or subscription_code
-  const { data: subs } = await supabase.from('user_subscriptions')
+  const { data: subs } = await (supabase as any).from('user_subscriptions')
     .select('id')
     .or(`reference.eq.${referenceOrSubCode},paystack_subscription_code.eq.${referenceOrSubCode}`)
     .limit(1);
 
   if (!subs || subs.length === 0) return false;
 
-  const { error } = await supabase.from('user_subscriptions')
+  const { error } = await (supabase as any).from('user_subscriptions')
     .update(updates)
     .eq('id', subs[0].id);
 
