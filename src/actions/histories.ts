@@ -37,29 +37,45 @@ export const syncHistory = async (
     }
 
     // 2. Perform Upsert
-    const { error } = await supabase
-      .from("histories")
-      .upsert(
-        {
-          user_id: user.id,
-          media_id: Number(data.mediaId),
-          type: data.mediaType,
-          season: data.season || 0,
-          episode: data.episode || 0,
-          duration: Math.round(data.duration || 0),
-          last_position: Math.round(data.currentTime || 0),
-          completed: completed || false,
-          adult: "adult" in media ? media.adult : false,
-          backdrop_path: media.backdrop_path,
-          poster_path: media.poster_path,
-          release_date: "release_date" in media ? media.release_date : media.first_air_date,
-          title: "title" in media ? mutateMovieTitle(media) : mutateTvShowTitle(media),
-          vote_average: media.vote_average,
-        },
-        { onConflict: "user_id,media_id,type,season,episode" }
-      );
+    const historyData = {
+      user_id: user.id,
+      media_id: Number(data.mediaId),
+      type: data.mediaType,
+      season: data.season || 0,
+      episode: data.episode || 0,
+      duration: Math.round(data.duration || 0),
+      last_position: Math.round(data.currentTime || 0),
+      completed: completed || false,
+      adult: "adult" in media ? media.adult : false,
+      backdrop_path: media.backdrop_path,
+      poster_path: media.poster_path,
+      release_date: "release_date" in media ? media.release_date : media.first_air_date,
+      title: "title" in media ? mutateMovieTitle(media) : mutateTvShowTitle(media),
+      vote_average: media.vote_average,
+    };
 
-    if (error) throw error;
+    const { data: existing } = await supabase
+      .from("histories")
+      .select("id")
+      .eq("user_id", user.id)
+      .eq("media_id", historyData.media_id)
+      .eq("type", historyData.type)
+      .eq("season", historyData.season)
+      .eq("episode", historyData.episode)
+      .maybeSingle();
+
+    if (existing) {
+      const { error } = await supabase
+        .from("histories")
+        .update(historyData)
+        .eq("id", existing.id);
+      if (error) throw error;
+    } else {
+      const { error } = await supabase
+        .from("histories")
+        .insert(historyData);
+      if (error) throw error;
+    }
 
     // Refresh the home page data
     revalidatePath("/");
