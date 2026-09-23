@@ -120,11 +120,13 @@ export default function ProfilesPage() {
   const handleDeleteProfile = async (onClose: () => void) => {
     if (!editingProfile) return;
     if (profiles.length <= 1) {
-      alert("You must have at least one profile.");
+      addToast({ title: "You must have at least one profile.", color: "danger" });
       return;
     }
-    const confirmDelete = window.confirm(`Are you sure you want to delete ${editingProfile.name}? This cannot be undone.`);
-    if (!confirmDelete) return;
+    if (!confirmDeletePending) {
+      setConfirmDeletePending(true);
+      return;
+    }
 
     try {
       const res = await fetch('/api/profiles', {
