@@ -63,8 +63,8 @@ export function ProfileProvider({ children }: { children: React.ReactNode }) {
               } else {
                 Cookies.remove('movira_active_profile');
               }
-          } else if (profilesJson.data.length === 1) {
-            // Auto select if only 1
+          } else if (profilesJson.data.length === 1 && !profilesJson.data[0].pin) {
+            // Auto select if only 1 AND it is not locked with a PIN
             setActiveProfileState(profilesJson.data[0]);
             Cookies.set('movira_active_profile', profilesJson.data[0].id, { expires: 365 });
           }
